@@ -50,6 +50,15 @@ Plutôt que de simples exercices théoriques, l'utilisateur est immergé dans un
 
 </details>
 
+## État d'avancement actuel
+
+Le projet est en cours de développement (MVP). Voici ce qui a été implémenté :
+- **Environnement & Docker** : PostgreSQL et Adminer configurés via `docker-compose`.
+- **Base de données** : Schémas SQL générés via Flyway (`V1` et `V2`).
+- **Couche Entités (JPA)** : `User`, `QuestCategory`, `Quest`, `QuestSubmission`, `Badge`, `Achievement`.
+- **Couche Données (Repositories)** : Création des interfaces Spring Data JPA avec des méthodes de recherche personnalisées (`UserRepository`, `QuestCategoryRepository`, `QuestRepository`).
+- **Tests Unitaires** : Couverture des tests d'intégration avec la base H2 en mémoire (`@SpringBootTest`).
+
 ## Documentation
 
 La documentation détaillée du projet est disponible dans le répertoire `docs/` :

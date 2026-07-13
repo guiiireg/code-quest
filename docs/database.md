@@ -8,6 +8,8 @@ erDiagram
     USER ||--o{ USER_QUEST : "tente"
     WORLD ||--o{ QUEST : "contient"
     QUEST ||--o{ USER_QUEST : "est réalisée par"
+    USER ||--o{ ACHIEVEMENT : "débloque"
+    BADGE ||--o{ ACHIEVEMENT : "est attribué via"
     
     USER {
         uuid id PK
@@ -49,6 +51,21 @@ erDiagram
         string status
         timestamp completed_at
     }
+
+    BADGE {
+        uuid id PK
+        string name
+        string description
+        string icon_url
+        timestamp created_at
+    }
+
+    ACHIEVEMENT {
+        uuid id PK
+        uuid user_id FK
+        uuid badge_id FK
+        timestamp earned_at
+    }
 ```
 
 ## Entités
@@ -58,6 +75,8 @@ erDiagram
 - **World** : Représente une technologie ou un domaine d'apprentissage spécifique (Java, Spring Boot, Git, Docker, etc.).
 - **Quest** : Définition d'un défi ou d'un exercice technique avec son contexte, le code source initial, la récompense en XP et un indicateur si la quête est un boss.
 - **UserQuest** : Table de liaison qui stocke l'état d'avancement (en cours, validée, échouée) d'une quête pour un utilisateur donné.
+- **Badge** : Définition d'un succès ou d'une récompense visuelle (nom, description, icône).
+- **Achievement** : Table de liaison enregistrant l'obtention d'un Badge par un User à une date donnée.
 
 ## Relations
 
@@ -66,3 +85,4 @@ erDiagram
 - Une quête (**Quest**) appartient obligatoirement à un seul monde (**World**).
 - Un utilisateur (**User**) peut participer à plusieurs quêtes (**Quest**), l'historique étant tracé par **UserQuest**.
 - Une quête (**Quest**) peut être tentée et résolue par de multiples utilisateurs (**User**).
+- Un utilisateur (**User**) peut débloquer plusieurs succès (**Achievement**), chacun étant lié à un badge spécifique (**Badge**).
