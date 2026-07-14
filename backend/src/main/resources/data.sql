@@ -1,6 +1,14 @@
 -- Nettoyage des anciennes données
+DELETE FROM user_roles;
+DELETE FROM roles;
+DELETE FROM users;
 DELETE FROM quests;
 DELETE FROM worlds;
+
+-- Insertion des rôles
+INSERT INTO roles (id, name) VALUES
+('role-user', 'ROLE_USER'),
+('role-admin', 'ROLE_ADMIN');
 
 -- Insertion des mondes
 INSERT INTO worlds (id, name, description) VALUES
