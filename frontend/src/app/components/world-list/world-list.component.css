@@ -1,0 +1,186 @@
+.dashboard-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  color: #f1f5f9;
+}
+
+.dashboard-header {
+  margin-bottom: 48px;
+  text-align: center;
+}
+
+.dashboard-header h1 {
+  font-size: 2.8rem;
+  font-weight: 800;
+  margin-bottom: 12px;
+  background: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.025em;
+}
+
+.dashboard-header .subtitle {
+  font-size: 1.1rem;
+  color: #94a3b8;
+  font-weight: 400;
+}
+
+/* Grille de cartes */
+.worlds-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 32px;
+}
+
+/* Style premium de la carte */
+.world-card {
+  position: relative;
+  background: rgba(30, 41, 59, 0.7) !important;
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 20px !important;
+  overflow: hidden;
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5) !important;
+  transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s ease, border-color 0.3s ease !important;
+  padding: 24px;
+}
+
+.world-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px -15px rgba(99, 102, 241, 0.25) !important;
+  border-color: rgba(99, 102, 241, 0.4) !important;
+}
+
+/* Effet de dégradé supérieur */
+.card-bg-gradient {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #6366f1, #a855f7, #ec4899);
+  opacity: 0.8;
+}
+
+.world-card-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+  padding: 0 !important;
+}
+
+.world-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: rgba(99, 102, 241, 0.15);
+  color: #818cf8;
+}
+
+.world-badge mat-icon {
+  font-size: 24px;
+  width: 24px;
+  height: 24px;
+}
+
+::ng-deep .world-card-header .mat-mdc-card-header-text {
+  margin: 0 !important;
+}
+
+::ng-deep .world-card-header .mat-mdc-card-title {
+  font-size: 1.4rem !important;
+  font-weight: 700 !important;
+  color: #f8fafc !important;
+  margin-bottom: 4px !important;
+}
+
+::ng-deep .world-card-header .mat-mdc-card-subtitle {
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+  color: #a78bfa !important;
+}
+
+.world-card-content {
+  color: #cbd5e1;
+  font-size: 0.975rem;
+  line-height: 1.6;
+  margin-bottom: 24px;
+  min-height: 60px;
+  padding: 0 !important;
+}
+
+.world-card-actions {
+  padding: 0 !important;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.action-button {
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%) !important;
+  color: #ffffff !important;
+  border-radius: 12px !important;
+  padding: 10px 20px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.025em;
+  transition: all 0.2s ease !important;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.action-button:hover {
+  background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%) !important;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4) !important;
+}
+
+/* Spinner et états de chargement / erreur */
+.loading-state, .error-state, .empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  text-align: center;
+  background: rgba(30, 41, 59, 0.4);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(99, 102, 241, 0.1);
+  border-top-color: #6366f1;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.error-icon, .empty-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+  margin-bottom: 16px;
+}
+
+.error-icon {
+  color: #ef4444;
+}
+
+.empty-icon {
+  color: #64748b;
+}
+
+p {
+  margin: 0;
+}

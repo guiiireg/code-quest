@@ -1,0 +1,53 @@
+<div class="dashboard-container">
+  <header class="dashboard-header">
+    <h1>CodeQuest Dashboard</h1>
+    <p class="subtitle">Sélectionnez un monde pour commencer vos quêtes et gagner de l'XP</p>
+  </header>
+
+  @if (loading) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Chargement des mondes légendaires...</p>
+    </div>
+  }
+
+  @if (errorMessage) {
+    <div class="error-state">
+      <mat-icon class="error-icon">error_outline</mat-icon>
+      <p>{{ errorMessage }}</p>
+    </div>
+  }
+
+  @if (!loading && !errorMessage) {
+    <div class="worlds-grid">
+      @for (world of worlds; track world.id) {
+        <mat-card class="world-card">
+          <div class="card-bg-gradient"></div>
+          <mat-card-header class="world-card-header">
+            <div class="world-badge">
+              <mat-icon>public</mat-icon>
+            </div>
+            <mat-card-title>{{ world.name }}</mat-card-title>
+            <mat-card-subtitle>{{ world.quests.length }} quête(s) disponible(s)</mat-card-subtitle>
+          </mat-card-header>
+          
+          <mat-card-content class="world-card-content">
+            <p>{{ world.description }}</p>
+          </mat-card-content>
+          
+          <mat-card-actions class="world-card-actions">
+            <button mat-flat-button class="action-button">
+              Explorer le monde
+              <mat-icon iconPositionEnd>arrow_forward</mat-icon>
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      } @empty {
+        <div class="empty-state">
+          <mat-icon class="empty-icon">blur_off</mat-icon>
+          <p>Aucun monde disponible pour le moment. Revenez plus tard !</p>
+        </div>
+      }
+    </div>
+  }
+</div>
