@@ -1,34 +1,34 @@
-<div class="detail-container">
-  <div class="back-nav">
+<main class="detail-container">
+  <nav class="back-nav">
     <button mat-button class="back-button" routerLink="/worlds">
       <mat-icon>arrow_back</mat-icon>
       Retour aux mondes
     </button>
-  </div>
+  </nav>
 
   @if (loading) {
-    <div class="loading-state">
-      <div class="spinner"></div>
+    <section class="loading-state">
+      <aside class="spinner"></aside>
       <p>Chargement des secrets de ce monde...</p>
-    </div>
+    </section>
   }
 
   @if (errorMessage) {
-    <div class="error-state">
+    <section class="error-state">
       <mat-icon class="error-icon">error_outline</mat-icon>
       <p>{{ errorMessage }}</p>
-    </div>
+    </section>
   }
 
   @if (!loading && !errorMessage && world) {
     <header class="world-header">
-      <div class="world-icon-wrapper">
+      <figure class="world-icon-wrapper">
         <mat-icon>public</mat-icon>
-      </div>
-      <div class="world-meta">
+      </figure>
+      <hgroup class="world-meta">
         <h1>{{ world.name }}</h1>
         <p class="world-desc">{{ world.description }}</p>
-      </div>
+      </hgroup>
     </header>
 
     <mat-divider class="custom-divider"></mat-divider>
@@ -39,21 +39,21 @@
         Quêtes disponibles ({{ world.quests.length }})
       </h2>
 
-      <div class="quests-list">
+      <section class="quests-list">
         @for (quest of world.quests; track quest.id) {
           <mat-card class="quest-card">
-            <div class="quest-card-header">
-              <div class="quest-title-wrapper">
+            <header class="quest-card-header">
+              <hgroup class="quest-title-wrapper">
                 <mat-card-title class="quest-title">{{ quest.title }}</mat-card-title>
-                <span class="quest-id">#{{ quest.id }}</span>
-              </div>
-              <div class="quest-badges">
-                <span class="badge xp-badge">+{{ quest.xpReward }} XP</span>
-                <span class="badge difficulty-badge" [class]="quest.difficulty.toLowerCase()">
+                <small class="quest-id">#{{ quest.id }}</small>
+              </hgroup>
+              <aside class="quest-badges">
+                <strong class="badge xp-badge">+{{ quest.xpReward }} XP</strong>
+                <em class="badge difficulty-badge" [class]="quest.difficulty.toLowerCase()">
                   {{ quest.difficulty }}
-                </span>
-              </div>
-            </div>
+                </em>
+              </aside>
+            </header>
             
             <mat-card-content class="quest-card-content">
               <p>{{ quest.description }}</p>
@@ -64,12 +64,12 @@
             </mat-card-actions>
           </mat-card>
         } @empty {
-          <div class="empty-quests">
+          <section class="empty-quests">
             <mat-icon>sentiment_dissatisfied</mat-icon>
             <p>Il n'y a aucune quête dans ce monde pour le moment.</p>
-          </div>
+          </section>
         }
-      </div>
+      </section>
     </section>
   }
-</div>
+</main>
