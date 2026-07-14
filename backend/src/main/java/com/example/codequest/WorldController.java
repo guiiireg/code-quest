@@ -51,7 +51,7 @@ public class WorldController {
      * @throws WorldNotFoundException si le monde n'est pas trouvé
      */
     @GetMapping("/worlds/{id}")
-    public World getworldById(@PathVariable String id) {
+    public World getWorldById(@PathVariable String id) {
         return worldRepository.findById(id)
             .orElseThrow(() -> new WorldNotFoundException("Monde non trouvé"));
     }
@@ -80,7 +80,7 @@ public class WorldController {
         Quest quest = questRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Quête non trouvée"));
 
-        String code = request.getCode();
+        String code = request.code();
         if (code == null) {
             return new SubmissionResponse(false, "ERROR 500 : Code manquant.", 0);
         }
