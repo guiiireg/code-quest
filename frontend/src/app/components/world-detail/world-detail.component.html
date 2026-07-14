@@ -1,0 +1,75 @@
+<main class="detail-container">
+  <nav class="back-nav">
+    <button mat-button class="back-button" routerLink="/worlds">
+      <mat-icon>arrow_back</mat-icon>
+      Retour aux mondes
+    </button>
+  </nav>
+
+  @if (loading) {
+    <section class="loading-state">
+      <aside class="spinner"></aside>
+      <p>Chargement des secrets de ce monde...</p>
+    </section>
+  }
+
+  @if (errorMessage) {
+    <section class="error-state">
+      <mat-icon class="error-icon">error_outline</mat-icon>
+      <p>{{ errorMessage }}</p>
+    </section>
+  }
+
+  @if (!loading && !errorMessage && world) {
+    <header class="world-header">
+      <figure class="world-icon-wrapper">
+        <mat-icon>public</mat-icon>
+      </figure>
+      <hgroup class="world-meta">
+        <h1>{{ world.name }}</h1>
+        <p class="world-desc">{{ world.description }}</p>
+      </hgroup>
+    </header>
+
+    <mat-divider class="custom-divider"></mat-divider>
+
+    <section class="quests-section">
+      <h2 class="section-title">
+        <mat-icon>assignment</mat-icon>
+        Quêtes disponibles ({{ world.quests.length }})
+      </h2>
+
+      <section class="quests-list">
+        @for (quest of world.quests; track quest.id) {
+          <mat-card class="quest-card">
+            <header class="quest-card-header">
+              <hgroup class="quest-title-wrapper">
+                <mat-card-title class="quest-title">{{ quest.title }}</mat-card-title>
+                <small class="quest-id">#{{ quest.id }}</small>
+              </hgroup>
+              <aside class="quest-badges">
+                <strong class="badge xp-badge">+{{ quest.xpReward }} XP</strong>
+                <em class="badge difficulty-badge" [class]="quest.difficulty.toLowerCase()">
+                  {{ quest.difficulty }}
+                </em>
+              </aside>
+            </header>
+            
+            <mat-card-content class="quest-card-content">
+              <p>{{ quest.description }}</p>
+            </mat-card-content>
+            
+            <mat-card-actions class="quest-card-actions">
+              <button mat-stroked-button class="quest-action">Commencer la quête</button>
+            </mat-card-actions>
+          </mat-card>
+        } @empty {
+          <section class="empty-quests">
+            <mat-icon>sentiment_dissatisfied</mat-icon>
+            <p>Il n'y a aucune quête dans ce monde pour le moment.</p>
+          </section>
+        }
+      </section>
+    </section>
+  }
+</main>
