@@ -17,10 +17,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.hamcrest.Matchers.hasSize;
 
+import org.springframework.security.test.context.support.WithMockUser;
+
 /**
  * Tests d'intégration pour le contrôleur REST des mondes (WorldController).
  */
 @WebMvcTest(WorldController.class)
+@WithMockUser
 class WorldControllerTest {
 
     @Autowired
