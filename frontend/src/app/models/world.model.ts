@@ -7,6 +7,17 @@ export interface Quest {
   description: string;
   xpReward: number;
   difficulty: string;
+  codeTemplate?: string;
+  testValidationRegex?: string;
+}
+
+/**
+ * Représente la réponse de soumission de code.
+ */
+export interface SubmissionResponse {
+  success: boolean;
+  output: string;
+  xpGained: number;
 }
 
 /**

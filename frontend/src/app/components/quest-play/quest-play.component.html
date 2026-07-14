@@ -1,0 +1,99 @@
+<main class="playground-container">
+  @if (loading) {
+    <section class="loading-state">
+      <aside class="spinner"></aside>
+      <p>Initialisation de votre espace de code...</p>
+    </section>
+  }
+
+  @if (errorMessage) {
+    <section class="error-state">
+      <mat-icon class="error-icon">error_outline</mat-icon>
+      <p>{{ errorMessage }}</p>
+      <button mat-flat-button color="primary" [routerLink]="['/worlds', worldId]">Retour au monde</button>
+    </section>
+  }
+
+  @if (!loading && !errorMessage && quest) {
+    <section class="instructions-pane">
+      <nav class="back-nav">
+        <button mat-button class="back-button" [routerLink]="['/worlds', worldId]">
+          <mat-icon>arrow_back</mat-icon>
+          Retour au monde
+        </button>
+      </nav>
+
+      <header class="quest-header">
+        <h1>{{ quest.title }}</h1>
+        <aside class="quest-meta">
+          <strong class="badge xp-badge">+{{ quest.xpReward }} XP</strong>
+          <em class="badge difficulty-badge" [class]="quest.difficulty.toLowerCase()">
+            {{ quest.difficulty }}
+          </em>
+        </aside>
+      </header>
+
+      <mat-divider class="custom-divider"></mat-divider>
+
+      <article class="instructions-content">
+        <h2>Instructions de l'exercice</h2>
+        <p class="description-text">{{ quest.description }}</p>
+        
+        <blockquote class="tip-blockquote">
+          <mat-icon>lightbulb_outline</mat-icon>
+          <p>Assurez-vous de respecter les types de retour demandés et de ne pas modifier la signature de la classe ou des méthodes principales.</p>
+        </blockquote>
+      </article>
+    </section>
+
+    <section class="editor-pane">
+      <header class="editor-header">
+        <h2>Éditeur de code (Java)</h2>
+        <button mat-icon-button class="reset-button" (click)="resetTemplate()" title="Réinitialiser le code de départ">
+          <mat-icon>refresh</mat-icon>
+        </button>
+      </header>
+
+      <form class="editor-container" (submit)="submitCode(); $event.preventDefault()">
+        <textarea 
+          class="code-textarea" 
+          [(ngModel)]="code" 
+          name="code" 
+          spellcheck="false" 
+          placeholder="// Écrivez votre code ici...">
+        </textarea>
+
+        <footer class="editor-footer">
+          <button 
+            mat-flat-button 
+            class="submit-button" 
+            type="submit" 
+            [disabled]="submitting || !code.trim()">
+            @if (submitting) {
+              <aside class="mini-spinner"></aside>
+              Validation en cours...
+            } @else {
+              <ng-container>
+                <mat-icon>play_arrow</mat-icon>
+                Soumettre le code
+              </ng-container>
+            }
+          </button>
+        </footer>
+      </form>
+
+      @if (result) {
+        <aside class="console-panel" [class.success]="result.success" [class.failure]="!result.success">
+          <header class="console-header">
+            <mat-icon>{{ result.success ? 'check_circle_outline' : 'highlight_off' }}</mat-icon>
+            <h3>{{ result.success ? 'Succès' : 'Échec des tests' }}</h3>
+          </header>
+          <p class="console-output">{{ result.output }}</p>
+          @if (result.success) {
+            <p class="xp-message">Reçu : +{{ result.xpGained }} XP</p>
+          }
+        </aside>
+      }
+    </section>
+  }
+</main>
