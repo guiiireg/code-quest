@@ -21,16 +21,19 @@ public class WorldController {
     
     private final WorldRepository worldRepository;
     private final QuestRepository questRepository;
+    private final CodeCompilerService compilerService;
 
     /**
      * Constructeur pour l'injection des repositories.
      * 
      * @param worldRepository Le repository des mondes
      * @param questRepository Le repository des quêtes
+     * @param compilerService Le service de compilation
      */
-    public WorldController(WorldRepository worldRepository, QuestRepository questRepository) {
+    public WorldController(WorldRepository worldRepository, QuestRepository questRepository, CodeCompilerService compilerService) {
         this.worldRepository = worldRepository;
         this.questRepository = questRepository;
+        this.compilerService = compilerService;
     }
 
     /**
@@ -69,7 +72,7 @@ public class WorldController {
     }
 
     /**
-     * Valide le code soumis pour une quête spécifique (validation naïve).
+     * Valide le code soumis pour une quête spécifique (compilation et validation).
      * 
      * @param id L'identifiant de la quête
      * @param request La requête contenant le code utilisateur
@@ -81,15 +84,27 @@ public class WorldController {
             .orElseThrow(() -> new RuntimeException("Quête non trouvée"));
 
         String code = request.code();
-        if (code == null) {
-            return new SubmissionResponse(false, "ERROR 500 : Code manquant.", 0);
+        if (code == null || code.isBlank()) {
+            return new SubmissionResponse(false, "Erreur : Code manquant.", 0);
         }
 
-        // Validation naïve : si le code contient la chaîne "SUCCESS", on valide la quête
-        if (code.contains("SUCCESS")) {
-            return new SubmissionResponse(true, "SUCCESS", quest.getXpReward());
-        } else {
-            return new SubmissionResponse(false, "ERROR 500", 0);
+        // 1. Compilation
+        CodeCompilerService.CompilationResult compileResult = compilerService.compile(code);
+        if (!compileResult.success()) {
+            return new SubmissionResponse(false, "Erreur de compilation :\n" + compileResult.output(), 0);
         }
+
+        // 2. Validation Logique (Regex)
+        String regex = quest.getTestValidationRegex();
+        if (regex != null && !regex.isBlank()) {
+            if (code.matches(regex)) {
+                return new SubmissionResponse(true, "Compilation réussie. Validation logicielle réussie !", quest.getXpReward());
+            } else {
+                return new SubmissionResponse(false, "Compilation réussie, mais la logique de la solution est incorrecte.", 0);
+            }
+        }
+
+        // Par défaut si aucune validation logicielle n'est définie
+        return new SubmissionResponse(true, "Compilation réussie. (Aucune validation logicielle définie)", quest.getXpReward());
     }
 }
