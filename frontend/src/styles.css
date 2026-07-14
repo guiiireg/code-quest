@@ -1,10 +1,57 @@
 /* You can add global styles to this file, and also import other style files */
 
+:root {
+  --bg-primary: #020617; /* Deep cyber dark */
+  --bg-secondary: #080f1d; /* Cyber panel dark */
+  --bg-tertiary: #0e1726; /* Cyber card background */
+  
+  --neon-cyan: #00f2fe;
+  --neon-purple: #9d4edd;
+  --neon-magenta: #ff007f;
+  --neon-green: #39ff14;
+  --neon-orange: #f59e0b;
+  --neon-red: #ef4444;
+  
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-accent: #00f2fe;
+  
+  --font-gaming: 'Orbitron', sans-serif;
+  --font-code: 'JetBrains Mono', monospace;
+  
+  --shadow-cyan: 0 0 10px rgba(0, 242, 254, 0.4), 0 0 20px rgba(0, 242, 254, 0.15);
+  --shadow-purple: 0 0 10px rgba(157, 78, 221, 0.4), 0 0 20px rgba(157, 78, 221, 0.15);
+  --shadow-magenta: 0 0 10px rgba(255, 0, 127, 0.4), 0 0 20px rgba(255, 0, 127, 0.15);
+  --shadow-green: 0 0 10px rgba(57, 255, 20, 0.4), 0 0 20px rgba(57, 255, 20, 0.15);
+  
+  --border-glow: 1px solid rgba(0, 242, 254, 0.15);
+}
+
 html, body { height: 100%; }
 body {
   margin: 0;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
-  background: radial-gradient(circle at 50% 50%, #0f172a 0%, #020617 100%);
+  font-family: 'JetBrains Mono', monospace;
+  background: radial-gradient(circle at 50% 50%, #080f1d 0%, #020617 100%);
   background-attachment: fixed;
-  color: #f1f5f9;
+  color: var(--text-primary);
+}
+
+/* Personnalisation des barres de défilement (style cyber) */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 242, 254, 0.2);
+  border-radius: 4px;
+  border: 1px solid rgba(0, 242, 254, 0.1);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 242, 254, 0.4);
 }
