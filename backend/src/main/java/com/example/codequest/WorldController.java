@@ -45,6 +45,6 @@ public class WorldController {
         return mockworlds.stream()
             .filter(world -> world.id().equals(id))
             .findFirst()
-            .orElseThrow(() -> new RuntimeException("Monde non trouvé"));
+            .orElseThrow(() -> new WorldNotFoundException("Monde non trouvé"));
     }
 }
