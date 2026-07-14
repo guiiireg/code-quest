@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.hamcrest.Matchers.hasSize;
@@ -85,5 +86,76 @@ class WorldControllerTest {
         mockMvc.perform(get("/api/worlds/non-existent-world")
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
+    }
+    /**
+     * Vérifie que la récupération d'une quête existante par son ID retourne les détails attendus.
+     */
+    @Test
+    void shouldReturnQuestByIdWhenExists() throws Exception {
+        Quest mockQuest = new Quest("quest-test", "Titre", "Desc", 100, "EASY");
+        Mockito.when(questRepository.findById("quest-test")).thenReturn(Optional.of(mockQuest));
+
+        mockMvc.perform(get("/api/quests/quest-test")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value("quest-test"))
+                .andExpect(jsonPath("$.title").value("Titre"))
+                .andExpect(jsonPath("$.xpReward").value(100));
+    }
+
+    /**
+     * Vérifie que la soumission d'un code correct (contenant "SUCCESS") valide la quête.
+     */
+    @Test
+    void shouldReturnSuccessWhenSubmittedCodeContainsSuccessString() throws Exception {
+        Quest mockQuest = new Quest("quest-test", "Titre", "Desc", 100, "EASY");
+        Mockito.when(questRepository.findById("quest-test")).thenReturn(Optional.of(mockQuest));
+
+        String requestJson = "{\"questId\":\"quest-test\",\"code\":\"public class Solution { // SUCCESS }\"}";
+
+        mockMvc.perform(post("/api/quests/quest-test/submit")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.output").value("SUCCESS"))
+                .andExpect(jsonPath("$.xpGained").value(100));
+    }
+
+    /**
+     * Vérifie que la soumission d'un code incorrect (ne contenant pas "SUCCESS") échoue.
+     */
+    @Test
+    void shouldReturnFailureWhenSubmittedCodeDoesNotContainSuccessString() throws Exception {
+        Quest mockQuest = new Quest("quest-test", "Titre", "Desc", 100, "EASY");
+        Mockito.when(questRepository.findById("quest-test")).thenReturn(Optional.of(mockQuest));
+
+        String requestJson = "{\"questId\":\"quest-test\",\"code\":\"public class Solution { // WRONG CODE }\"}";
+
+        mockMvc.perform(post("/api/quests/quest-test/submit")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.output").value("ERROR 500"))
+                .andExpect(jsonPath("$.xpGained").value(0));
+    }
+
+    /**
+     * Vérifie que la soumission d'un code nul renvoie une erreur 500.
+     */
+    @Test
+    void shouldReturnFailureWhenSubmittedCodeIsNull() throws Exception {
+        Quest mockQuest = new Quest("quest-test", "Titre", "Desc", 100, "EASY");
+        Mockito.when(questRepository.findById("quest-test")).thenReturn(Optional.of(mockQuest));
+
+        String requestJson = "{\"questId\":\"quest-test\",\"code\":null}";
+
+        mockMvc.perform(post("/api/quests/quest-test/submit")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.output").value("ERROR 500 : Code manquant."));
     }
 }
