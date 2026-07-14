@@ -28,6 +28,9 @@ class WorldControllerTest {
     @MockitoBean
     private WorldRepository worldRepository;
 
+    @MockitoBean
+    private QuestRepository questRepository;
+
     /**
      * Vérifie que la récupération de tous les mondes retourne la liste complète
      * avec un code de retour HTTP 200 (OK).
