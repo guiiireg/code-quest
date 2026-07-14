@@ -49,6 +49,12 @@ public class AuthController {
     @Autowired
     JwtUtils jwtUtils;
 
+    /**
+     * Authentifie un utilisateur et génère un jeton JWT en cas de succès.
+     * 
+     * @param loginRequest La requête contenant le nom d'utilisateur et le mot de passe
+     * @return Une ResponseEntity contenant les informations utilisateur et le jeton JWT
+     */
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
@@ -69,6 +75,12 @@ public class AuthController {
                 roles));
     }
 
+    /**
+     * Enregistre un nouvel utilisateur dans la base de données.
+     * 
+     * @param signUpRequest La requête contenant les informations du nouvel utilisateur
+     * @return Une ResponseEntity contenant un message de succès ou d'erreur
+     */
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@RequestBody SignupRequest signUpRequest) {
         if (userRepository.existsByUsername(signUpRequest.username())) {

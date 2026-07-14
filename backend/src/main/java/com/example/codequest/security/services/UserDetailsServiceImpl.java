@@ -18,6 +18,14 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Autowired
     UserRepository userRepository;
 
+    /**
+     * Charge les détails d'un utilisateur à partir de son nom d'utilisateur.
+     * Utilisé par Spring Security pour vérifier les informations d'identification.
+     * 
+     * @param username Le nom d'utilisateur à charger
+     * @return Les détails de l'utilisateur correspondants sous la forme d'un objet UserDetails
+     * @throws UsernameNotFoundException Si l'utilisateur n'est pas trouvé dans la base de données
+     */
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

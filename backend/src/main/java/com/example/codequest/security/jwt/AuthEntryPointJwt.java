@@ -15,6 +15,16 @@ import java.io.IOException;
 @Component
 public class AuthEntryPointJwt implements AuthenticationEntryPoint {
 
+    /**
+     * Se déclenche lorsqu'un utilisateur non authentifié tente d'accéder à une ressource protégée.
+     * Renvoie une erreur HTTP 401 (Unauthorized).
+     * 
+     * @param request       La requête HTTP
+     * @param response      La réponse HTTP
+     * @param authException L'exception d'authentification levée
+     * @throws IOException      En cas d'erreur d'entrée/sortie
+     * @throws ServletException En cas d'erreur de servlet générale
+     */
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
                          AuthenticationException authException) throws IOException, ServletException {

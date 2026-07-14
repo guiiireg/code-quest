@@ -25,6 +25,16 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
 
+    /**
+     * Intercepte chaque requête HTTP entrante pour extraire et valider le jeton JWT.
+     * Si le jeton est valide, configure l'authentification de l'utilisateur dans le contexte de sécurité Spring.
+     * 
+     * @param request     La requête HTTP
+     * @param response    La réponse HTTP
+     * @param filterChain La chaîne de filtres de servlet
+     * @throws ServletException En cas d'erreur générale de servlet
+     * @throws IOException      En cas d'erreur d'entrée/sortie
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
@@ -47,6 +57,12 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
+    /**
+     * Extrait le jeton JWT de l'en-tête Authorization de la requête HTTP.
+     * 
+     * @param request La requête HTTP
+     * @return Le jeton JWT sous forme de chaîne de caractères, ou null s'il est absent ou mal formé
+     */
     private String parseJwt(HttpServletRequest request) {
         String headerAuth = request.getHeader("Authorization");
 

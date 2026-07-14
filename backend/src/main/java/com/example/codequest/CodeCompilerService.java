@@ -104,6 +104,9 @@ public class CodeCompilerService {
      * Classe interne représentant un fichier source Java en mémoire.
      */
     private static class JavaSourceFromString extends SimpleJavaFileObject {
+        /**
+         * Le code source Java sous forme de chaîne de caractères.
+         */
         final String code;
 
         /**

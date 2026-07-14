@@ -35,11 +35,21 @@ public class WebSecurityConfig {
     @Autowired
     private AuthEntryPointJwt unauthorizedHandler;
 
+    /**
+     * Crée le filtre de validation des jetons JWT.
+     * 
+     * @return L'instance du filtre AuthTokenFilter
+     */
     @Bean
     public AuthTokenFilter authenticationJwtTokenFilter() {
         return new AuthTokenFilter();
     }
 
+    /**
+     * Configure le fournisseur d'authentification avec le service d'utilisateurs et l'encodeur de mot de passe.
+     * 
+     * @return Le fournisseur d'authentification DaoAuthenticationProvider
+     */
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(userDetailsService);
@@ -47,16 +57,33 @@ public class WebSecurityConfig {
         return authProvider;
     }
 
+    /**
+     * Récupère le gestionnaire d'authentification Spring Security par défaut.
+     * 
+     * @param authConfig La configuration d'authentification
+     * @return Le gestionnaire d'authentification AuthenticationManager
+     * @throws Exception En cas d'erreur de configuration
+     */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
         return authConfig.getAuthenticationManager();
     }
 
+    /**
+     * Définit l'algorithme de hashage des mots de passe.
+     * 
+     * @return L'encodeur de mot de passe PasswordEncoder (BCrypt)
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     * Configure les règles de partage de ressources d'origines croisées (CORS).
+     * 
+     * @return La source de configuration CORS
+     */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
@@ -69,6 +96,13 @@ public class WebSecurityConfig {
         return source;
     }
 
+    /**
+     * Configure la chaîne de filtres de sécurité HTTP (CORS, CSRF, gestion de session, règles d'accès aux URLs).
+     * 
+     * @param http L'objet HttpSecurity permettant de configurer la sécurité
+     * @return La chaîne de filtres configurée
+     * @throws Exception En cas d'erreur de configuration
+     */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.cors(cors -> cors.configurationSource(corsConfigurationSource()))

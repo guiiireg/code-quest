@@ -25,6 +25,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.mockito.ArgumentMatchers.any;
 
+/**
+ * Tests d'intégration et de sécurité pour le contrôleur d'authentification AuthController.
+ */
 @SpringBootTest
 @AutoConfigureMockMvc
 class AuthControllerTest {
@@ -43,6 +46,9 @@ class AuthControllerTest {
     @Autowired
     private PasswordEncoder encoder;
 
+    /**
+     * Initialise les mocks requis avant l'exécution de chaque test.
+     */
     @BeforeEach
     void setup() {
         Role userRole = new Role("role-user", "ROLE_USER");
@@ -52,6 +58,12 @@ class AuthControllerTest {
         Mockito.when(roleRepository.findByName("ROLE_ADMIN")).thenReturn(Optional.of(adminRole));
     }
 
+    /**
+     * Vérifie que l'inscription d'un nouvel utilisateur réussit lorsque
+     * le nom d'utilisateur et l'email ne sont pas encore pris.
+     * 
+     * @throws Exception En cas d'erreur lors de l'exécution de la requête MockMvc
+     */
     @Test
     void shouldRegisterUserSuccessfully() throws Exception {
         SignupRequest signupRequest = new SignupRequest("testuser", "test@test.com", "password", null);
@@ -67,6 +79,12 @@ class AuthControllerTest {
                 .andExpect(jsonPath("$.message").value("User registered successfully!"));
     }
 
+    /**
+     * Vérifie que l'inscription échoue avec un code de retour HTTP 400 (Bad Request)
+     * si le nom d'utilisateur demandé est déjà pris.
+     * 
+     * @throws Exception En cas d'erreur lors de l'exécution de la requête MockMvc
+     */
     @Test
     void shouldFailRegistrationIfUsernameTaken() throws Exception {
         SignupRequest signupRequest = new SignupRequest("testuser", "test2@test.com", "password", null);
@@ -80,6 +98,11 @@ class AuthControllerTest {
                 .andExpect(jsonPath("$.message").value("Error: Username is already taken!"));
     }
 
+    /**
+     * Vérifie qu'un utilisateur existant peut s'authentifier avec succès et obtenir un token JWT.
+     * 
+     * @throws Exception En cas d'erreur lors de l'exécution de la requête MockMvc
+     */
     @Test
     void shouldAuthenticateUserSuccessfully() throws Exception {
         User user = new User("123", "testuser", "test@test.com", encoder.encode("password"));
