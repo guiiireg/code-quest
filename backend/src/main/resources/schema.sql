@@ -26,9 +26,7 @@ CREATE TABLE users (
     id VARCHAR(255) PRIMARY KEY,
     username VARCHAR(255) NOT NULL UNIQUE,
     email VARCHAR(255) NOT NULL UNIQUE,
-    password VARCHAR(255) NOT NULL,
-    level INTEGER NOT NULL,
-    xp INTEGER NOT NULL
+    password VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE roles (

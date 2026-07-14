@@ -99,66 +99,146 @@ public class Quest {
         this.testValidationRegex = testValidationRegex;
     }
 
+    /**
+     * Récupère l'identifiant unique de la quête.
+     * 
+     * @return L'identifiant de la quête
+     */
     public String getId() {
         return id;
     }
 
+    /**
+     * Définit l'identifiant de la quête.
+     * 
+     * @param id Le nouvel identifiant de la quête
+     */
     public void setId(String id) {
         this.id = id;
     }
 
+    /**
+     * Récupère le titre de la quête.
+     * 
+     * @return Le titre de la quête
+     */
     public String getTitle() {
         return title;
     }
 
+    /**
+     * Définit le titre de la quête.
+     * 
+     * @param title Le nouveau titre de la quête
+     */
     public void setTitle(String title) {
         this.title = title;
     }
 
+    /**
+     * Récupère la description de la quête.
+     * 
+     * @return La description de la quête
+     */
     public String getDescription() {
         return description;
     }
 
+    /**
+     * Définit la description de la quête.
+     * 
+     * @param description La nouvelle description de la quête
+     */
     public void setDescription(String description) {
         this.description = description;
     }
 
+    /**
+     * Récupère l'expérience gagnée comme récompense de la quête.
+     * 
+     * @return Le nombre de points d'expérience
+     */
     public int getXpReward() {
         return xpReward;
     }
 
+    /**
+     * Définit l'expérience gagnée comme récompense de la quête.
+     * 
+     * @param xpReward Le nombre de points d'expérience de récompense
+     */
     public void setXpReward(int xpReward) {
         this.xpReward = xpReward;
     }
 
+    /**
+     * Récupère la difficulté de la quête.
+     * 
+     * @return La difficulté de la quête
+     */
     public String getDifficulty() {
         return difficulty;
     }
 
+    /**
+     * Définit la difficulté de la quête.
+     * 
+     * @param difficulty La nouvelle difficulté de la quête
+     */
     public void setDifficulty(String difficulty) {
         this.difficulty = difficulty;
     }
 
+    /**
+     * Récupère le monde auquel appartient cette quête.
+     * 
+     * @return Le monde associé
+     */
     public World getWorld() {
         return world;
     }
 
+    /**
+     * Définit le monde auquel appartient cette quête.
+     * 
+     * @param world Le nouveau monde associé
+     */
     public void setWorld(World world) {
         this.world = world;
     }
 
+    /**
+     * Récupère le modèle de code fourni pour démarrer la quête.
+     * 
+     * @return Le modèle de code source
+     */
     public String getCodeTemplate() {
         return codeTemplate;
     }
 
+    /**
+     * Définit le modèle de code fourni pour démarrer la quête.
+     * 
+     * @param codeTemplate Le nouveau modèle de code source
+     */
     public void setCodeTemplate(String codeTemplate) {
         this.codeTemplate = codeTemplate;
     }
 
+    /**
+     * Récupère l'expression régulière de validation de la quête.
+     * 
+     * @return L'expression régulière de validation
+     */
     public String getTestValidationRegex() {
         return testValidationRegex;
     }
 
+    /**
+     * Définit l'expression régulière de validation de la quête.
+     * 
+     * @param testValidationRegex La nouvelle expression de validation
+     */
     public void setTestValidationRegex(String testValidationRegex) {
         this.testValidationRegex = testValidationRegex;
     }

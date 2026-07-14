@@ -36,18 +36,6 @@ public class User {
     private String password;
 
     /**
-     * Niveau de l'utilisateur.
-     */
-    @Column(nullable = false)
-    private int level = 1;
-
-    /**
-     * Points d'expérience de l'utilisateur.
-     */
-    @Column(nullable = false)
-    private int xp = 0;
-
-    /**
      * Liste des rôles attribués à l'utilisateur.
      */
     @ManyToMany(fetch = FetchType.EAGER)
@@ -64,7 +52,7 @@ public class User {
     public User() {}
 
     /**
-     * Constructeur complet pour créer un utilisateur avec niveau et XP par défaut.
+     * Constructeur complet pour créer un utilisateur.
      * 
      * @param id       L'identifiant unique de l'utilisateur
      * @param username Le nom de l'utilisateur
@@ -76,27 +64,6 @@ public class User {
         this.username = username;
         this.email = email;
         this.password = password;
-        this.level = 1;
-        this.xp = 0;
-    }
-
-    /**
-     * Constructeur complet pour créer un utilisateur avec tous ses attributs.
-     * 
-     * @param id       L'identifiant unique de l'utilisateur
-     * @param username Le nom de l'utilisateur
-     * @param email    L'adresse email de l'utilisateur
-     * @param password Le mot de passe hashé de l'utilisateur
-     * @param level    Le niveau de l'utilisateur
-     * @param xp       Les points d'expérience de l'utilisateur
-     */
-    public User(String id, String username, String email, String password, int level, int xp) {
-        this.id = id;
-        this.username = username;
-        this.email = email;
-        this.password = password;
-        this.level = level;
-        this.xp = xp;
     }
 
     /**
@@ -169,42 +136,6 @@ public class User {
      */
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    /**
-     * Récupère le niveau de l'utilisateur.
-     * 
-     * @return Le niveau actuel
-     */
-    public int getLevel() {
-        return level;
-    }
-
-    /**
-     * Définit le niveau de l'utilisateur.
-     * 
-     * @param level Le nouveau niveau
-     */
-    public void setLevel(int level) {
-        this.level = level;
-    }
-
-    /**
-     * Récupère les points d'expérience de l'utilisateur.
-     * 
-     * @return Les points d'expérience actuels
-     */
-    public int getXp() {
-        return xp;
-    }
-
-    /**
-     * Définit les points d'expérience de l'utilisateur.
-     * 
-     * @param xp Les nouveaux points d'expérience
-     */
-    public void setXp(int xp) {
-        this.xp = xp;
     }
 
     /**

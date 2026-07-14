@@ -9,7 +9,6 @@ DELETE FROM worlds;
 INSERT INTO roles (id, name) VALUES
 ('role-user', 'ROLE_USER'),
 ('role-admin', 'ROLE_ADMIN');
-
 -- Insertion des mondes
 INSERT INTO worlds (id, name, description) VALUES
 ('world-test', 'Monde test', 'Maitrister'),

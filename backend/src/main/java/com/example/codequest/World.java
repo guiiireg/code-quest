@@ -59,34 +59,74 @@ public class World {
         setQuests(quests);
     }
 
+    /**
+     * Récupère l'identifiant unique du monde.
+     * 
+     * @return L'identifiant unique du monde
+     */
     public String getId() {
         return id;
     }
 
+    /**
+     * Définit l'identifiant unique du monde.
+     * 
+     * @param id Le nouvel identifiant du monde
+     */
     public void setId(String id) {
         this.id = id;
     }
 
+    /**
+     * Récupère le nom du monde.
+     * 
+     * @return Le nom du monde
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Définit le nom du monde.
+     * 
+     * @param name Le nouveau nom du monde
+     */
     public void setName(String name) {
         this.name = name;
     }
 
+    /**
+     * Récupère la description du monde.
+     * 
+     * @return La description du monde
+     */
     public String getDescription() {
         return description;
     }
 
+    /**
+     * Définit la description du monde.
+     * 
+     * @param description La nouvelle description du monde
+     */
     public void setDescription(String description) {
         this.description = description;
     }
 
+    /**
+     * Récupère la liste des quêtes associées à ce monde.
+     * 
+     * @return La liste des quêtes
+     */
     public List<Quest> getQuests() {
         return quests;
     }
 
+    /**
+     * Définit la liste des quêtes associées à ce monde et assure la cohérence bidirectionnelle.
+     * 
+     * @param quests La nouvelle liste de quêtes
+     */
     public void setQuests(List<Quest> quests) {
         this.quests = quests != null ? quests : new ArrayList<>();
         // Assure la cohérence de la relation bidirectionnelle
