@@ -69,7 +69,7 @@ public class WorldController {
     }
 
     /**
-     * Valide le code soumis pour une quête spécifique.
+     * Valide le code soumis pour une quête spécifique (validation naïve).
      * 
      * @param id L'identifiant de la quête
      * @param request La requête contenant le code utilisateur
@@ -80,6 +80,16 @@ public class WorldController {
         Quest quest = questRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Quête non trouvée"));
 
-        return new SubmissionResponse(false, "NOT_IMPLEMENTED", 0);
+        String code = request.getCode();
+        if (code == null) {
+            return new SubmissionResponse(false, "ERROR 500 : Code manquant.", 0);
+        }
+
+        // Validation naïve : si le code contient la chaîne "SUCCESS", on valide la quête
+        if (code.contains("SUCCESS")) {
+            return new SubmissionResponse(true, "SUCCESS", quest.getXpReward());
+        } else {
+            return new SubmissionResponse(false, "ERROR 500", 0);
+        }
     }
 }
