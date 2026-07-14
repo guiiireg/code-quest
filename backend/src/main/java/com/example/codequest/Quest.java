@@ -43,6 +43,16 @@ public class Quest {
     private String difficulty;
 
     /**
+     * Modèle de code initial fourni à l'utilisateur.
+     */
+    private String codeTemplate;
+
+    /**
+     * Expression régulière de validation pour vérifier la soumission.
+     */
+    private String testValidationRegex;
+
+    /**
      * Le monde auquel appartient cette quête.
      */
     @ManyToOne
@@ -56,7 +66,7 @@ public class Quest {
     public Quest() {}
 
     /**
-     * Constructeur complet pour créer une instance de quête.
+     * Constructeur pour créer une quête sans modèle de code de départ.
      * 
      * @param id          L'id unique de la quête
      * @param title       Le titre de la quête
@@ -65,11 +75,28 @@ public class Quest {
      * @param difficulty  Le niveau de difficulté de la quête
      */
     public Quest(String id, String title, String description, int xpReward, String difficulty) {
+        this(id, title, description, xpReward, difficulty, null, null);
+    }
+
+    /**
+     * Constructeur complet pour créer une instance de quête.
+     * 
+     * @param id                  L'id unique de la quête
+     * @param title       Le titre de la quête
+     * @param description La description détaillée de la quête
+     * @param xpReward    La récompense en expérience de la quête
+     * @param difficulty  Le niveau de difficulté de la quête
+     * @param codeTemplate        Le modèle de code de départ
+     * @param testValidationRegex L'expression de validation de la quête
+     */
+    public Quest(String id, String title, String description, int xpReward, String difficulty, String codeTemplate, String testValidationRegex) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.xpReward = xpReward;
         this.difficulty = difficulty;
+        this.codeTemplate = codeTemplate;
+        this.testValidationRegex = testValidationRegex;
     }
 
     public String getId() {
@@ -118,5 +145,21 @@ public class Quest {
 
     public void setWorld(World world) {
         this.world = world;
+    }
+
+    public String getCodeTemplate() {
+        return codeTemplate;
+    }
+
+    public void setCodeTemplate(String codeTemplate) {
+        this.codeTemplate = codeTemplate;
+    }
+
+    public String getTestValidationRegex() {
+        return testValidationRegex;
+    }
+
+    public void setTestValidationRegex(String testValidationRegex) {
+        this.testValidationRegex = testValidationRegex;
     }
 }
