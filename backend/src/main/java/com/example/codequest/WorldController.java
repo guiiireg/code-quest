@@ -14,14 +14,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/worlds")
 public class WorldController {
     
+    private final WorldRepository worldRepository;
+
     /**
-     * Liste fictive de mondes pour les tests.
+     * Constructeur pour l'injection du repository.
+     * 
+     * @param worldRepository Le repository des mondes
      */
-    private final List<World> mockworlds = List.of(
-        new World("world-test", "Monde test", "Maitrister", List.of(
-            new Quest("quest-1", "corriger", "api", 150, "EASY")
-        ))
-    );
+    public WorldController(WorldRepository worldRepository) {
+        this.worldRepository = worldRepository;
+    }
 
     /**
      * Récupère la liste de tous les mondes.
@@ -30,7 +32,7 @@ public class WorldController {
      */
     @GetMapping
     public List<World> getAllWorlds() {
-        return mockworlds;
+        return worldRepository.findAll();
     }
 
     /**
@@ -38,13 +40,11 @@ public class WorldController {
      * 
      * @param id L'identifiant unique du monde à rechercher
      * @return Le monde correspondant à l'identifiant
-     * @throws RuntimeException si le monde n'est pas trouvé
+     * @throws WorldNotFoundException si le monde n'est pas trouvé
      */
     @GetMapping("/{id}")
     public World getworldById(@PathVariable String id) {
-        return mockworlds.stream()
-            .filter(world -> world.getId().equals(id))
-            .findFirst()
+        return worldRepository.findById(id)
             .orElseThrow(() -> new WorldNotFoundException("Monde non trouvé"));
     }
 }

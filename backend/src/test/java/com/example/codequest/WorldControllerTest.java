@@ -1,10 +1,15 @@
 package com.example.codequest;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.List;
+import java.util.Optional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -20,12 +25,21 @@ class WorldControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
+    @MockitoBean
+    private WorldRepository worldRepository;
+
     /**
      * Vérifie que la récupération de tous les mondes retourne la liste complète
      * avec un code de retour HTTP 200 (OK).
      */
     @Test
     void shouldReturnAllWorlds() throws Exception {
+        Mockito.when(worldRepository.findAll()).thenReturn(List.of(
+            new World("world-test", "Monde test", "Maitrister", List.of(
+                new Quest("quest-1", "corriger", "api", 150, "EASY")
+            ))
+        ));
+
         mockMvc.perform(get("/api/worlds")
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -44,6 +58,12 @@ class WorldControllerTest {
      */
     @Test
     void shouldReturnWorldByIdWhenExists() throws Exception {
+        Mockito.when(worldRepository.findById("world-test")).thenReturn(Optional.of(
+            new World("world-test", "Monde test", "Maitrister", List.of(
+                new Quest("quest-1", "corriger", "api", 150, "EASY")
+            ))
+        ));
+
         mockMvc.perform(get("/api/worlds/world-test")
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -57,6 +77,8 @@ class WorldControllerTest {
      */
     @Test
     void shouldReturn404WhenWorldDoesNotExist() throws Exception {
+        Mockito.when(worldRepository.findById("non-existent-world")).thenReturn(Optional.empty());
+
         mockMvc.perform(get("/api/worlds/non-existent-world")
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
