@@ -4,6 +4,7 @@ import { World } from '../../models/world.model';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { RouterModule } from '@angular/router';
 
 /**
  * Composant qui affiche la liste des mondes sous forme de cartes Material.
@@ -11,7 +12,7 @@ import { MatIconModule } from '@angular/material/icon';
 @Component({
   selector: 'app-world-list',
   standalone: true,
-  imports: [MatCardModule, MatButtonModule, MatIconModule],
+  imports: [MatCardModule, MatButtonModule, MatIconModule, RouterModule],
   templateUrl: './world-list.component.html',
   styleUrl: './world-list.component.css'
 })
