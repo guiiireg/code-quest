@@ -51,7 +51,7 @@ public class WorldController {
      * @throws WorldNotFoundException si le monde n'est pas trouvé
      */
     @GetMapping("/worlds/{id}")
-    public World getworldById(@PathVariable String id) {
+    public World getWorldById(@PathVariable String id) {
         return worldRepository.findById(id)
             .orElseThrow(() -> new WorldNotFoundException("Monde non trouvé"));
     }
@@ -69,34 +69,27 @@ public class WorldController {
     }
 
     /**
-     * Valide le code soumis pour une quête spécifique.
+     * Valide le code soumis pour une quête spécifique (validation naïve).
      * 
      * @param id L'identifiant de la quête
      * @param request La requête contenant le code utilisateur
      * @return Le résultat de la soumission
      */
     @PostMapping("/quests/{id}/submit")
-    public SubmissionResponse submitQuest(@PathVariable String id, @RequestBody SubmissionRequest request) {
+    public SubmissionResponse submitQuest(@PathVariable String id, @RequestBody SubmissionDTO request) {
         Quest quest = questRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Quête non trouvée"));
 
-        String code = request.getCode();
+        String code = request.code();
         if (code == null) {
-            return new SubmissionResponse(false, "Code vide ou manquant.", 0);
+            return new SubmissionResponse(false, "ERROR 500 : Code manquant.", 0);
         }
 
-        String regex = quest.getTestValidationRegex();
-        boolean matches = false;
-        try {
-            matches = Pattern.compile(regex).matcher(code).matches();
-        } catch (Exception e) {
-            return new SubmissionResponse(false, "Erreur lors de la validation du code : " + e.getMessage(), 0);
-        }
-
-        if (matches) {
-            return new SubmissionResponse(true, "Félicitations ! Votre code est correct et passe tous les tests de validation !", quest.getXpReward());
+        // Validation naïve : si le code contient la chaîne "SUCCESS", on valide la quête
+        if (code.contains("SUCCESS")) {
+            return new SubmissionResponse(true, "SUCCESS", quest.getXpReward());
         } else {
-            return new SubmissionResponse(false, "Échec de validation. Votre code ne respecte pas les consignes de l'exercice ou a échoué aux tests de conformité.", 0);
+            return new SubmissionResponse(false, "ERROR 500", 0);
         }
     }
 }
