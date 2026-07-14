@@ -9,6 +9,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class CodeQuestApplicationTests {
 
+    /**
+     * Vérifie que le contexte de l'application Spring se charge correctement.
+     */
     @Test
     void contextLoads() {
     }

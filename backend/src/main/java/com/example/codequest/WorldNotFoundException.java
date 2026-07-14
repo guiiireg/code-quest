@@ -8,6 +8,12 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  */
 @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Monde non trouvé")
 public class WorldNotFoundException extends RuntimeException {
+
+    /**
+     * Construit une nouvelle exception avec le message spécifié.
+     * 
+     * @param message Le message détaillant l'erreur
+     */
     public WorldNotFoundException(String message) {
         super(message);
     }

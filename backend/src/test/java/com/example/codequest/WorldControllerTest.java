@@ -32,6 +32,9 @@ class WorldControllerTest {
     @MockitoBean
     private QuestRepository questRepository;
 
+    @MockitoBean
+    private CodeCompilerService compilerService;
+
     /**
      * Vérifie que la récupération de tous les mondes retourne la liste complète
      * avec un code de retour HTTP 200 (OK).
@@ -104,45 +107,75 @@ class WorldControllerTest {
     }
 
     /**
-     * Vérifie que la soumission d'un code correct (contenant "SUCCESS") valide la quête.
+     * Vérifie que la soumission d'un code correct compile et passe la validation.
      */
     @Test
-    void shouldReturnSuccessWhenSubmittedCodeContainsSuccessString() throws Exception {
+    void shouldReturnSuccessWhenCompilationAndRegexPass() throws Exception {
         Quest mockQuest = new Quest("quest-test", "Titre", "Desc", 100, "EASY");
+        mockQuest.setTestValidationRegex(".*SUCCESS.*");
         Mockito.when(questRepository.findById("quest-test")).thenReturn(Optional.of(mockQuest));
 
-        String requestJson = "{\"questId\":\"quest-test\",\"code\":\"public class Solution { // SUCCESS }\"}";
+        String code = "public class Solution { // SUCCESS }";
+        Mockito.when(compilerService.compile(code)).thenReturn(new CodeCompilerService.CompilationResult(true, "Compilation successful.\n"));
+
+        String requestJson = "{\"questId\":\"quest-test\",\"code\":\"" + code + "\"}";
 
         mockMvc.perform(post("/api/quests/quest-test/submit")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.output").value("SUCCESS"))
+                .andExpect(jsonPath("$.output").value("Compilation réussie. Validation logicielle réussie !"))
                 .andExpect(jsonPath("$.xpGained").value(100));
     }
 
     /**
-     * Vérifie que la soumission d'un code incorrect (ne contenant pas "SUCCESS") échoue.
+     * Vérifie que la soumission d'un code incorrect échoue à la compilation.
      */
     @Test
-    void shouldReturnFailureWhenSubmittedCodeDoesNotContainSuccessString() throws Exception {
+    void shouldReturnFailureWhenCompilationFails() throws Exception {
         Quest mockQuest = new Quest("quest-test", "Titre", "Desc", 100, "EASY");
         Mockito.when(questRepository.findById("quest-test")).thenReturn(Optional.of(mockQuest));
 
-        String requestJson = "{\"questId\":\"quest-test\",\"code\":\"public class Solution { // WRONG CODE }\"}";
+        String code = "public class Solution { syntax error }";
+        Mockito.when(compilerService.compile(code)).thenReturn(new CodeCompilerService.CompilationResult(false, "Line 1: syntax error"));
+
+        String requestJson = "{\"questId\":\"quest-test\",\"code\":\"" + code + "\"}";
 
         mockMvc.perform(post("/api/quests/quest-test/submit")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.output").value("ERROR 500"))
+                .andExpect(jsonPath("$.output").value("Erreur de compilation :\nLine 1: syntax error"))
                 .andExpect(jsonPath("$.xpGained").value(0));
     }
 
     /**
-     * Vérifie que la soumission d'un code nul renvoie une erreur 500.
+     * Vérifie que la soumission d'un code incorrect compile mais échoue la logique.
+     */
+    @Test
+    void shouldReturnFailureWhenCompilationPassesButRegexFails() throws Exception {
+        Quest mockQuest = new Quest("quest-test", "Titre", "Desc", 100, "EASY");
+        mockQuest.setTestValidationRegex(".*SUCCESS.*");
+        Mockito.when(questRepository.findById("quest-test")).thenReturn(Optional.of(mockQuest));
+
+        String code = "public class Solution { // WRONG CODE }";
+        Mockito.when(compilerService.compile(code)).thenReturn(new CodeCompilerService.CompilationResult(true, "Compilation successful.\n"));
+
+        String requestJson = "{\"questId\":\"quest-test\",\"code\":\"" + code + "\"}";
+
+        mockMvc.perform(post("/api/quests/quest-test/submit")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.output").value("Compilation réussie, mais la logique de la solution est incorrecte."))
+                .andExpect(jsonPath("$.xpGained").value(0));
+    }
+
+    /**
+     * Vérifie que la soumission d'un code nul renvoie une erreur.
      */
     @Test
     void shouldReturnFailureWhenSubmittedCodeIsNull() throws Exception {
@@ -156,6 +189,6 @@ class WorldControllerTest {
                 .content(requestJson))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.output").value("ERROR 500 : Code manquant."));
+                .andExpect(jsonPath("$.output").value("Erreur : Code manquant."));
     }
 }
