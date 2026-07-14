@@ -26,3 +26,5 @@ replay_pid*
 # Maven build outputs and generated test results
 target/
 
+# Visual Studio Code
+.vscode/
