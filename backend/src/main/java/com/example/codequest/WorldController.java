@@ -76,27 +76,10 @@ public class WorldController {
      * @return Le résultat de la soumission
      */
     @PostMapping("/quests/{id}/submit")
-    public SubmissionResponse submitQuest(@PathVariable String id, @RequestBody SubmissionRequest request) {
+    public SubmissionResponse submitQuest(@PathVariable String id, @RequestBody SubmissionDTO request) {
         Quest quest = questRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Quête non trouvée"));
 
-        String code = request.getCode();
-        if (code == null) {
-            return new SubmissionResponse(false, "Code vide ou manquant.", 0);
-        }
-
-        String regex = quest.getTestValidationRegex();
-        boolean matches = false;
-        try {
-            matches = Pattern.compile(regex).matcher(code).matches();
-        } catch (Exception e) {
-            return new SubmissionResponse(false, "Erreur lors de la validation du code : " + e.getMessage(), 0);
-        }
-
-        if (matches) {
-            return new SubmissionResponse(true, "Félicitations ! Votre code est correct et passe tous les tests de validation !", quest.getXpReward());
-        } else {
-            return new SubmissionResponse(false, "Échec de validation. Votre code ne respecte pas les consignes de l'exercice ou a échoué aux tests de conformité.", 0);
-        }
+        return new SubmissionResponse(false, "NOT_IMPLEMENTED", 0);
     }
 }
