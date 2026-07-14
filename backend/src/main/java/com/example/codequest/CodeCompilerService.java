@@ -18,11 +18,26 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.Comparator;
 
+/**
+ * Service gérant la compilation dynamique du code Java soumis par les utilisateurs.
+ */
 @Service
 public class CodeCompilerService {
 
+    /**
+     * Record représentant le résultat d'une compilation.
+     * 
+     * @param success Indique si la compilation a réussi
+     * @param output Les messages de diagnostic ou logs de compilation
+     */
     public record CompilationResult(boolean success, String output) {}
 
+    /**
+     * Compile dynamiquement le code source Java.
+     * 
+     * @param sourceCode Le code source Java à compiler
+     * @return Le résultat de la compilation contenant le statut et la sortie
+     */
     public CompilationResult compile(String sourceCode) {
         String className = extractClassName(sourceCode);
         if (className == null) {
@@ -70,6 +85,12 @@ public class CodeCompilerService {
         }
     }
 
+    /**
+     * Extrait le nom de la classe publique depuis le code source.
+     * 
+     * @param sourceCode Le code source Java
+     * @return Le nom de la classe, ou null si non trouvé
+     */
     private String extractClassName(String sourceCode) {
         Pattern pattern = Pattern.compile("public\\s+class\\s+(\\w+)");
         Matcher matcher = pattern.matcher(sourceCode);
@@ -79,15 +100,30 @@ public class CodeCompilerService {
         return null;
     }
 
+    /**
+     * Classe interne représentant un fichier source Java en mémoire.
+     */
     private static class JavaSourceFromString extends SimpleJavaFileObject {
         final String code;
 
+        /**
+         * Constructeur pour initialiser le fichier source.
+         * 
+         * @param name Le nom de la classe
+         * @param code Le code source
+         */
         JavaSourceFromString(String name, String code) {
             super(URI.create("string:///" + name.replace('.', '/') + JavaFileObject.Kind.SOURCE.extension),
                   JavaFileObject.Kind.SOURCE);
             this.code = code;
         }
 
+        /**
+         * Renvoie le contenu du code source.
+         * 
+         * @param ignoreEncodingErrors Si vrai, ignore les erreurs d'encodage
+         * @return Le contenu sous forme de séquence de caractères
+         */
         @Override
         public CharSequence getCharContent(boolean ignoreEncodingErrors) {
             return code;
