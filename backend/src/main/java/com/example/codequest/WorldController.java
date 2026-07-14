@@ -43,7 +43,7 @@ public class WorldController {
     @GetMapping("/{id}")
     public World getworldById(@PathVariable String id) {
         return mockworlds.stream()
-            .filter(world -> world.id().equals(id))
+            .filter(world -> world.getId().equals(id))
             .findFirst()
             .orElseThrow(() -> new WorldNotFoundException("Monde non trouvé"));
     }
