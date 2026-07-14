@@ -14,8 +14,25 @@ import java.util.List;
  * @param quests      La liste des quêtes dispo dans ce monde
  */
 public record World(
+    /**
+     * Id unique du monde.
+     * Ne doit pas être null.
+     */
     String id,
+
+    /**
+     * Nom du monde.
+     */
     String name,
+
+    /**
+     * Description du monde.
+     */
     String description,
+
+    /**
+     * Liste des quêtes associés à ce monde.
+     * Peut être vide, mais pas null.
+     */
     List<Quest> quests) {
 }

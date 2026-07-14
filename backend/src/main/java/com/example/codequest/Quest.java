@@ -13,9 +13,29 @@ package com.example.codequest;
  * @param difficulty  Le niveau de difficulté de la quête
  */
 public record Quest(
+        /**
+         * Id unique de la quête.
+         * Ne doit pas être null.
+         */
         String id,
+
+        /**
+         * Titre de la quête.
+         */
         String title,
+
+        /**
+         * Description de la quête.
+         */
         String description,
+
+        /**
+         * Récompense en expérience de la quête.
+         */
         int xpReward,
-        String difficulty
-) {}
+
+        /**
+         * Niveau de difficulté de la quête.
+         */
+        String difficulty) {
+}
