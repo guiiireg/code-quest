@@ -1,0 +1,58 @@
+<main class="auth-container">
+  <article class="auth-card">
+    <header class="card-bg-gradient"></header>
+    
+    <header class="auth-header">
+      <figure class="auth-badge">
+        <mat-icon>vpn_key</mat-icon>
+      </figure>
+      <h1>Connexion</h1>
+      <p class="subtitle">Accédez à votre compte pour continuer vos quêtes</p>
+    </header>
+
+    @if (errorMessage) {
+      <section class="error-alert">
+        <mat-icon>error_outline</mat-icon>
+        <p>{{ errorMessage }}</p>
+      </section>
+    }
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="auth-form">
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Nom d'utilisateur</mat-label>
+        <input matInput formControlName="username" type="text" placeholder="Entrez votre pseudo" autocomplete="username">
+        <mat-icon matSuffix>person</mat-icon>
+        @if (loginForm.get('username')?.touched && loginForm.get('username')?.invalid) {
+          <mat-error>Le nom d'utilisateur est requis (min. 3 caractères)</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="form-field">
+        <mat-label>Mot de passe</mat-label>
+        <input matInput formControlName="password" [type]="hidePassword ? 'password' : 'text'" placeholder="Entrez votre mot de passe" autocomplete="current-password">
+        <button type="button" mat-icon-button matSuffix (click)="hidePassword = !hidePassword" [attr.aria-label]="'Masquer le mot de passe'" [attr.aria-pressed]="hidePassword">
+          <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+        </button>
+        @if (loginForm.get('password')?.touched && loginForm.get('password')?.invalid) {
+          <mat-error>Le mot de passe est requis (min. 4 caractères)</mat-error>
+        }
+      </mat-form-field>
+
+      @if (loading) {
+        <button mat-flat-button class="submit-button" type="button" disabled>
+          <aside class="spinner-small"></aside>
+          <span>Connexion en cours...</span>
+        </button>
+      } @else {
+        <button mat-flat-button class="submit-button" type="submit" [disabled]="loginForm.invalid">
+          <span>Se connecter</span>
+          <mat-icon>login</mat-icon>
+        </button>
+      }
+    </form>
+
+    <footer class="auth-footer">
+      <p>Pas encore inscrit ? <a routerLink="/register" class="auth-link">Créer un compte</a></p>
+    </footer>
+  </article>
+</main>

@@ -1,0 +1,152 @@
+.app-navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: rgba(8, 15, 29, 0.75);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(0, 242, 254, 0.1);
+  height: 70px;
+}
+
+.navbar-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+}
+
+.navbar-left, .navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.navbar-brand {
+  text-decoration: none;
+  margin-right: 24px;
+}
+
+.brand-text {
+  font-family: var(--font-gaming);
+  font-size: 1.6rem;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  color: #ffffff;
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+}
+
+.cyan-glow {
+  color: var(--neon-cyan);
+  text-shadow: 0 0 10px rgba(0, 242, 254, 0.6);
+}
+
+.nav-link {
+  font-family: var(--font-gaming) !important;
+  color: var(--text-secondary) !important;
+  font-size: 0.9rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.05em !important;
+  transition: all 0.2s ease !important;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.nav-link:hover, .nav-link.active-link {
+  color: var(--neon-cyan) !important;
+}
+
+.navbar-bottom-glow {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--neon-cyan), var(--neon-purple), transparent);
+  opacity: 0.5;
+}
+
+/* Boutons d'authentification */
+.login-button {
+  font-family: var(--font-gaming) !important;
+  color: var(--text-secondary) !important;
+  font-size: 0.85rem !important;
+  font-weight: 700 !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 8px !important;
+  padding: 6px 16px !important;
+  transition: all 0.2s ease !important;
+}
+
+.login-button:hover {
+  color: #ffffff !important;
+  border-color: #ffffff !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+}
+
+.register-button {
+  background: linear-gradient(135deg, var(--neon-cyan) 0%, #4f46e5 100%) !important;
+  color: #020617 !important;
+  font-family: var(--font-gaming) !important;
+  font-size: 0.85rem !important;
+  font-weight: 800 !important;
+  border-radius: 8px !important;
+  padding: 6px 16px !important;
+  border: 1px solid transparent !important;
+  transition: all 0.2s ease !important;
+}
+
+.register-button:hover {
+  background: transparent !important;
+  color: var(--neon-cyan) !important;
+  border-color: var(--neon-cyan) !important;
+  box-shadow: var(--shadow-cyan) !important;
+}
+
+/* Profil utilisateur */
+.user-profile-button {
+  font-family: var(--font-gaming) !important;
+  color: #ffffff !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 6px 12px !important;
+  border-radius: 8px !important;
+  border: 1px solid rgba(0, 242, 254, 0.15) !important;
+  background: rgba(8, 15, 29, 0.4) !important;
+  transition: all 0.2s ease !important;
+}
+
+.user-profile-button:hover {
+  border-color: var(--neon-cyan) !important;
+  box-shadow: 0 0 10px rgba(0, 242, 254, 0.1) !important;
+}
+
+.user-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  color: var(--neon-cyan);
+}
+
+.user-avatar mat-icon {
+  font-size: 24px;
+  width: 24px;
+  height: 24px;
+}
+
+.username {
+  font-weight: 700;
+}
+
+.arrow-down {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: var(--text-secondary);
+}
+
+
+.app-main-content {
+  min-height: calc(100vh - 70px);
+}

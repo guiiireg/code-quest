@@ -55,3 +55,141 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(0, 242, 254, 0.4);
 }
+
+/* Surcharge des variables système Material Design pour le thème sombre cyberpunk */
+/* Doit être sur 'html' pour surpasser le thème azure-blue.css qui cible également 'html' */
+html {
+  --mat-sys-surface-container: #080f1d;
+  --mat-sys-surface-container-high: #0e1726;
+  --mat-sys-surface-container-highest: #0e1726;
+  --mat-sys-on-surface: #f1f5f9;
+  --mat-sys-on-surface-variant: #94a3b8;
+  /* Surcharge de la police système de Material pour imposer Orbitron */
+  --mat-sys-label-large: 700 0.85rem / 1.25rem 'Orbitron', sans-serif;
+  --mat-sys-label-large-font: 'Orbitron', sans-serif;
+  --mat-menu-item-label-text-font: 'Orbitron', sans-serif;
+  --mat-menu-item-label-text-weight: 700;
+}
+
+/* Menu Cyberpunk Global Overrides */
+.cyber-menu.mat-mdc-menu-panel,
+.mat-mdc-menu-panel.cyber-menu {
+  --mat-menu-container-color: #080f1d;
+  --mat-sys-surface-container: #080f1d;
+  background: #080f1d !important;
+  backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(0, 242, 254, 0.4) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 242, 254, 0.15) !important;
+  padding: 16px !important;
+  min-width: 220px !important;
+}
+
+.cyber-menu .mat-mdc-menu-content {
+  background-color: transparent !important;
+  padding: 0 !important;
+}
+
+/* Ciblage profond des éléments internes MDC pour forcer les couleurs claires */
+.cyber-menu .mat-mdc-menu-item {
+  --mat-menu-item-label-text-color: #f1f5f9;
+  --mat-menu-item-icon-color: #f1f5f9;
+  --mat-sys-on-surface: #f1f5f9;
+  --mat-sys-on-surface-variant: #94a3b8;
+  color: #f1f5f9 !important;
+  font-family: var(--font-gaming) !important;
+  font-size: 0.85rem !important;
+  font-weight: 700 !important;
+}
+
+.cyber-menu .mat-mdc-menu-item .mdc-list-item__primary-text,
+.cyber-menu .mat-mdc-menu-item .mat-mdc-menu-item-text {
+  color: #f1f5f9 !important;
+  font-family: 'Orbitron', sans-serif !important;
+  font-weight: 700 !important;
+  font-size: 0.85rem !important;
+}
+
+.cyber-menu .mat-mdc-menu-item .mat-icon {
+  color: #f1f5f9 !important;
+}
+
+.cyber-menu .profile-menu-item {
+  --mat-menu-item-label-text-color: var(--text-primary) !important;
+  --mat-menu-item-icon-color: var(--neon-cyan) !important;
+  color: var(--text-primary) !important;
+  font-family: var(--font-gaming) !important;
+  font-size: 0.85rem !important;
+  font-weight: 700 !important;
+  border-radius: 6px !important;
+  transition: all 0.2s ease !important;
+  text-decoration: none;
+  display: flex !important;
+  align-items: center;
+}
+
+.cyber-menu .profile-menu-item mat-icon {
+  color: var(--neon-cyan) !important;
+}
+
+.cyber-menu .profile-menu-item:hover {
+  background: rgba(0, 242, 254, 0.08) !important;
+}
+
+.cyber-menu .logout-menu-item {
+  --mat-menu-item-label-text-color: var(--neon-red) !important;
+  --mat-menu-item-icon-color: var(--neon-red) !important;
+  color: var(--neon-red) !important;
+  font-family: var(--font-gaming) !important;
+  font-size: 0.85rem !important;
+  font-weight: 700 !important;
+  border-radius: 6px !important;
+  transition: all 0.2s ease !important;
+}
+
+.cyber-menu .logout-menu-item mat-icon {
+  color: var(--neon-red) !important;
+}
+
+.cyber-menu .logout-menu-item:hover {
+  background: rgba(239, 68, 68, 0.08) !important;
+}
+
+/* Styles pour les informations utilisateur de l'en-tête du menu */
+.cyber-menu .menu-user-info {
+  font-family: var(--font-code);
+  padding: 8px 8px 12px 8px;
+}
+
+.cyber-menu .menu-username {
+  font-family: var(--font-gaming);
+  font-weight: 700;
+  font-size: 1rem;
+  color: #ffffff !important;
+  margin: 0 0 4px 0;
+}
+
+.cyber-menu .menu-email {
+  font-size: 0.75rem;
+  color: var(--text-secondary) !important;
+  margin: 0 0 8px 0;
+}
+
+.cyber-menu .user-role {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--neon-purple) !important;
+  border: 1px solid rgba(157, 78, 221, 0.3) !important;
+  background: rgba(157, 78, 221, 0.08) !important;
+  padding: 2px 6px;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+}
+
+.cyber-menu .menu-divider {
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  margin: 8px 0 !important;
+}
+

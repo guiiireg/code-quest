@@ -1,0 +1,84 @@
+<main class="profile-container">
+  <article class="profile-card">
+    <header class="card-bg-gradient"></header>
+
+    @if (userSession) {
+      <header class="profile-header">
+        <figure class="profile-avatar">
+          <mat-icon>account_circle</mat-icon>
+        </figure>
+        <h1>{{ userSession.username }}</h1>
+        <span class="user-role">{{ userSession.roles[0] || 'Joueur' }}</span>
+      </header>
+
+      <mat-divider class="custom-divider"></mat-divider>
+
+      <section class="profile-info-grid">
+        <article class="info-card">
+          <mat-icon class="info-icon">person</mat-icon>
+          <hgroup class="info-details">
+            <h2>Nom d'utilisateur</h2>
+            <p>{{ userSession.username }}</p>
+          </hgroup>
+        </article>
+
+        <article class="info-card">
+          <mat-icon class="info-icon">mail</mat-icon>
+          <hgroup class="info-details">
+            <h2>Adresse Email</h2>
+            <p>{{ userSession.email }}</p>
+          </hgroup>
+        </article>
+
+        <article class="info-card">
+          <mat-icon class="info-icon">fingerprint</mat-icon>
+          <hgroup class="info-details">
+            <h2>ID Joueur</h2>
+            <p class="mono-text">{{ userSession.id }}</p>
+          </hgroup>
+        </article>
+
+        <article class="info-card">
+          <mat-icon class="info-icon">shield</mat-icon>
+          <hgroup class="info-details">
+            <h2>Niveau d'Accès</h2>
+            <p>{{ userSession.roles.join(', ') }}</p>
+          </hgroup>
+        </article>
+      </section>
+
+      <mat-divider class="custom-divider"></mat-divider>
+
+      <section class="stats-section">
+        <h2 class="section-title">Statistiques du Codeur</h2>
+        <div class="stats-grid">
+          <div class="stat-box">
+            <span class="stat-value text-cyan">1</span>
+            <span class="stat-label">Niveau</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-value text-purple">0 XP</span>
+            <span class="stat-label">Progression</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-value text-green">0</span>
+            <span class="stat-label">Quêtes résolues</span>
+          </div>
+        </div>
+      </section>
+
+      <footer class="profile-actions">
+        <button mat-stroked-button class="back-button" routerLink="/worlds">
+          <mat-icon>arrow_back</mat-icon>
+          Retour au Dashboard
+        </button>
+      </footer>
+    } @else {
+      <section class="error-state">
+        <mat-icon class="error-icon">error_outline</mat-icon>
+        <p>Aucune session utilisateur active trouvée.</p>
+        <button mat-flat-button class="action-button" routerLink="/login">Se connecter</button>
+      </section>
+    }
+  </article>
+</main>

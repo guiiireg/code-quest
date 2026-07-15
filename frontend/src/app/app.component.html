@@ -1,1 +1,61 @@
-<router-outlet></router-outlet>
+<header class="app-navbar">
+  <nav class="navbar-container">
+    <div class="navbar-left">
+      @if (authService.isAuthenticated()) {
+        <a routerLink="/worlds" class="navbar-brand">
+          <span class="brand-text">Code<span class="cyan-glow">Quest</span></span>
+        </a>
+        <a mat-button routerLink="/worlds" routerLinkActive="active-link" class="nav-link">
+          <mat-icon>dashboard</mat-icon>
+          <span>Mondes</span>
+        </a>
+      } @else {
+        <a routerLink="/login" class="navbar-brand">
+          <span class="brand-text">Code<span class="cyan-glow">Quest</span></span>
+        </a>
+      }
+    </div>
+
+    <div class="navbar-right">
+      @if (authService.isAuthenticated()) {
+        <button mat-button [matMenuTriggerFor]="userMenu" class="user-profile-button">
+          <figure class="user-avatar">
+            <mat-icon>account_circle</mat-icon>
+          </figure>
+          <span class="username">{{ authService.currentUser()?.username }}</span>
+          <mat-icon class="arrow-down">keyboard_arrow_down</mat-icon>
+        </button>
+        <mat-menu #userMenu="matMenu" panelClass="cyber-menu">
+          <header class="menu-user-info">
+            <p class="menu-username">{{ authService.currentUser()?.username }}</p>
+            <p class="menu-email">{{ authService.currentUser()?.email }}</p>
+            <span class="user-role">{{ (authService.currentUser()?.roles?.[0] || 'Joueur').replace('ROLE_', '') | titlecase }}</span>
+          </header>
+          <mat-divider class="menu-divider"></mat-divider>
+          <a mat-menu-item routerLink="/profile" class="profile-menu-item">
+            <mat-icon>person</mat-icon>
+            <span>Mon Profil</span>
+          </a>
+          <button mat-menu-item (click)="logout()" class="logout-menu-item">
+            <mat-icon>logout</mat-icon>
+            <span>Se déconnecter</span>
+          </button>
+        </mat-menu>
+      } @else {
+        <a mat-button routerLink="/login" class="login-button">
+          <mat-icon>login</mat-icon>
+          <span>Connexion</span>
+        </a>
+        <a mat-flat-button routerLink="/register" class="register-button">
+          <mat-icon>person_add</mat-icon>
+          <span>Inscription</span>
+        </a>
+      }
+    </div>
+  </nav>
+  <div class="navbar-bottom-glow"></div>
+</header>
+
+<main class="app-main-content">
+  <router-outlet></router-outlet>
+</main>
