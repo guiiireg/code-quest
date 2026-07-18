@@ -30,3 +30,5 @@ target/
 .vscode/
 AGENTS.md
 .agents/
+GEMINI.md
+plan.md
