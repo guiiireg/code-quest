@@ -1,4 +1,4 @@
-package com.example.codequest;
+package com.example.codequest.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

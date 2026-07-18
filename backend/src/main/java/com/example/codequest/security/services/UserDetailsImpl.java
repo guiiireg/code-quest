@@ -1,6 +1,6 @@
 package com.example.codequest.security.services;
 
-import com.example.codequest.User;
+import com.example.codequest.models.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

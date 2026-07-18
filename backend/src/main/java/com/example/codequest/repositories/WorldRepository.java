@@ -1,5 +1,6 @@
-package com.example.codequest;
+package com.example.codequest.repositories;
 
+import com.example.codequest.models.World;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

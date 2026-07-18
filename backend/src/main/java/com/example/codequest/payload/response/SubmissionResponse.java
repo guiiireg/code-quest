@@ -1,4 +1,4 @@
-package com.example.codequest;
+package com.example.codequest.payload.response;
 
 /**
  * Record représentant la réponse à une soumission (DTO moderne et immuable).

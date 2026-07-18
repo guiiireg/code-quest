@@ -1,4 +1,4 @@
-package com.example.codequest;
+package com.example.codequest.payload.request;
 
 /**
  * Record représentant les données de soumission d'une quête (DTO moderne et immuable).

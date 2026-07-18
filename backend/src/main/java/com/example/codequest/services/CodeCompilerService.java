@@ -1,4 +1,4 @@
-package com.example.codequest;
+package com.example.codequest.services;
 
 import org.springframework.stereotype.Service;
 

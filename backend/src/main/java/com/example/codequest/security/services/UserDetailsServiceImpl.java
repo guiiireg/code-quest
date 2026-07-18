@@ -1,7 +1,7 @@
 package com.example.codequest.security.services;
 
-import com.example.codequest.User;
-import com.example.codequest.UserRepository;
+import com.example.codequest.models.User;
+import com.example.codequest.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

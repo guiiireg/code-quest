@@ -1,4 +1,4 @@
-package com.example.codequest;
+package com.example.codequest.models;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
