@@ -15,10 +15,10 @@ import java.util.Date;
 public class GlobalExceptionHandler {
 
     /**
-     * Gère l'exception WorldNotFoundException.
+     * Gère l'exception WorldNotFoundException et QuestNotFoundException.
      */
-    @ExceptionHandler(WorldNotFoundException.class)
-    public ResponseEntity<ErrorMessage> resourceNotFoundException(WorldNotFoundException ex, WebRequest request) {
+    @ExceptionHandler({WorldNotFoundException.class, QuestNotFoundException.class})
+    public ResponseEntity<ErrorMessage> resourceNotFoundException(RuntimeException ex, WebRequest request) {
         ErrorMessage message = new ErrorMessage(
             HttpStatus.NOT_FOUND.value(),
             new Date(),
@@ -26,6 +26,20 @@ public class GlobalExceptionHandler {
             request.getDescription(false));
 
         return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
+    }
+
+    /**
+     * Gère l'exception UserAlreadyExistsException.
+     */
+    @ExceptionHandler(UserAlreadyExistsException.class)
+    public ResponseEntity<ErrorMessage> userAlreadyExistsException(UserAlreadyExistsException ex, WebRequest request) {
+        ErrorMessage message = new ErrorMessage(
+            HttpStatus.BAD_REQUEST.value(),
+            new Date(),
+            ex.getMessage(),
+            request.getDescription(false));
+
+        return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
     }
 
     /**

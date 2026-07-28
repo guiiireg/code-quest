@@ -1,5 +1,6 @@
 package com.example.codequest.services;
 
+import com.example.codequest.exceptions.UserAlreadyExistsException;
 import com.example.codequest.models.Role;
 import com.example.codequest.models.User;
 import com.example.codequest.repositories.RoleRepository;
@@ -78,11 +79,11 @@ public class AuthService {
      */
     public MessageResponse registerUser(SignupRequest signUpRequest) {
         if (userRepository.existsByUsername(signUpRequest.username())) {
-            throw new RuntimeException("Error: Username is already taken!");
+            throw new UserAlreadyExistsException("Error: Username is already taken!");
         }
 
         if (userRepository.existsByEmail(signUpRequest.email())) {
-            throw new RuntimeException("Error: Email is already in use!");
+            throw new UserAlreadyExistsException("Error: Email is already in use!");
         }
 
         User user = new User(UUID.randomUUID().toString(), signUpRequest.username(),

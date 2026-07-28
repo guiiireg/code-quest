@@ -1,5 +1,6 @@
 package com.example.codequest.services;
 
+import com.example.codequest.exceptions.QuestNotFoundException;
 import com.example.codequest.models.Quest;
 import com.example.codequest.repositories.QuestRepository;
 import com.example.codequest.payload.request.SubmissionDTO;
@@ -34,7 +35,7 @@ public class QuestService {
      */
     public Quest getQuestById(String id) {
         return questRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Quête non trouvée avec l'id : " + id));
+                .orElseThrow(() -> new QuestNotFoundException("Quête non trouvée avec l'id : " + id));
     }
 
     /**

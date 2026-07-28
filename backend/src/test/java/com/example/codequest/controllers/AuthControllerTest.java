@@ -1,9 +1,9 @@
 package com.example.codequest.controllers;
 
-import com.example.codequest.Role;
-import com.example.codequest.RoleRepository;
-import com.example.codequest.User;
-import com.example.codequest.UserRepository;
+import com.example.codequest.models.Role;
+import com.example.codequest.repositories.RoleRepository;
+import com.example.codequest.models.User;
+import com.example.codequest.repositories.UserRepository;
 import com.example.codequest.payload.request.LoginRequest;
 import com.example.codequest.payload.request.SignupRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;

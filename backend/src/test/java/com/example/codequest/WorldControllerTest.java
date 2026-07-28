@@ -1,9 +1,19 @@
 package com.example.codequest;
 
+import com.example.codequest.controllers.WorldController;
+import com.example.codequest.models.Quest;
+import com.example.codequest.models.World;
+import com.example.codequest.repositories.QuestRepository;
+import com.example.codequest.repositories.WorldRepository;
+import com.example.codequest.services.CodeCompilerService;
+import com.example.codequest.services.QuestService;
+import com.example.codequest.services.WorldService;
+
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -17,17 +27,28 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.hamcrest.Matchers.hasSize;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import org.springframework.security.test.context.support.WithMockUser;
+
+import com.example.codequest.security.WebSecurityConfig;
+import com.example.codequest.security.jwt.AuthEntryPointJwt;
+import com.example.codequest.security.jwt.AuthTokenFilter;
+import com.example.codequest.security.jwt.JwtUtils;
+import com.example.codequest.security.services.UserDetailsServiceImpl;
 
 /**
  * Tests d'intégration pour le contrôleur REST des mondes (WorldController).
  */
 @WebMvcTest(WorldController.class)
+@Import({WorldService.class, QuestService.class, WebSecurityConfig.class, AuthEntryPointJwt.class, AuthTokenFilter.class, JwtUtils.class})
 @WithMockUser
 class WorldControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @MockitoBean
+    private UserDetailsServiceImpl userDetailsService;
 
     @MockitoBean
     private WorldRepository worldRepository;
@@ -124,6 +145,7 @@ class WorldControllerTest {
         String requestJson = "{\"questId\":\"quest-test\",\"code\":\"" + code + "\"}";
 
         mockMvc.perform(post("/api/quests/quest-test/submit")
+                .with(user("testuser"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson))
                 .andExpect(status().isOk())
@@ -146,6 +168,7 @@ class WorldControllerTest {
         String requestJson = "{\"questId\":\"quest-test\",\"code\":\"" + code + "\"}";
 
         mockMvc.perform(post("/api/quests/quest-test/submit")
+                .with(user("testuser"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson))
                 .andExpect(status().isOk())
@@ -169,6 +192,7 @@ class WorldControllerTest {
         String requestJson = "{\"questId\":\"quest-test\",\"code\":\"" + code + "\"}";
 
         mockMvc.perform(post("/api/quests/quest-test/submit")
+                .with(user("testuser"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson))
                 .andExpect(status().isOk())
@@ -188,10 +212,23 @@ class WorldControllerTest {
         String requestJson = "{\"questId\":\"quest-test\",\"code\":null}";
 
         mockMvc.perform(post("/api/quests/quest-test/submit")
+                .with(user("testuser"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(false))
                 .andExpect(jsonPath("$.output").value("Erreur : Code manquant."));
+    }
+
+    /**
+     * Vérifie qu'un utilisateur non authentifié ne peut pas soumettre de quête (HTTP 401 Unauthorized).
+     */
+    @Test
+    @org.springframework.security.test.context.support.WithAnonymousUser
+    void shouldDenyUnauthenticatedQuestSubmission() throws Exception {
+        mockMvc.perform(post("/api/quests/quest-test/submit")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"questId\":\"quest-test\",\"code\":\"test\"}"))
+                .andExpect(status().isUnauthorized());
     }
 }
