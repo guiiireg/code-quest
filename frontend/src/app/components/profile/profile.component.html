@@ -1,84 +1,173 @@
 <main class="profile-container">
-  <article class="profile-card">
-    <header class="card-bg-gradient"></header>
-
-    @if (userSession) {
-      <header class="profile-header">
-        <figure class="profile-avatar">
-          <mat-icon>account_circle</mat-icon>
+  @if (userSession) {
+    <!-- En-tête Fiche de Personnage -->
+    <article class="character-sheet-card">
+      <header class="sheet-header">
+        <figure class="character-avatar-large">
+          <mat-icon class="avatar-icon">shield</mat-icon>
+          <span class="lvl-badge">NIV {{ progressService.currentLevelInfo().level }}</span>
         </figure>
-        <h1>{{ userSession.username }}</h1>
-        <span class="user-role">{{ userSession.roles[0] || 'Joueur' }}</span>
+
+        <hgroup class="identity-group">
+          <h1>{{ userSession.username }}</h1>
+          <p class="character-title">{{ progressService.currentLevelInfo().title }}</p>
+          <div class="role-tags">
+            @if (authService.isAdmin()) {
+              <span class="rpg-badge rpg-badge--gold" title="Privilèges d'accès total Administrateur">👑 Administrateur</span>
+            }
+            <span class="rpg-badge rpg-badge--blue">🛡️ Joueur</span>
+            <span class="rpg-badge rpg-badge--purple">Guilde des Codeurs</span>
+          </div>
+        </hgroup>
       </header>
 
       <mat-divider class="custom-divider"></mat-divider>
 
-      <section class="profile-info-grid">
-        <article class="info-card">
-          <mat-icon class="info-icon">person</mat-icon>
-          <hgroup class="info-details">
-            <h2>Nom d'utilisateur</h2>
-            <p>{{ userSession.username }}</p>
-          </hgroup>
+      <!-- Section Niveaux et Barre d'Expérience -->
+      <section class="xp-section" aria-label="Progression du niveau">
+        <div class="xp-header-row">
+          <h2>Expérience de Codeur (XP)</h2>
+          <span class="xp-ratio"><strong>{{ progressService.progress().xp }} XP</strong> / {{ progressService.currentLevelInfo().maxXp }} XP</span>
+        </div>
+        
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill" [style.width.%]="progressService.xpProgressPercentage()"></div>
+        </div>
+
+        <p class="xp-note">
+          @if (progressService.nextLevelInfo()) {
+            Prochain titre : <strong>{{ progressService.nextLevelInfo()?.title }}</strong> au niveau {{ progressService.nextLevelInfo()?.level }}
+          } @else {
+            <strong>Rang Suprême de la Guilde atteint !</strong>
+          }
+        </p>
+      </section>
+
+      <mat-divider class="custom-divider"></mat-divider>
+
+      <!-- Grille d'Informations & Statistiques -->
+      <section class="stats-grid" aria-label="Statistiques du joueur">
+        <article class="stat-card">
+          <mat-icon class="stat-icon gold">admin_panel_settings</mat-icon>
+          <div class="stat-info">
+            <span class="stat-value">{{ authService.isAdmin() ? '👑 Administrateur' : '🛡️ Joueur' }}</span>
+            <span class="stat-label">Rôle du Compte</span>
+          </div>
         </article>
 
-        <article class="info-card">
-          <mat-icon class="info-icon">mail</mat-icon>
-          <hgroup class="info-details">
-            <h2>Adresse Email</h2>
-            <p>{{ userSession.email }}</p>
-          </hgroup>
+        <article class="stat-card">
+          <mat-icon class="stat-icon emerald">task_alt</mat-icon>
+          <div class="stat-info">
+            <span class="stat-value">{{ progressService.completedCount() }}</span>
+            <span class="stat-label">Quêtes Accomplies</span>
+          </div>
         </article>
 
-        <article class="info-card">
-          <mat-icon class="info-icon">fingerprint</mat-icon>
-          <hgroup class="info-details">
-            <h2>ID Joueur</h2>
-            <p class="mono-text">{{ userSession.id }}</p>
-          </hgroup>
+        <article class="stat-card">
+          <mat-icon class="stat-icon gold">workspace_premium</mat-icon>
+          <div class="stat-info">
+            <span class="stat-value">{{ progressService.progress().xp }} XP</span>
+            <span class="stat-label">Total Expérience</span>
+          </div>
         </article>
 
-        <article class="info-card">
-          <mat-icon class="info-icon">shield</mat-icon>
-          <hgroup class="info-details">
-            <h2>Niveau d'Accès</h2>
-            <p>{{ userSession.roles.join(', ') }}</p>
-          </hgroup>
+        <article class="stat-card">
+          <mat-icon class="stat-icon blue">military_tech</mat-icon>
+          <div class="stat-info">
+            <span class="stat-value">{{ progressService.progress().unlockedSkills.length }}</span>
+            <span class="stat-label">Compétences Débloquées</span>
+          </div>
+        </article>
+
+        <article class="stat-card">
+          <mat-icon class="stat-icon purple">fingerprint</mat-icon>
+          <div class="stat-info">
+            <span class="stat-value mono">{{ userSession.id.substring(0, 8) }}...</span>
+            <span class="stat-label">Identifiant Joueur</span>
+          </div>
         </article>
       </section>
 
       <mat-divider class="custom-divider"></mat-divider>
 
-      <section class="stats-section">
-        <h2 class="section-title">Statistiques du Codeur</h2>
-        <div class="stats-grid">
-          <div class="stat-box">
-            <span class="stat-value text-cyan">1</span>
-            <span class="stat-label">Niveau</span>
+      <!-- Section Arbre de Compétences -->
+      <section class="skills-section" aria-label="Arbre de compétences">
+        <header class="section-title">
+          <h2>
+            <mat-icon class="gold">psychology</mat-icon>
+            Arbre de Compétences Techniques
+          </h2>
+        </header>
+
+        <div class="skills-grid">
+          @for (skill of progressService.progress().unlockedSkills; track skill) {
+            <div class="skill-item unlocked">
+              <mat-icon class="emerald">verified</mat-icon>
+              <div class="skill-details">
+                <span class="skill-name">{{ skill }}</span>
+                <span class="skill-desc">Acquis avec succès</span>
+              </div>
+            </div>
+          }
+          <div class="skill-item locked">
+            <mat-icon class="muted">lock</mat-icon>
+            <div class="skill-details">
+              <span class="skill-name">Design REST & HTTP</span>
+              <span class="skill-desc">Complétez l'Archipel des APIs</span>
+            </div>
           </div>
-          <div class="stat-box">
-            <span class="stat-value text-purple">0 XP</span>
-            <span class="stat-label">Progression</span>
-          </div>
-          <div class="stat-box">
-            <span class="stat-value text-green">0</span>
-            <span class="stat-label">Quêtes résolues</span>
+          <div class="skill-item locked">
+            <mat-icon class="muted">lock</mat-icon>
+            <div class="skill-details">
+              <span class="skill-name">Gestion des Exceptions</span>
+              <span class="skill-desc">Requis : Niveau 3</span>
+            </div>
           </div>
         </div>
       </section>
 
-      <footer class="profile-actions">
-        <button mat-stroked-button class="back-button" routerLink="/worlds">
-          <mat-icon>arrow_back</mat-icon>
-          Retour au Dashboard
-        </button>
-      </footer>
-    } @else {
-      <section class="error-state">
-        <mat-icon class="error-icon">error_outline</mat-icon>
-        <p>Aucune session utilisateur active trouvée.</p>
-        <button mat-flat-button class="action-button" routerLink="/login">Se connecter</button>
+      <mat-divider class="custom-divider"></mat-divider>
+
+      <!-- Badges & Trophees -->
+      <section class="achievements-section" aria-label="Hauts faits et trophées">
+        <header class="section-title">
+          <h2>
+            <mat-icon class="gold">emoji_events</mat-icon>
+            Trophées & Badges de Guilde
+          </h2>
+        </header>
+
+        <div class="trophy-grid">
+          <div class="trophy-card unlocked" title="Compte de joueur créé avec succès">
+            <mat-icon class="gold">military_tech</mat-icon>
+            <span class="trophy-title">Premiers Pas</span>
+            <span class="trophy-sub">Membre de CodeQuest</span>
+          </div>
+          <div class="trophy-card" [class.unlocked]="progressService.completedCount() >= 1">
+            <mat-icon class="emerald">auto_stories</mat-icon>
+            <span class="trophy-title">Scribe de Java</span>
+            <span class="trophy-sub">Première quête résolue</span>
+          </div>
+          <div class="trophy-card" [class.unlocked]="progressService.progress().xp >= 200">
+            <mat-icon class="blue">stars</mat-icon>
+            <span class="trophy-title">Niveau 2 Atteint</span>
+            <span class="trophy-sub">Apprenti Développeur</span>
+          </div>
+        </div>
       </section>
-    }
-  </article>
+
+      <footer class="sheet-actions">
+        <a mat-flat-button class="back-dashboard-btn" routerLink="/worlds">
+          <mat-icon>arrow_back</mat-icon>
+          <span>Retourner au Tableau de Bord</span>
+        </a>
+      </footer>
+    </article>
+  } @else {
+    <section class="error-state">
+      <mat-icon class="error-icon">error_outline</mat-icon>
+      <p>Aucune session de joueur active trouvée.</p>
+      <a mat-flat-button class="login-btn" routerLink="/login">Se connecter</a>
+    </section>
+  }
 </main>

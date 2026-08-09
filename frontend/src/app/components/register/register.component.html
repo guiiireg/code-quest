@@ -1,24 +1,22 @@
 <main class="auth-container">
   <article class="auth-card">
-    <header class="card-bg-gradient"></header>
-    
     <header class="auth-header">
       <figure class="auth-badge">
-        <mat-icon>person_add</mat-icon>
+        <mat-icon class="gold">how_to_reg</mat-icon>
       </figure>
-      <h1>Inscription</h1>
-      <p class="subtitle">Rejoignez CodeQuest pour commencer votre aventure</p>
+      <h1>Inscription de Joueur</h1>
+      <p class="subtitle">Rejoignez la Guilde de CodeQuest et commencez l'aventure</p>
     </header>
 
     @if (errorMessage) {
-      <section class="error-alert">
+      <section class="error-alert" role="alert">
         <mat-icon>error_outline</mat-icon>
         <p>{{ errorMessage }}</p>
       </section>
     }
 
     @if (successMessage) {
-      <section class="success-alert">
+      <section class="success-alert" role="alert">
         <mat-icon>check_circle_outline</mat-icon>
         <p>{{ successMessage }}</p>
       </section>
@@ -27,7 +25,7 @@
     <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="auth-form">
       <mat-form-field appearance="outline" class="form-field">
         <mat-label>Nom d'utilisateur</mat-label>
-        <input matInput formControlName="username" type="text" placeholder="Entrez un pseudo" autocomplete="username">
+        <input matInput formControlName="username" type="text" placeholder="Choisissez un pseudo" autocomplete="username">
         <mat-icon matSuffix>person</mat-icon>
         @if (registerForm.get('username')?.touched && registerForm.get('username')?.invalid) {
           <mat-error>Le nom d'utilisateur est requis (min. 3 caractères)</mat-error>
@@ -68,18 +66,18 @@
       @if (loading) {
         <button mat-flat-button class="submit-button" type="button" disabled>
           <aside class="spinner-small"></aside>
-          <span>Création du compte...</span>
+          <span>Enregistrement du compte...</span>
         </button>
       } @else {
         <button mat-flat-button class="submit-button" type="submit" [disabled]="registerForm.invalid">
-          <span>Créer un compte</span>
-          <mat-icon>person_add</mat-icon>
+          <span>Créer mon compte</span>
+          <mat-icon>how_to_reg</mat-icon>
         </button>
       }
     </form>
 
     <footer class="auth-footer">
-      <p>Déjà inscrit ? <a routerLink="/login" class="auth-link">Se connecter</a></p>
+      <p>Déjà membre de la guilde ? <a routerLink="/login" class="auth-link">Se connecter</a></p>
     </footer>
   </article>
 </main>

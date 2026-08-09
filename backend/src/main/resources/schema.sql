@@ -19,6 +19,10 @@ CREATE TABLE quests (
     code_template TEXT,
     test_validation_regex TEXT,
     world_id VARCHAR(255),
+    category VARCHAR(255),
+    languages VARCHAR(255),
+    concept VARCHAR(255),
+    theory TEXT,
     CONSTRAINT fk_world FOREIGN KEY (world_id) REFERENCES worlds(id) ON DELETE CASCADE
 );
 

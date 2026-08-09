@@ -1,238 +1,366 @@
 .profile-container {
-  max-width: 900px;
+  max-width: 1000px;
   margin: 0 auto;
-  padding: 40px 20px;
+  padding: 32px 24px 60px 24px;
 }
 
-.profile-card {
+.character-sheet-card {
+  background: var(--rpg-bg-surface);
+  border: 1px solid var(--rpg-gold-border);
+  border-radius: var(--rpg-radius-md);
+  padding: 36px;
+  box-shadow: var(--rpg-shadow-md), var(--rpg-shadow-gold);
   position: relative;
-  background: rgba(8, 15, 29, 0.7) !important;
-  backdrop-filter: blur(16px);
-  border: 1px solid rgba(0, 242, 254, 0.15) !important;
-  border-radius: 16px !important;
   overflow: hidden;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6) !important;
-  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
 }
 
-.card-bg-gradient {
+.character-sheet-card::before {
+  content: '';
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple), var(--neon-magenta));
+  background: linear-gradient(90deg, var(--rpg-gold), var(--rpg-gold-bright));
 }
 
-.profile-header {
+.sheet-header {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  margin-bottom: 32px;
-  text-align: center;
+  gap: 28px;
 }
 
-.profile-avatar {
+.character-avatar-large {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 96px;
-  height: 96px;
+  width: 84px;
+  height: 84px;
   border-radius: 50%;
-  background: rgba(0, 242, 254, 0.08);
-  color: var(--neon-cyan);
-  border: 2px solid rgba(0, 242, 254, 0.3);
-  margin-bottom: 16px;
-  box-shadow: 0 0 25px rgba(0, 242, 254, 0.2);
+  background: var(--rpg-bg-main);
+  border: 3px solid var(--rpg-gold-bright);
+  color: var(--rpg-gold-bright);
+  box-shadow: 0 0 20px rgba(217, 119, 6, 0.3);
+  margin: 0;
 }
 
-.profile-avatar mat-icon {
-  font-size: 56px;
-  width: 56px;
-  height: 56px;
+.avatar-icon {
+  font-size: 46px;
+  width: 46px;
+  height: 46px;
 }
 
-.profile-header h1 {
-  font-family: var(--font-gaming);
+.lvl-badge {
+  position: absolute;
+  bottom: -8px;
+  background: var(--rpg-gold-bright);
+  color: #0f1217;
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  font-weight: 900;
+  padding: 3px 10px;
+  border-radius: 12px;
+  letter-spacing: 0.05em;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.identity-group h1 {
+  font-family: var(--font-title);
   font-size: 2.2rem;
   font-weight: 900;
-  margin: 0 0 8px 0;
-  letter-spacing: 0.05em;
-  color: #ffffff;
-  text-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+  color: var(--rpg-text-primary);
+  margin: 0 0 6px 0;
 }
 
-.user-role {
-  font-family: var(--font-code);
-  font-size: 0.75rem;
-  font-weight: 700;
+.character-title {
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--rpg-gold-bright);
+  margin: 0 0 10px 0;
   text-transform: uppercase;
-  color: var(--neon-purple);
-  border: 1px solid rgba(157, 78, 221, 0.4);
-  background: rgba(157, 78, 221, 0.1);
-  padding: 4px 12px;
-  border-radius: 6px;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.04em;
+}
+
+.role-tags {
+  display: flex;
+  gap: 8px;
 }
 
 .custom-divider {
   border-color: rgba(255, 255, 255, 0.08) !important;
-  margin: 32px 0 !important;
+  margin: 0 !important;
 }
 
-.profile-info-grid {
+/* XP Section */
+.xp-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.xp-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-heading);
+}
+
+.xp-header-row h2 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--rpg-text-primary);
+  margin: 0;
+}
+
+.xp-ratio {
+  font-size: 0.95rem;
+  color: var(--rpg-text-secondary);
+}
+
+.xp-ratio strong {
+  color: var(--rpg-gold-bright);
+}
+
+.progress-bar-track {
+  width: 100%;
+  height: 12px;
+  background: var(--rpg-bg-main);
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--rpg-gold) 0%, var(--rpg-gold-bright) 100%);
+  border-radius: 6px;
+  transition: width 0.4s ease;
+}
+
+.xp-note {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--rpg-text-secondary);
+  margin: 0;
+}
+
+.xp-note strong {
+  color: var(--rpg-gold-bright);
+}
+
+/* Stats Cards */
+.stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
 }
 
-.info-card {
+.stat-card {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 16px 20px;
-  background: rgba(2, 6, 23, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 10px;
-  transition: all 0.2s ease;
+  gap: 14px;
+  background: var(--rpg-bg-main);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: var(--rpg-radius-sm);
+  padding: 16px;
 }
 
-.info-card:hover {
-  border-color: rgba(0, 242, 254, 0.2);
-  background: rgba(2, 6, 23, 0.5);
-  box-shadow: 0 0 15px rgba(0, 242, 254, 0.03);
-}
-
-.info-icon {
-  color: var(--neon-cyan);
+.stat-icon {
   font-size: 28px;
   width: 28px;
   height: 28px;
 }
 
-.info-details {
+.stat-icon.emerald { color: var(--rpg-emerald-bright); }
+.stat-icon.gold { color: var(--rpg-gold-bright); }
+.stat-icon.blue { color: var(--rpg-blue-bright); }
+.stat-icon.purple { color: #c084fc; }
+
+.stat-info {
   display: flex;
   flex-direction: column;
-}
-
-.info-details h2 {
-  font-family: var(--font-gaming);
-  font-size: 0.8rem;
-  color: var(--text-secondary);
-  text-transform: uppercase;
-  margin: 0 0 4px 0;
-  letter-spacing: 0.05em;
-}
-
-.info-details p {
-  font-family: var(--font-code);
-  font-size: 0.95rem;
-  color: #ffffff;
-  margin: 0;
-}
-
-.mono-text {
-  font-size: 0.85rem !important;
-  color: var(--text-secondary) !important;
-}
-
-/* Statistiques */
-.stats-section {
-  margin-bottom: 32px;
-}
-
-.section-title {
-  font-family: var(--font-gaming);
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: #ffffff;
-  margin-bottom: 20px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-}
-
-.stat-box {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  background: rgba(8, 15, 29, 0.5);
-  border: 1px solid rgba(0, 242, 254, 0.1);
-  border-radius: 12px;
-  text-align: center;
 }
 
 .stat-value {
-  font-family: var(--font-gaming);
-  font-size: 1.8rem;
-  font-weight: 900;
-  margin-bottom: 4px;
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--rpg-text-primary);
 }
 
-.text-cyan {
-  color: var(--neon-cyan);
-  text-shadow: 0 0 10px rgba(0, 242, 254, 0.3);
-}
-
-.text-purple {
-  color: var(--neon-purple);
-  text-shadow: 0 0 10px rgba(157, 78, 221, 0.3);
-}
-
-.text-green {
-  color: var(--neon-green);
-  text-shadow: 0 0 10px rgba(57, 255, 20, 0.3);
+.stat-value.mono {
+  font-family: var(--font-code);
+  font-size: 0.85rem;
 }
 
 .stat-label {
-  font-family: var(--font-code);
   font-size: 0.75rem;
-  color: var(--text-secondary);
+  color: var(--rpg-text-muted);
 }
 
-.profile-actions {
+/* Skills Section */
+.section-title h2 {
+  font-family: var(--font-title);
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--rpg-text-primary);
+  margin: 0 0 16px 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.skill-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  background: var(--rpg-bg-main);
+  border: 1px solid var(--rpg-border);
+  border-radius: var(--rpg-radius-sm);
+}
+
+.skill-item.unlocked {
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.skill-item.locked {
+  opacity: 0.5;
+}
+
+.skill-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.skill-name {
+  font-family: var(--font-heading);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--rpg-text-primary);
+}
+
+.skill-desc {
+  font-size: 0.75rem;
+  color: var(--rpg-text-muted);
+}
+
+/* Trophy Grid */
+.trophy-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.trophy-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 20px 16px;
+  background: var(--rpg-bg-main);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: var(--rpg-radius-sm);
+  opacity: 0.5;
+  transition: all 0.2s ease;
+}
+
+.trophy-card.unlocked {
+  opacity: 1;
+  border-color: var(--rpg-gold-border);
+  box-shadow: var(--rpg-shadow-sm);
+}
+
+.trophy-card mat-icon {
+  font-size: 36px;
+  width: 36px;
+  height: 36px;
+  margin-bottom: 8px;
+}
+
+.trophy-title {
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--rpg-text-primary);
+  margin-bottom: 2px;
+}
+
+.trophy-sub {
+  font-size: 0.75rem;
+  color: var(--rpg-text-muted);
+}
+
+.sheet-actions {
   display: flex;
   justify-content: flex-start;
-  margin-top: 16px;
+  margin-top: 8px;
 }
 
-.back-button {
-  border-color: rgba(255, 255, 255, 0.15) !important;
-  color: var(--text-primary) !important;
-  font-family: var(--font-gaming) !important;
-  font-size: 0.85rem !important;
+.back-dashboard-btn {
+  background: var(--rpg-bg-main) !important;
+  color: var(--rpg-text-primary) !important;
+  border: 1px solid var(--rpg-border) !important;
+  font-family: var(--font-heading) !important;
+  font-size: 0.9rem !important;
   font-weight: 700 !important;
-  letter-spacing: 0.05em !important;
-  border-radius: 8px !important;
-  padding: 8px 20px !important;
+  border-radius: var(--rpg-radius-sm) !important;
+  padding: 8px 22px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  text-decoration: none;
   transition: all 0.2s ease !important;
 }
 
-.back-button:hover {
-  background: rgba(255, 255, 255, 0.05) !important;
-  border-color: #ffffff !important;
+.back-dashboard-btn:hover {
+  border-color: var(--rpg-gold-bright) !important;
+  color: var(--rpg-gold-bright) !important;
 }
 
 .error-state {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 40px;
+  padding: 60px;
   text-align: center;
+  background: var(--rpg-bg-surface);
+  border-radius: var(--rpg-radius-md);
+  color: var(--rpg-text-secondary);
 }
 
 .error-icon {
   font-size: 48px;
   width: 48px;
   height: 48px;
-  color: var(--neon-red);
+  color: var(--rpg-ruby-bright);
   margin-bottom: 16px;
-  filter: drop-shadow(0 0 5px rgba(239, 68, 68, 0.5));
+}
+
+@media (max-width: 800px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 550px) {
+  .sheet-header {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
 }

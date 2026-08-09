@@ -1,59 +1,125 @@
-<header class="app-navbar">
-  <nav class="navbar-container">
+<header class="rpg-navbar">
+  <nav class="navbar-container" aria-label="Navigation principale">
     <div class="navbar-left">
       @if (authService.isAuthenticated()) {
-        <a routerLink="/worlds" class="navbar-brand">
-          <span class="brand-text">Code<span class="cyan-glow">Quest</span></span>
+        <a routerLink="/worlds" class="navbar-brand" aria-label="CodeQuest Accueil">
+          <mat-icon class="brand-icon">explore</mat-icon>
+          <span class="brand-text">Code<span class="gold-text">Quest</span></span>
         </a>
-        <a mat-button routerLink="/worlds" routerLinkActive="active-link" class="nav-link">
-          <mat-icon>dashboard</mat-icon>
-          <span>Mondes</span>
-        </a>
+
+        <div class="nav-links desktop-only">
+          <a mat-button routerLink="/worlds" routerLinkActive="active-link" class="nav-link">
+            <mat-icon>auto_stories</mat-icon>
+            <span>Tableau de Bord</span>
+          </a>
+          <a mat-button routerLink="/profile" routerLinkActive="active-link" class="nav-link">
+            <mat-icon>shield</mat-icon>
+            <span>Mon Personnage</span>
+          </a>
+        </div>
       } @else {
-        <a routerLink="/login" class="navbar-brand">
-          <span class="brand-text">Code<span class="cyan-glow">Quest</span></span>
+        <a routerLink="/login" class="navbar-brand" aria-label="CodeQuest Connexion">
+          <mat-icon class="brand-icon">explore</mat-icon>
+          <span class="brand-text">Code<span class="gold-text">Quest</span></span>
         </a>
       }
     </div>
 
     <div class="navbar-right">
       @if (authService.isAuthenticated()) {
-        <button mat-button [matMenuTriggerFor]="userMenu" class="user-profile-button">
-          <figure class="user-avatar">
+        <!-- Mini Statut Progression Joueur -->
+        <div class="player-quick-status desktop-only" routerLink="/profile" tabindex="0" aria-label="Avoir mes caractéristiques de personnage">
+          <div class="level-chip">
+            <span class="lvl-label">NIV.</span>
+            <span class="lvl-val">{{ progressService.currentLevelInfo().level }}</span>
+          </div>
+          <div class="xp-mini-details">
+            <div class="xp-mini-text">
+              <span class="title-label">{{ progressService.currentLevelInfo().title }}</span>
+              <span class="xp-count">{{ progressService.progress().xp }} XP</span>
+            </div>
+            <div class="xp-bar-container" title="Progression du niveau actuel">
+              <div class="xp-bar-fill" [style.width.%]="progressService.xpProgressPercentage()"></div>
+            </div>
+          </div>
+        </div>
+
+        <button mat-button [matMenuTriggerFor]="userMenu" class="user-profile-button" aria-label="Menu profil utilisateur">
+          <div class="user-avatar">
             <mat-icon>account_circle</mat-icon>
-          </figure>
-          <span class="username">{{ authService.currentUser()?.username }}</span>
+          </div>
+          <span class="username desktop-only">
+            {{ authService.currentUser()?.username }}
+            @if (authService.isAdmin()) {
+              <span class="admin-badge" title="Mode Administrateur — Accès direct illimité">👑 ADMIN</span>
+            }
+          </span>
           <mat-icon class="arrow-down">keyboard_arrow_down</mat-icon>
         </button>
-        <mat-menu #userMenu="matMenu" panelClass="cyber-menu">
+
+        <mat-menu #userMenu="matMenu" panelClass="rpg-menu">
           <header class="menu-user-info">
-            <p class="menu-username">{{ authService.currentUser()?.username }}</p>
+            <p class="menu-username">
+              {{ authService.currentUser()?.username }}
+              @if (authService.isAdmin()) {
+                <span class="admin-badge">👑 ADMIN</span>
+              }
+            </p>
+            <p class="menu-title">{{ progressService.currentLevelInfo().title }}</p>
             <p class="menu-email">{{ authService.currentUser()?.email }}</p>
-            <span class="user-role">{{ (authService.currentUser()?.roles?.[0] || 'Joueur').replace('ROLE_', '') | titlecase }}</span>
           </header>
           <mat-divider class="menu-divider"></mat-divider>
           <a mat-menu-item routerLink="/profile" class="profile-menu-item">
-            <mat-icon>person</mat-icon>
-            <span>Mon Profil</span>
+            <mat-icon>account_box</mat-icon>
+            <span>Fiche de Personnage</span>
+          </a>
+          <a mat-menu-item routerLink="/worlds" class="profile-menu-item">
+            <mat-icon>map</mat-icon>
+            <span>Mondes & Quêtes</span>
           </a>
           <button mat-menu-item (click)="logout()" class="logout-menu-item">
             <mat-icon>logout</mat-icon>
             <span>Se déconnecter</span>
           </button>
         </mat-menu>
+
+        <!-- Toggle Mobile Menu -->
+        <button mat-icon-button class="mobile-toggle-btn mobile-only" (click)="toggleMobileMenu()" aria-label="Ouvrir le menu mobile">
+          <mat-icon>{{ mobileMenuOpen ? 'close' : 'menu' }}</mat-icon>
+        </button>
       } @else {
         <a mat-button routerLink="/login" class="login-button">
           <mat-icon>login</mat-icon>
           <span>Connexion</span>
         </a>
         <a mat-flat-button routerLink="/register" class="register-button">
-          <mat-icon>person_add</mat-icon>
+          <mat-icon>how_to_reg</mat-icon>
           <span>Inscription</span>
         </a>
       }
     </div>
   </nav>
-  <div class="navbar-bottom-glow"></div>
+
+  <!-- Navigation Mobile Drawer -->
+  @if (authService.isAuthenticated() && mobileMenuOpen) {
+    <nav class="mobile-drawer" aria-label="Menu mobile">
+      <a routerLink="/worlds" routerLinkActive="active-link" (click)="closeMobileMenu()" class="drawer-link">
+        <mat-icon>auto_stories</mat-icon>
+        <span>Tableau de Bord</span>
+      </a>
+      <a routerLink="/profile" routerLinkActive="active-link" (click)="closeMobileMenu()" class="drawer-link">
+        <mat-icon>shield</mat-icon>
+        <span>Mon Personnage</span>
+      </a>
+      <div class="drawer-status">
+        <span>Niveau {{ progressService.currentLevelInfo().level }} — {{ progressService.progress().xp }} XP</span>
+      </div>
+      <button (click)="logout()" class="drawer-logout">
+        <mat-icon>logout</mat-icon>
+        <span>Déconnexion</span>
+      </button>
+    </nav>
+  }
 </header>
 
 <main class="app-main-content">

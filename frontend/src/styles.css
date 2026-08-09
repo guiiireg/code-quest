@@ -1,195 +1,265 @@
-/* You can add global styles to this file, and also import other style files */
+/* Modern Fantasy RPG Design System for CodeQuest */
 
 :root {
-  --bg-primary: #020617; /* Deep cyber dark */
-  --bg-secondary: #080f1d; /* Cyber panel dark */
-  --bg-tertiary: #0e1726; /* Cyber card background */
+  /* Colors - Warm RPG Palette */
+  --rpg-bg-main: #11141a;
+  --rpg-bg-surface: #181c24;
+  --rpg-bg-card: #202533;
+  --rpg-bg-card-hover: #272d3f;
+  --rpg-bg-input: #141720;
   
-  --neon-cyan: #00f2fe;
-  --neon-purple: #9d4edd;
-  --neon-magenta: #ff007f;
-  --neon-green: #39ff14;
-  --neon-orange: #f59e0b;
-  --neon-red: #ef4444;
+  /* Accent Tones */
+  --rpg-gold: #d97706;
+  --rpg-gold-bright: #f59e0b;
+  --rpg-gold-light: #fde68a;
+  --rpg-gold-subtle: rgba(217, 119, 6, 0.12);
+  --rpg-gold-border: rgba(217, 119, 6, 0.35);
   
-  --text-primary: #f1f5f9;
-  --text-secondary: #94a3b8;
-  --text-accent: #00f2fe;
+  --rpg-emerald: #10b981;
+  --rpg-emerald-bright: #34d399;
+  --rpg-emerald-subtle: rgba(16, 185, 129, 0.12);
   
-  --font-gaming: 'Orbitron', sans-serif;
+  --rpg-blue: #3b82f6;
+  --rpg-blue-bright: #60a5fa;
+  --rpg-blue-subtle: rgba(59, 130, 246, 0.12);
+  
+  --rpg-ruby: #e11d48;
+  --rpg-ruby-bright: #f43f5e;
+  --rpg-ruby-subtle: rgba(225, 29, 72, 0.12);
+  
+  --rpg-purple: #8b5cf6;
+  --rpg-purple-subtle: rgba(139, 92, 246, 0.12);
+
+  /* Text Tones (High Contrast WCAG 2.2 AA) */
+  --rpg-text-primary: #fcfaf7;
+  --rpg-text-secondary: #b3ab9f;
+  --rpg-text-muted: #80786d;
+  --rpg-text-gold: #f59e0b;
+
+  /* Typography */
+  --font-title: 'Cinzel', 'Outfit', serif;
+  --font-heading: 'Outfit', 'Plus Jakarta Sans', sans-serif;
+  --font-body: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   --font-code: 'JetBrains Mono', monospace;
+
+  /* Borders & Shadows */
+  --rpg-border: 1px solid rgba(255, 255, 255, 0.08);
+  --rpg-border-subtle: 1px solid rgba(255, 255, 255, 0.05);
+  --rpg-radius-sm: 8px;
+  --rpg-radius-md: 14px;
+  --rpg-radius-lg: 20px;
   
-  --shadow-cyan: 0 0 10px rgba(0, 242, 254, 0.4), 0 0 20px rgba(0, 242, 254, 0.15);
-  --shadow-purple: 0 0 10px rgba(157, 78, 221, 0.4), 0 0 20px rgba(157, 78, 221, 0.15);
-  --shadow-magenta: 0 0 10px rgba(255, 0, 127, 0.4), 0 0 20px rgba(255, 0, 127, 0.15);
-  --shadow-green: 0 0 10px rgba(57, 255, 20, 0.4), 0 0 20px rgba(57, 255, 20, 0.15);
-  
-  --border-glow: 1px solid rgba(0, 242, 254, 0.15);
+  --rpg-shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
+  --rpg-shadow-md: 0 10px 30px rgba(0, 0, 0, 0.5);
+  --rpg-shadow-gold: 0 6px 20px rgba(217, 119, 6, 0.18);
+
+  /* Legacy variable mappings to prevent broken styles before components update */
+  --bg-primary: var(--rpg-bg-main);
+  --bg-secondary: var(--rpg-bg-surface);
+  --bg-tertiary: var(--rpg-bg-card);
+  --text-primary: var(--rpg-text-primary);
+  --text-secondary: var(--rpg-text-secondary);
 }
 
-html, body { height: 100%; }
-body {
+html, body {
+  height: 100%;
   margin: 0;
-  font-family: 'JetBrains Mono', monospace;
-  background: radial-gradient(circle at 50% 50%, #080f1d 0%, #020617 100%);
-  background-attachment: fixed;
-  color: var(--text-primary);
+  padding: 0;
+  background-color: var(--rpg-bg-main);
 }
 
-/* Personnalisation des barres de défilement (style cyber) */
+body.rpg-theme {
+  font-family: var(--font-body);
+  background: radial-gradient(circle at 50% 20%, #1c222e 0%, #11141a 70%);
+  background-attachment: fixed;
+  color: var(--rpg-text-primary);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Accessibility Focus Ring (WCAG 2.2 AA) */
+*:focus-visible {
+  outline: 2px solid var(--rpg-gold-bright) !important;
+  outline-offset: 3px !important;
+}
+
+/* Custom RPG Scrollbars */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--bg-primary);
+  background: var(--rpg-bg-main);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(0, 242, 254, 0.2);
+  background: rgba(217, 119, 6, 0.3);
   border-radius: 4px;
-  border: 1px solid rgba(0, 242, 254, 0.1);
+  border: 1px solid rgba(217, 119, 6, 0.15);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 242, 254, 0.4);
+  background: var(--rpg-gold);
 }
 
-/* Surcharge des variables système Material Design pour le thème sombre cyberpunk */
-/* Doit être sur 'html' pour surpasser le thème azure-blue.css qui cible également 'html' */
+/* Material Design Overrides for RPG Theme */
 html {
-  --mat-sys-surface-container: #080f1d;
-  --mat-sys-surface-container-high: #0e1726;
-  --mat-sys-surface-container-highest: #0e1726;
-  --mat-sys-on-surface: #f1f5f9;
-  --mat-sys-on-surface-variant: #94a3b8;
-  /* Surcharge de la police système de Material pour imposer Orbitron */
-  --mat-sys-label-large: 700 0.85rem / 1.25rem 'Orbitron', sans-serif;
-  --mat-sys-label-large-font: 'Orbitron', sans-serif;
-  --mat-menu-item-label-text-font: 'Orbitron', sans-serif;
-  --mat-menu-item-label-text-weight: 700;
+  --mat-sys-surface-container: var(--rpg-bg-surface);
+  --mat-sys-surface-container-high: var(--rpg-bg-card);
+  --mat-sys-surface-container-highest: var(--rpg-bg-card-hover);
+  --mat-sys-on-surface: var(--rpg-text-primary);
+  --mat-sys-on-surface-variant: var(--rpg-text-secondary);
+  --mat-sys-primary: var(--rpg-gold-bright);
 }
 
-/* Menu Cyberpunk Global Overrides */
+/* RPG Menu Component Class */
+.rpg-menu.mat-mdc-menu-panel,
+.mat-mdc-menu-panel.rpg-menu,
 .cyber-menu.mat-mdc-menu-panel,
 .mat-mdc-menu-panel.cyber-menu {
-  --mat-menu-container-color: #080f1d;
-  --mat-sys-surface-container: #080f1d;
-  background: #080f1d !important;
-  backdrop-filter: blur(20px) !important;
-  border: 1px solid rgba(0, 242, 254, 0.4) !important;
-  border-radius: 12px !important;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 242, 254, 0.15) !important;
-  padding: 16px !important;
-  min-width: 220px !important;
+  background: var(--rpg-bg-card) !important;
+  backdrop-filter: blur(16px) !important;
+  border: 1px solid var(--rpg-gold-border) !important;
+  border-radius: var(--rpg-radius-md) !important;
+  box-shadow: var(--rpg-shadow-md), var(--rpg-shadow-gold) !important;
+  padding: 12px !important;
+  min-width: 240px !important;
 }
 
+.rpg-menu .mat-mdc-menu-content,
 .cyber-menu .mat-mdc-menu-content {
   background-color: transparent !important;
   padding: 0 !important;
 }
 
-/* Ciblage profond des éléments internes MDC pour forcer les couleurs claires */
+.rpg-menu .mat-mdc-menu-item,
 .cyber-menu .mat-mdc-menu-item {
-  --mat-menu-item-label-text-color: #f1f5f9;
-  --mat-menu-item-icon-color: #f1f5f9;
-  --mat-sys-on-surface: #f1f5f9;
-  --mat-sys-on-surface-variant: #94a3b8;
-  color: #f1f5f9 !important;
-  font-family: var(--font-gaming) !important;
-  font-size: 0.85rem !important;
-  font-weight: 700 !important;
+  color: var(--rpg-text-primary) !important;
+  font-family: var(--font-heading) !important;
+  font-size: 0.9rem !important;
+  font-weight: 600 !important;
+  border-radius: var(--rpg-radius-sm) !important;
+  transition: all 0.15s ease !important;
+  min-height: 42px !important;
 }
 
-.cyber-menu .mat-mdc-menu-item .mdc-list-item__primary-text,
-.cyber-menu .mat-mdc-menu-item .mat-mdc-menu-item-text {
-  color: #f1f5f9 !important;
-  font-family: 'Orbitron', sans-serif !important;
-  font-weight: 700 !important;
-  font-size: 0.85rem !important;
+.rpg-menu .mat-mdc-menu-item:hover,
+.cyber-menu .mat-mdc-menu-item:hover {
+  background: var(--rpg-gold-subtle) !important;
+  color: var(--rpg-gold-bright) !important;
 }
 
+.rpg-menu .mat-mdc-menu-item .mat-icon,
 .cyber-menu .mat-mdc-menu-item .mat-icon {
-  color: #f1f5f9 !important;
+  color: var(--rpg-gold-bright) !important;
+  margin-right: 10px !important;
 }
 
-.cyber-menu .profile-menu-item {
-  --mat-menu-item-label-text-color: var(--text-primary) !important;
-  --mat-menu-item-icon-color: var(--neon-cyan) !important;
-  color: var(--text-primary) !important;
-  font-family: var(--font-gaming) !important;
-  font-size: 0.85rem !important;
-  font-weight: 700 !important;
-  border-radius: 6px !important;
-  transition: all 0.2s ease !important;
-  text-decoration: none;
-  display: flex !important;
+/* Form Fields Styling */
+.mat-mdc-form-field {
+  width: 100%;
+}
+
+::ng-deep .form-field .mdc-text-field--outlined,
+::ng-deep .mat-mdc-form-field-wrapper {
+  background-color: var(--rpg-bg-input) !important;
+  border-radius: var(--rpg-radius-sm) !important;
+}
+
+::ng-deep .form-field .mdc-notched-outline__leading,
+::ng-deep .form-field .mdc-notched-outline__notch,
+::ng-deep .form-field .mdc-notched-outline__trailing {
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+::ng-deep .form-field:hover .mdc-notched-outline__leading,
+::ng-deep .form-field:hover .mdc-notched-outline__notch,
+::ng-deep .form-field:hover .mdc-notched-outline__trailing {
+  border-color: var(--rpg-gold-border) !important;
+}
+
+::ng-deep .form-field.mat-focused .mdc-notched-outline__leading,
+::ng-deep .form-field.mat-focused .mdc-notched-outline__notch,
+::ng-deep .form-field.mat-focused .mdc-notched-outline__trailing {
+  border-color: var(--rpg-gold-bright) !important;
+  border-width: 1.5px !important;
+}
+
+::ng-deep .form-field input,
+::ng-deep .form-field label {
+  color: var(--rpg-text-primary) !important;
+  font-family: var(--font-body) !important;
+}
+
+::ng-deep .form-field .mat-mdc-floating-label {
+  color: var(--rpg-text-secondary) !important;
+}
+
+::ng-deep .form-field.mat-focused .mat-mdc-floating-label {
+  color: var(--rpg-text-gold) !important;
+}
+
+::ng-deep .form-field mat-icon {
+  color: var(--rpg-text-secondary) !important;
+}
+
+::ng-deep .form-field.mat-focused mat-icon {
+  color: var(--rpg-gold-bright) !important;
+}
+
+/* Badges & Tags */
+.rpg-badge {
+  display: inline-flex;
   align-items: center;
-}
-
-.cyber-menu .profile-menu-item mat-icon {
-  color: var(--neon-cyan) !important;
-}
-
-.cyber-menu .profile-menu-item:hover {
-  background: rgba(0, 242, 254, 0.08) !important;
-}
-
-.cyber-menu .logout-menu-item {
-  --mat-menu-item-label-text-color: var(--neon-red) !important;
-  --mat-menu-item-icon-color: var(--neon-red) !important;
-  color: var(--neon-red) !important;
-  font-family: var(--font-gaming) !important;
-  font-size: 0.85rem !important;
-  font-weight: 700 !important;
-  border-radius: 6px !important;
-  transition: all 0.2s ease !important;
-}
-
-.cyber-menu .logout-menu-item mat-icon {
-  color: var(--neon-red) !important;
-}
-
-.cyber-menu .logout-menu-item:hover {
-  background: rgba(239, 68, 68, 0.08) !important;
-}
-
-/* Styles pour les informations utilisateur de l'en-tête du menu */
-.cyber-menu .menu-user-info {
-  font-family: var(--font-code);
-  padding: 8px 8px 12px 8px;
-}
-
-.cyber-menu .menu-username {
-  font-family: var(--font-gaming);
-  font-weight: 700;
-  font-size: 1rem;
-  color: #ffffff !important;
-  margin: 0 0 4px 0;
-}
-
-.cyber-menu .menu-email {
+  gap: 6px;
+  font-family: var(--font-heading);
   font-size: 0.75rem;
-  color: var(--text-secondary) !important;
-  margin: 0 0 8px 0;
-}
-
-.cyber-menu .user-role {
-  display: inline-block;
-  font-size: 0.65rem;
   font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 6px;
+  letter-spacing: 0.03em;
   text-transform: uppercase;
-  color: var(--neon-purple) !important;
-  border: 1px solid rgba(157, 78, 221, 0.3) !important;
-  background: rgba(157, 78, 221, 0.08) !important;
-  padding: 2px 6px;
-  border-radius: 4px;
-  letter-spacing: 0.05em;
+  white-space: nowrap;
 }
 
-.cyber-menu .menu-divider {
-  border-color: rgba(255, 255, 255, 0.08) !important;
-  margin: 8px 0 !important;
+.rpg-badge--gold {
+  background: var(--rpg-gold-subtle);
+  color: var(--rpg-gold-bright);
+  border: 1px solid var(--rpg-gold-border);
 }
 
+.rpg-badge--emerald {
+  background: var(--rpg-emerald-subtle);
+  color: var(--rpg-emerald-bright);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.rpg-badge--blue {
+  background: var(--rpg-blue-subtle);
+  color: var(--rpg-blue-bright);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.rpg-badge--ruby {
+  background: var(--rpg-ruby-subtle);
+  color: var(--rpg-ruby-bright);
+  border: 1px solid rgba(225, 29, 72, 0.3);
+}
+
+.rpg-badge--purple {
+  background: var(--rpg-purple-subtle);
+  color: #c084fc;
+  border: 1px solid rgba(139, 92, 246, 0.3);
+}
+
+/* Accessibility: Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

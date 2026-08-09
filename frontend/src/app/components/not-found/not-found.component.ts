@@ -4,7 +4,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
 
 /**
- * Composant affiché en cas de route introuvable (Erreur 404) avec un style cyberpunk.
+ * Composant affiché en cas de route introuvable (Erreur 404) avec le thème RPG.
  */
 @Component({
   selector: 'app-not-found',

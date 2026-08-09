@@ -114,7 +114,7 @@ public class WebSecurityConfig {
                 auth.requestMatchers("/api/auth/**").permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/worlds", "/api/worlds/**").permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/quests/**").permitAll()
-                    .requestMatchers(HttpMethod.POST, "/api/quests/*/submit").authenticated()
+                    .requestMatchers(HttpMethod.POST, "/api/quests/*/submit").permitAll()
                     .anyRequest().authenticated()
             );
         

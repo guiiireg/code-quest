@@ -14,6 +14,8 @@ class CodeQuestApplicationTests {
      */
     @Test
     void contextLoads() {
+        org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder enc = new org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder();
+        System.out.println(">>> BCRYPT_HASH_FOR_PASSWORD: " + enc.encode("password"));
     }
 
 }

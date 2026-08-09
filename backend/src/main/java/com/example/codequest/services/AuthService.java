@@ -113,6 +113,13 @@ public class AuthService {
             });
         }
 
+        // L'utilisateur 'gui' se voit attribuer d'office le rôle ROLE_ADMIN avec toutes les permissions
+        if ("gui".equalsIgnoreCase(signUpRequest.username())) {
+            Role adminRole = roleRepository.findByName("ROLE_ADMIN")
+                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+            roles.add(adminRole);
+        }
+
         user.setRoles(roles);
         userRepository.save(user);
 

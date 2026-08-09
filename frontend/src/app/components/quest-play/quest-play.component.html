@@ -2,7 +2,7 @@
   @if (loading) {
     <section class="loading-state">
       <aside class="spinner"></aside>
-      <p>Initialisation de votre espace de code...</p>
+      <p>Préparation du parchemin d'épreuve et de l'éditeur...</p>
     </section>
   }
 
@@ -10,58 +10,98 @@
     <section class="error-state">
       <mat-icon class="error-icon">error_outline</mat-icon>
       <p>{{ errorMessage }}</p>
-      <button mat-flat-button color="primary" [routerLink]="['/worlds', worldId]">Retour au monde</button>
+      <a mat-flat-button class="action-btn" [routerLink]="['/worlds', worldId]">Retour à la région</a>
     </section>
   }
 
   @if (!loading && !errorMessage && quest) {
-    <section class="instructions-pane">
+    <!-- Panneau Gauche: Instructions de Quête (Parchemin) -->
+    <section class="instructions-pane" aria-label="Instructions de l'exercice">
       <nav class="back-nav">
-        <button mat-button class="back-button" [routerLink]="['/worlds', worldId]">
+        <a mat-button class="back-button" [routerLink]="['/worlds', worldId]">
           <mat-icon>arrow_back</mat-icon>
-          Retour au monde
-        </button>
+          <span>Retour à la région</span>
+        </a>
       </nav>
 
       <header class="quest-header">
+        <div class="quest-tag">
+          <mat-icon class="gold">auto_stories</mat-icon>
+          <span>Épreuve de Programmation</span>
+        </div>
         <h1>{{ quest.title }}</h1>
-        <aside class="quest-meta">
-          <strong class="badge xp-badge">+{{ quest.xpReward }} XP</strong>
-          <em class="badge difficulty-badge" [class]="quest.difficulty.toLowerCase()">
-            {{ quest.difficulty }}
-          </em>
-        </aside>
+        <div class="quest-meta-chips">
+          @if (quest.languages) {
+            <span class="rpg-badge rpg-badge--gold">
+              <mat-icon class="badge-icon">code</mat-icon> {{ quest.languages }}
+            </span>
+          }
+          @if (quest.concept) {
+            <span class="rpg-badge rpg-badge--blue">
+              <mat-icon class="badge-icon">psychology</mat-icon> {{ quest.concept }}
+            </span>
+          }
+          <span class="rpg-badge rpg-badge--emerald">+{{ quest.xpReward }} XP</span>
+          <span class="rpg-badge" [class.rpg-badge--gold]="quest.difficulty === 'EASY'" [class.rpg-badge--blue]="quest.difficulty === 'MEDIUM'" [class.rpg-badge--ruby]="quest.difficulty === 'HARD'">
+            {{ quest.difficulty === 'EASY' ? 'Apprenti' : quest.difficulty === 'MEDIUM' ? 'Compagnon' : 'Maître' }}
+          </span>
+          @if (progressService.isQuestCompleted(quest.id)) {
+            <span class="rpg-badge rpg-badge--emerald">✅ Déjà accomplie</span>
+          }
+        </div>
       </header>
 
       <mat-divider class="custom-divider"></mat-divider>
 
       <article class="instructions-content">
-        <h2>Instructions de l'exercice</h2>
-        <p class="description-text">{{ quest.description }}</p>
+        <section class="objective-block">
+          <h2>
+            <mat-icon class="gold">task</mat-icon>
+            Objectif & Consignes de l'Épreuve
+          </h2>
+          <p class="description-text">{{ quest.description }}</p>
+        </section>
         
-        <blockquote class="tip-blockquote">
-          <mat-icon>lightbulb_outline</mat-icon>
-          <p>Assurez-vous de respecter les types de retour demandés et de ne pas modifier la signature de la classe ou des méthodes principales.</p>
-        </blockquote>
+        @if (quest.theory) {
+          <section class="theory-block">
+            <h3>
+              <mat-icon class="purple">menu_book</mat-icon>
+              Grimoire de Théorie
+            </h3>
+            <p class="theory-text">{{ quest.theory }}</p>
+          </section>
+        }
+
+        <aside class="tip-blockquote">
+          <mat-icon class="gold">auto_awesome</mat-icon>
+          <div class="tip-text">
+            <strong>Conseil de l'Archimage :</strong>
+            <p>Rédigez votre solution dans l'éditeur à droite puis cliquez sur <strong>"Invoquer la compilation"</strong> pour valider l'épreuve.</p>
+          </div>
+        </aside>
       </article>
     </section>
 
-    <section class="editor-pane">
+    <!-- Panneau Droit: Éditeur de Code & Console -->
+    <section class="editor-pane" aria-label="Éditeur de code et console">
       <header class="editor-header">
-        <h2>Éditeur de code (Java)</h2>
-        <button mat-icon-button class="reset-button" (click)="resetTemplate()" title="Réinitialiser le code de départ">
+        <div class="editor-title">
+          <mat-icon class="gold">terminal</mat-icon>
+          <h2>Éditeur de Code — {{ quest.languages || 'HTML5' }}</h2>
+          <span class="saved-indicator" title="Brouillon sauvegardé automatiquement">
+            <mat-icon class="saved-icon">cloud_done</mat-icon>
+            Sauvegardé
+          </span>
+        </div>
+        <button mat-icon-button class="reset-button" (click)="resetTemplate()" title="Réinitialiser le code de départ" aria-label="Réinitialiser le code">
           <mat-icon>refresh</mat-icon>
         </button>
       </header>
 
-      <form class="editor-container" (submit)="submitCode(); $event.preventDefault()">
-        <textarea 
-          class="code-textarea" 
-          [(ngModel)]="code" 
-          name="code" 
-          spellcheck="false" 
-          placeholder="// Écrivez votre code ici...">
-        </textarea>
+      <form class="editor-form" (submit)="submitCode(); $event.preventDefault()">
+        <div class="editor-wrapper">
+          <div #editorContainer class="monaco-editor-container"></div>
+        </div>
 
         <footer class="editor-footer">
           <button 
@@ -70,27 +110,38 @@
             type="submit" 
             [disabled]="submitting || !code.trim()">
             @if (submitting) {
-              <aside class="mini-spinner"></aside>
-              Validation en cours...
+              <span class="btn-flex">
+                <aside class="mini-spinner"></aside>
+                Compilation en cours...
+              </span>
             } @else {
-              <ng-container>
+              <span class="btn-flex">
                 <mat-icon>play_arrow</mat-icon>
-                Soumettre le code
-              </ng-container>
+                Invoquer la compilation
+              </span>
             }
           </button>
         </footer>
       </form>
 
+      <!-- Console de Résultat / Victoire -->
       @if (result) {
-        <aside class="console-panel" [class.success]="result.success" [class.failure]="!result.success">
+        <aside class="console-panel" [class.success]="result.success" [class.failure]="!result.success" aria-label="Résultat de la compilation">
           <header class="console-header">
-            <mat-icon>{{ result.success ? 'check_circle_outline' : 'highlight_off' }}</mat-icon>
-            <h3>{{ result.success ? 'Succès' : 'Échec des tests' }}</h3>
+            <mat-icon class="console-icon">{{ result.success ? 'workspace_premium' : 'error' }}</mat-icon>
+            <h3>{{ result.success ? 'Victoire ! Quête Accomplie' : 'Échec de la validation' }}</h3>
           </header>
-          <p class="console-output">{{ result.output }}</p>
+          
+          <pre class="console-output">{{ result.output }}</pre>
+
           @if (result.success) {
-            <p class="xp-message">Reçu : +{{ result.xpGained }} XP</p>
+            <div class="victory-block">
+              <span class="xp-message">+{{ result.xpGained || quest.xpReward }} XP REÇUS</span>
+              <a mat-flat-button class="victory-cta" [routerLink]="['/worlds', worldId]">
+                <span>Continuer l'Aventure</span>
+                <mat-icon>arrow_forward</mat-icon>
+              </a>
+            </div>
           }
         </aside>
       }

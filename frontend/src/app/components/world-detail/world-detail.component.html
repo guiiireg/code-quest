@@ -1,15 +1,15 @@
 <main class="detail-container">
-  <nav class="back-nav">
-    <button mat-button class="back-button" routerLink="/worlds">
+  <nav class="back-nav" aria-label="Navigation de retour">
+    <a mat-button class="back-button" routerLink="/worlds">
       <mat-icon>arrow_back</mat-icon>
-      Retour aux mondes
-    </button>
+      <span>Retour au Tableau de Bord</span>
+    </a>
   </nav>
 
   @if (loading) {
     <section class="loading-state">
       <aside class="spinner"></aside>
-      <p>Chargement des secrets de ce monde...</p>
+      <p>Exploration des territoires de la région...</p>
     </section>
   }
 
@@ -21,57 +21,159 @@
   }
 
   @if (!loading && !errorMessage && world) {
-    <header class="world-header">
-      <figure class="world-icon-wrapper">
-        <mat-icon>public</mat-icon>
+    <!-- Banner de Région -->
+    <header class="region-hero">
+      <figure class="region-crest">
+        <mat-icon>{{ world.id === 'world-1' ? 'landscape' : 'travel_explore' }}</mat-icon>
       </figure>
-      <hgroup class="world-meta">
+      
+      <div class="region-info">
         <h1>{{ world.name }}</h1>
-        <p class="world-desc">{{ world.description }}</p>
-      </hgroup>
+        <p class="region-desc">{{ world.description }}</p>
+        
+        <div class="region-stats-row">
+          @if (authService.isAdmin()) {
+            <div class="region-stat-item admin-mode-pill" title="Privilèges Administrateur actifs">
+              <mat-icon class="gold">admin_panel_settings</mat-icon>
+              <span><strong>👑 Mode Admin</strong> (Toutes quêtes débloquées)</span>
+            </div>
+          }
+          <div class="region-stat-item">
+            <mat-icon class="gold">task_alt</mat-icon>
+            <span><strong>{{ getCompletedQuestCount() }} / {{ world.quests.length }}</strong> Quêtes terminées</span>
+          </div>
+          <div class="region-stat-item">
+            <mat-icon class="emerald">workspace_premium</mat-icon>
+            <span><strong>{{ getTotalXp() }} XP</strong> Totaux à remporter</span>
+          </div>
+          <div class="region-stat-item">
+            <mat-icon class="blue">shield</mat-icon>
+            <span>Niveau conseillé : <strong>Niv. {{ world.id === 'world-1' ? '1+' : '2+' }}</strong></span>
+          </div>
+        </div>
+      </div>
     </header>
 
     <mat-divider class="custom-divider"></mat-divider>
 
-    <section class="quests-section">
-      <h2 class="section-title">
-        <mat-icon>assignment</mat-icon>
-        Quêtes disponibles ({{ world.quests.length }})
-      </h2>
+    <!-- Registre des Sous-Régions & Quêtes -->
+    <section class="quests-section" aria-label="Sous-régions et quêtes de la région">
+      <header class="section-title">
+        <h2>
+          <mat-icon class="gold">explore</mat-icon>
+          Sous-Régions & Parcours d'Épreuves ({{ subRegionGroups.length }})
+        </h2>
+        <p class="section-subtitle">Explorez les sous-régions thématiques, déroulez les chapitres et accomplissez chaque épreuve dans l'ordre pour progresser</p>
+      </header>
 
-      <section class="quests-list">
-        @for (quest of world.quests; track quest.id) {
-          <mat-card class="quest-card">
-            <header class="quest-card-header">
-              <hgroup class="quest-title-wrapper">
-                <mat-card-title class="quest-title">{{ quest.title }}</mat-card-title>
-                <small class="quest-id">#{{ quest.id }}</small>
-              </hgroup>
-              <aside class="quest-badges">
-                <strong class="badge xp-badge">+{{ quest.xpReward }} XP</strong>
-                <em class="badge difficulty-badge" [class]="quest.difficulty.toLowerCase()">
-                  {{ quest.difficulty }}
-                </em>
-              </aside>
+      <div class="subregions-list">
+        @for (group of subRegionGroups; track group.name) {
+          <article class="subregion-card" [class.collapsed]="isSubregionCollapsed(group.name)">
+            <header 
+              class="subregion-header" 
+              (click)="toggleSubregion(group.name)" 
+              (keydown.enter)="toggleSubregion(group.name)"
+              tabindex="0" 
+              role="button" 
+              [attr.aria-expanded]="!isSubregionCollapsed(group.name)"
+              title="Cliquer pour dérouler ou enrouler cette sous-région">
+              <div class="subregion-title-block">
+                <mat-icon class="subregion-icon">auto_stories</mat-icon>
+                <h3>{{ group.name }}</h3>
+              </div>
+              <div class="subregion-right-block">
+                <div class="subregion-stats">
+                  <span class="rpg-badge rpg-badge--emerald">{{ group.completedCount }} / {{ group.totalCount }} Quêtes</span>
+                  <span class="rpg-badge rpg-badge--gold">+{{ group.totalXp }} XP</span>
+                </div>
+                <mat-icon class="toggle-icon">
+                  {{ isSubregionCollapsed(group.name) ? 'expand_more' : 'expand_less' }}
+                </mat-icon>
+              </div>
             </header>
-            
-            <mat-card-content class="quest-card-content">
-              <p>{{ quest.description }}</p>
-            </mat-card-content>
-            
-            <mat-card-actions class="quest-card-actions">
-              <button mat-stroked-button class="quest-action" [routerLink]="['/worlds', world.id, 'quests', quest.id]">
-                Commencer la quête
-              </button>
-            </mat-card-actions>
-          </mat-card>
+
+            @if (!isSubregionCollapsed(group.name)) {
+              <div class="quests-list">
+                @for (quest of group.quests; track quest.id) {
+                  <article 
+                    class="quest-card" 
+                    [class.completed]="isCompleted(quest.id)" 
+                    [class.locked]="!isQuestUnlocked(quest)">
+                    <header class="quest-card-header">
+                      <div class="quest-title-block">
+                        <div class="status-indicator">
+                          @if (isCompleted(quest.id)) {
+                            <span class="rpg-badge rpg-badge--emerald">
+                              <mat-icon>check_circle</mat-icon> Terminée
+                            </span>
+                          } @else if (isQuestUnlocked(quest)) {
+                            <span class="rpg-badge rpg-badge--gold">
+                              <mat-icon>play_circle</mat-icon> Disponible
+                            </span>
+                          } @else {
+                            <span class="rpg-badge rpg-badge--ruby" [matTooltip]="'Accomplissez d\'abord : ' + getPreviousQuestTitle(quest)">
+                              <mat-icon>lock</mat-icon> Verrouillée
+                            </span>
+                          }
+                        </div>
+                        <h3>{{ quest.title }}</h3>
+                        <span class="quest-id">#{{ quest.id }}</span>
+                      </div>
+
+                      <div class="quest-badges-group">
+                        <span class="rpg-badge rpg-badge--emerald">+{{ quest.xpReward }} XP</span>
+                        <span class="rpg-badge" [class.rpg-badge--gold]="quest.difficulty === 'EASY'" [class.rpg-badge--blue]="quest.difficulty === 'MEDIUM'" [class.rpg-badge--ruby]="quest.difficulty === 'HARD'">
+                          {{ quest.difficulty === 'EASY' ? 'Apprenti' : quest.difficulty === 'MEDIUM' ? 'Compagnon' : 'Maître' }}
+                        </span>
+                      </div>
+                    </header>
+
+                    <div class="quest-card-body">
+                      <p class="quest-description">{{ quest.description }}</p>
+
+                      <div class="skills-tags">
+                        @for (lang of getLanguagesList(quest.languages); track lang) {
+                          <span class="skill-tag lang-tag">
+                            <mat-icon class="tag-icon">code</mat-icon> {{ lang }}
+                          </span>
+                        }
+                        @if (quest.concept) {
+                          <span class="skill-tag concept-tag">
+                            <mat-icon class="tag-icon">psychology</mat-icon> Concept : {{ quest.concept }}
+                          </span>
+                        }
+                      </div>
+                    </div>
+
+                    <footer class="quest-card-footer">
+                      @if (isQuestUnlocked(quest)) {
+                        <a mat-flat-button class="quest-action-btn" [routerLink]="['/worlds', world.id, 'quests', quest.id]">
+                          <span>{{ isCompleted(quest.id) ? 'Rejouer l\'épreuve' : 'Commencer l\'épreuve' }}</span>
+                          <mat-icon>arrow_forward</mat-icon>
+                        </a>
+                      } @else {
+                        <button 
+                          mat-flat-button 
+                          class="quest-action-btn locked-btn" 
+                          disabled
+                          [matTooltip]="'Accomplissez d\'abord la quête précédente : ' + getPreviousQuestTitle(quest)">
+                          <mat-icon>lock</mat-icon>
+                          <span>Verrouillée</span>
+                        </button>
+                      }
+                    </footer>
+                  </article>
+                }
+              </div>
+            }
+          </article>
         } @empty {
-          <section class="empty-quests">
-            <mat-icon>sentiment_dissatisfied</mat-icon>
-            <p>Il n'y a aucune quête dans ce monde pour le moment.</p>
+          <section class="empty-state">
+            <mat-icon class="empty-icon">assignment_late</mat-icon>
+            <p>Aucune sous-région enregistrée dans ce domaine.</p>
           </section>
         }
-      </section>
+      </div>
     </section>
   }
 </main>

@@ -50,25 +50,36 @@ public class QuestService {
 
         String code = request.code();
         if (code == null || code.isBlank()) {
-            return new SubmissionResponse(false, "Erreur : Code manquant.", 0);
+            return new SubmissionResponse(false, "Échec de la validation : Aucun code soumis.", 0);
         }
 
-        // 1. Compilation
-        CodeCompilerService.CompilationResult compileResult = compilerService.compile(code);
-        if (!compileResult.success()) {
-            return new SubmissionResponse(false, "Erreur de compilation :\n" + compileResult.output(), 0);
+        // Vérification si le code n'a pas été modifié par rapport au template de départ
+        if (quest.getCodeTemplate() != null && code.trim().equalsIgnoreCase(quest.getCodeTemplate().trim())) {
+            return new SubmissionResponse(false, "Échec de la validation : Vous n'avez pas encore complété l'exercice. Modifiez le code de départ pour réussir l'épreuve.", 0);
         }
 
-        // 2. Validation Logique (Regex)
-        String regex = quest.getTestValidationRegex();
-        if (regex != null && !regex.isBlank()) {
-            if (code.matches(regex)) {
-                return new SubmissionResponse(true, "Compilation réussie. Validation logicielle réussie !", quest.getXpReward());
-            } else {
-                return new SubmissionResponse(false, "Compilation réussie, mais la logique de la solution est incorrecte.", 0);
+        // 1. Compilation Java (ignorée pour les quêtes purement HTML/CSS)
+        boolean isWebQuest = quest.getLanguages() != null && 
+            (quest.getLanguages().toUpperCase().contains("HTML") || quest.getLanguages().toUpperCase().contains("CSS")) &&
+            !quest.getLanguages().toUpperCase().contains("JAVA");
+
+        if (!isWebQuest) {
+            CodeCompilerService.CompilationResult compileResult = compilerService.compile(code);
+            if (!compileResult.success()) {
+                return new SubmissionResponse(false, "Erreur de compilation Java :\n" + compileResult.output(), 0);
             }
         }
 
-        return new SubmissionResponse(true, "Compilation réussie. (Aucune validation logicielle définie)", quest.getXpReward());
+        // 2. Validation Logique & Structurelle (Regex)
+        String regex = quest.getTestValidationRegex();
+        if (regex != null && !regex.isBlank()) {
+            if (code.matches(regex)) {
+                return new SubmissionResponse(true, "Félicitations ! Épreuve accomplie avec succès.", quest.getXpReward());
+            } else {
+                return new SubmissionResponse(false, "Échec de la validation : Le code soumis ne respecte pas les consignes ou les balises demandées.", 0);
+            }
+        }
+
+        return new SubmissionResponse(true, "Épreuve accomplie avec succès.", quest.getXpReward());
     }
 }

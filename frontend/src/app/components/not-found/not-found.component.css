@@ -9,87 +9,74 @@
 .error-card {
   position: relative;
   width: 100%;
-  max-width: 500px;
-  background: rgba(8, 15, 29, 0.75) !important;
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(239, 68, 68, 0.2) !important;
-  border-radius: 16px !important;
-  padding: 48px 40px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6) !important;
+  max-width: 480px;
+  background: var(--rpg-bg-surface);
+  border: 1px solid var(--rpg-gold-border);
+  border-radius: var(--rpg-radius-md);
+  padding: 48px 36px;
+  box-shadow: var(--rpg-shadow-md), var(--rpg-shadow-gold);
   text-align: center;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  transition: all 0.3s ease;
 }
 
-.error-card:hover {
-  border-color: rgba(239, 68, 68, 0.4) !important;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 20px rgba(239, 68, 68, 0.05) !important;
-}
-
-.card-bg-gradient {
+.error-card::before {
+  content: '';
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(90deg, var(--neon-red), var(--neon-orange), var(--neon-purple));
-  border-top-left-radius: 16px;
-  border-top-right-radius: 16px;
+  background: linear-gradient(90deg, var(--rpg-ruby-bright), var(--rpg-gold-bright));
+  border-top-left-radius: var(--rpg-radius-md);
+  border-top-right-radius: var(--rpg-radius-md);
 }
 
-.error-glitch-icon {
+.error-badge {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 72px;
   height: 72px;
-  border-radius: 16px;
-  background: rgba(239, 68, 68, 0.08);
-  color: var(--neon-red);
-  border: 1px solid rgba(239, 68, 68, 0.2);
-  margin: 0 auto 24px auto;
-  box-shadow: 0 0 20px rgba(239, 68, 68, 0.15);
+  border-radius: var(--rpg-radius-sm);
+  background: var(--rpg-ruby-subtle);
+  color: var(--rpg-ruby-bright);
+  border: 1px solid rgba(225, 29, 72, 0.3);
+  margin: 0 auto 20px auto;
 }
 
-.error-glitch-icon mat-icon {
-  font-size: 36px;
-  width: 36px;
-  height: 36px;
+.error-badge mat-icon {
+  font-size: 40px;
+  width: 40px;
+  height: 40px;
 }
 
 .error-heading {
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 }
 
 .error-heading h1 {
-  font-family: var(--font-gaming);
-  font-size: 4rem;
+  font-family: var(--font-title);
+  font-size: 3.5rem;
   font-weight: 900;
+  color: var(--rpg-ruby-bright);
   margin: 0;
   line-height: 1;
-  background: linear-gradient(135deg, var(--neon-red) 0%, var(--neon-purple) 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  letter-spacing: 0.05em;
-  text-shadow: 0 0 30px rgba(239, 68, 68, 0.2);
 }
 
 .error-heading h2 {
-  font-family: var(--font-gaming);
+  font-family: var(--font-title);
   font-size: 1.4rem;
-  font-weight: 700;
-  color: #ffffff;
+  font-weight: 800;
+  color: var(--rpg-text-primary);
   margin: 8px 0 0 0;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
 }
 
 .error-text {
-  font-family: var(--font-code);
+  font-family: var(--font-body);
   font-size: 0.9rem;
-  color: var(--text-secondary);
+  color: var(--rpg-text-secondary);
   line-height: 1.6;
-  margin: 0 0 36px 0;
+  margin: 0 0 32px 0;
 }
 
 .error-actions {
@@ -98,25 +85,22 @@
 }
 
 .action-button {
-  background: linear-gradient(135deg, var(--neon-cyan) 0%, #4f46e5 100%) !important;
-  color: #020617 !important;
-  font-family: var(--font-gaming) !important;
+  background: linear-gradient(135deg, var(--rpg-gold) 0%, #b45309 100%) !important;
+  color: #ffffff !important;
+  font-family: var(--font-heading) !important;
   font-size: 0.9rem !important;
-  border-radius: 8px !important;
-  padding: 10px 24px !important;
   font-weight: 800 !important;
-  letter-spacing: 0.05em;
-  transition: all 0.2s ease !important;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  border: 1px solid transparent !important;
+  border-radius: var(--rpg-radius-sm) !important;
+  padding: 10px 24px !important;
+  box-shadow: var(--rpg-shadow-gold) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
   text-decoration: none;
+  transition: all 0.2s ease !important;
 }
 
 .action-button:hover {
-  background: transparent !important;
-  color: var(--neon-cyan) !important;
-  border: 1px solid var(--neon-cyan) !important;
-  box-shadow: var(--shadow-cyan) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(217, 119, 6, 0.4) !important;
 }

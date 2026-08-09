@@ -1,53 +1,194 @@
 <main class="dashboard-container">
-  <header class="dashboard-header">
-    <h1>CodeQuest Dashboard</h1>
-    <p class="subtitle">Sélectionnez un monde pour commencer vos quêtes et gagner de l'XP</p>
-  </header>
+  <!-- Section En-tête / Profil & Quête Recommandée -->
+  <section class="dashboard-hero" aria-label="Aperçu de la progression du joueur">
+    <article class="hero-character-card">
+      <header class="character-header">
+        <figure class="avatar-frame">
+          <mat-icon class="avatar-icon">shield</mat-icon>
+          <span class="lvl-badge">NIV {{ progressService.currentLevelInfo().level }}</span>
+        </figure>
+        <hgroup class="character-identity">
+          <div class="character-name-row">
+            <h1>{{ authService.currentUser()?.username }}</h1>
+            @if (authService.isAdmin()) {
+              <span class="role-badge role-badge--admin" title="Compte Administrateur avec accès total">👑 ADMIN</span>
+            } @else {
+              <span class="role-badge role-badge--user">🛡️ JOUEUR</span>
+            }
+          </div>
+          <p class="character-title">{{ progressService.currentLevelInfo().title }}</p>
+        </hgroup>
+      </header>
 
-  @if (loading) {
-    <section class="loading-state">
-      <aside class="spinner"></aside>
-      <p>Chargement des mondes légendaires...</p>
-    </section>
-  }
+      <div class="xp-progress-block">
+        <div class="xp-label-row">
+          <span class="xp-text">Expérience de Codeur</span>
+          <span class="xp-values"><strong>{{ progressService.progress().xp }} XP</strong> (Niveau {{ progressService.currentLevelInfo().level }})</span>
+        </div>
+        <div class="progress-bar-track" aria-label="Barre de progression d'expérience">
+          <div class="progress-bar-fill" [style.width.%]="progressService.xpProgressPercentage()"></div>
+        </div>
+        <div class="next-level-hint">
+          @if (progressService.nextLevelInfo()) {
+            <span>Prochain palier : {{ progressService.nextLevelInfo()?.title }} à {{ progressService.nextLevelInfo()?.minXp }} XP</span>
+          } @else {
+            <span>Niveau Maximum Atteint !</span>
+          }
+        </div>
+      </div>
 
-  @if (errorMessage) {
-    <section class="error-state">
-      <mat-icon class="error-icon">error_outline</mat-icon>
-      <p>{{ errorMessage }}</p>
-    </section>
-  }
+      <footer class="character-stats-row">
+        <div class="stat-pill">
+          <mat-icon class="stat-icon gold">admin_panel_settings</mat-icon>
+          <div class="stat-content">
+            <span class="stat-num">{{ authService.isAdmin() ? '👑 ADMIN' : '🛡️ JOUEUR' }}</span>
+            <span class="stat-lbl">Rôle du Compte</span>
+          </div>
+        </div>
+        <div class="stat-pill">
+          <mat-icon class="stat-icon emerald">check_circle</mat-icon>
+          <div class="stat-content">
+            <span class="stat-num">{{ progressService.completedCount() }}</span>
+            <span class="stat-lbl">Quêtes résolues</span>
+          </div>
+        </div>
+        <div class="stat-pill">
+          <mat-icon class="stat-icon blue">military_tech</mat-icon>
+          <div class="stat-content">
+            <span class="stat-num">{{ progressService.progress().unlockedSkills.length }}</span>
+            <span class="stat-lbl">Compétences</span>
+          </div>
+        </div>
+      </footer>
+    </article>
 
-  @if (!loading && !errorMessage) {
-    <section class="worlds-grid">
-      @for (world of worlds; track world.id) {
-        <mat-card class="world-card">
-          <header class="card-bg-gradient"></header>
-          <mat-card-header class="world-card-header">
-            <figure class="world-badge">
-              <mat-icon>public</mat-icon>
-            </figure>
-            <mat-card-title>{{ world.name }}</mat-card-title>
-            <mat-card-subtitle>{{ world.quests.length }} quête(s) disponible(s)</mat-card-subtitle>
-          </mat-card-header>
-          
-          <mat-card-content class="world-card-content">
-            <p>{{ world.description }}</p>
-          </mat-card-content>
-          
-          <mat-card-actions class="world-card-actions">
-            <button mat-flat-button class="action-button" [routerLink]="['/worlds', world.id]">
-              Explorer le monde
-              <mat-icon iconPositionEnd>arrow_forward</mat-icon>
-            </button>
-          </mat-card-actions>
-        </mat-card>
-      } @empty {
-        <section class="empty-state">
-          <mat-icon class="empty-icon">blur_off</mat-icon>
-          <p>Aucun monde disponible pour le moment. Revenez plus tard !</p>
-        </section>
+    <!-- Quête Recommandée Active -->
+    <article class="hero-active-quest">
+      @if (activeQuest) {
+        <header class="quest-recommendation-tag">
+          <mat-icon class="gold">play_circle_filled</mat-icon>
+          <span>Quête Recommandée Actuelle</span>
+        </header>
+        <h2>{{ activeQuest.title }}</h2>
+        <p class="quest-desc">{{ activeQuest.description }}</p>
+        
+        <div class="quest-meta-chips">
+          <span class="rpg-badge rpg-badge--emerald">+{{ activeQuest.xpReward }} XP</span>
+          <span class="rpg-badge rpg-badge--gold">{{ activeQuest.difficulty }}</span>
+          <span class="rpg-badge rpg-badge--blue">~10 MIN</span>
+        </div>
+
+        <div class="active-quest-action">
+          <a mat-flat-button class="cta-quest-btn" [routerLink]="['/worlds', activeWorldId, 'quests', activeQuest.id]">
+            <span>Lancer la quête</span>
+            <mat-icon>arrow_forward</mat-icon>
+          </a>
+        </div>
+      } @else {
+        <div class="all-completed-banner">
+          <mat-icon class="gold">workspace_premium</mat-icon>
+          <h2>Félicitations, Aventurier !</h2>
+          <p>Vous avez triomphé de toutes les quêtes actuellement disponibles. Explorez à nouveau les régions pour parfaire votre code !</p>
+        </div>
       }
-    </section>
-  }
+    </article>
+  </section>
+
+  <!-- Section Compétences & Déblocages -->
+  <section class="skills-overview-section" aria-label="Compétences et déblocages">
+    <header class="section-header">
+      <h2>
+        <mat-icon class="gold">psychology</mat-icon>
+        Arbre de Compétences & Récompenses
+      </h2>
+      <p class="subtitle">Compétences techniques acquises au cours de vos aventures</p>
+    </header>
+
+    <div class="skills-grid">
+      @for (skill of progressService.progress().unlockedSkills; track skill) {
+        <div class="skill-card unlocked">
+          <mat-icon class="skill-icon">verified</mat-icon>
+          <span class="skill-name">{{ skill }}</span>
+          <span class="skill-status">Maîtrisé</span>
+        </div>
+      }
+      <div class="skill-card locked" title="Réussissez des quêtes REST pour débloquer">
+        <mat-icon class="skill-icon">lock</mat-icon>
+        <span class="skill-name">Design REST & HTTP</span>
+        <span class="skill-status">Nécessite Archipel des APIs</span>
+      </div>
+      <div class="skill-card locked" title="Atteignez le niveau 3 pour débloquer">
+        <mat-icon class="skill-icon">lock</mat-icon>
+        <span class="skill-name">Algorithmique Avancée</span>
+        <span class="skill-status">Verrouillé (Niv. 3)</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section Régions / Mondes -->
+  <section class="worlds-section" aria-label="Régions à explorer">
+    <header class="section-header">
+      <h2>
+        <mat-icon class="gold">map</mat-icon>
+        Régions du Royaume de CodeQuest
+      </h2>
+      <p class="subtitle">Choisissez une région pour entamer un parcours d'apprentissage spécifique</p>
+    </header>
+
+    @if (loading) {
+      <section class="loading-state">
+        <aside class="spinner"></aside>
+        <p>Chargement de la carte du monde...</p>
+      </section>
+    }
+
+    @if (errorMessage) {
+      <section class="error-state">
+        <mat-icon class="error-icon">error_outline</mat-icon>
+        <p>{{ errorMessage }}</p>
+      </section>
+    }
+
+    @if (!loading && !errorMessage) {
+      <div class="worlds-grid">
+        @for (world of worlds; track world.id) {
+          <article class="world-card">
+            <header class="world-card-top">
+              <figure class="world-icon-badge">
+                <mat-icon>{{ world.id === 'world-1' ? 'landscape' : 'travel_explore' }}</mat-icon>
+              </figure>
+              <div class="world-title-block">
+                <h3>{{ world.name }}</h3>
+                <span class="rpg-badge rpg-badge--gold">Recommandé : Niv. {{ world.id === 'world-1' ? '1+' : '2+' }}</span>
+              </div>
+            </header>
+
+            <p class="world-desc">{{ world.description }}</p>
+
+            <div class="world-progress-block">
+              <div class="progress-info-row">
+                <span>Progression de la région</span>
+                <strong>{{ getCompletedQuestCountInWorld(world) }} / {{ world.quests.length }} Quêtes</strong>
+              </div>
+              <div class="progress-bar-track">
+                <div class="progress-bar-fill" [style.width.%]="getWorldProgressPercentage(world)"></div>
+              </div>
+            </div>
+
+            <footer class="world-card-footer">
+              <a mat-flat-button class="explore-btn" [routerLink]="['/worlds', world.id]">
+                <span>Explorer cette région</span>
+                <mat-icon>north_east</mat-icon>
+              </a>
+            </footer>
+          </article>
+        } @empty {
+          <section class="empty-state">
+            <mat-icon class="empty-icon">explore_off</mat-icon>
+            <p>Aucune région accessible actuellement.</p>
+          </section>
+        }
+      </div>
+    }
+  </section>
 </main>

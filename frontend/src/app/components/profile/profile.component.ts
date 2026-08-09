@@ -1,14 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
+import { UserProgressService, LEVEL_THRESHOLDS } from '../../services/user-progress.service';
 import { JwtResponse } from '../../models/auth.model';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { RouterModule } from '@angular/router';
 
 /**
- * Composant pour afficher les informations de profil de l'utilisateur connecté.
+ * Composant de la Fiche de Personnage RPG du joueur.
  */
 @Component({
   selector: 'app-profile',
@@ -18,6 +20,7 @@ import { RouterModule } from '@angular/router';
     MatButtonModule,
     MatIconModule,
     MatDividerModule,
+    MatProgressBarModule,
     RouterModule
   ],
   templateUrl: './profile.component.html',
@@ -25,11 +28,14 @@ import { RouterModule } from '@angular/router';
 })
 export class ProfileComponent implements OnInit {
   userSession: JwtResponse | null = null;
+  levelThresholds = LEVEL_THRESHOLDS;
 
-  constructor(private authService: AuthService) {}
+  constructor(
+    public authService: AuthService,
+    public progressService: UserProgressService
+  ) {}
 
   ngOnInit(): void {
-    // Récupère l'utilisateur depuis le service
     this.userSession = this.authService.currentUser();
   }
 }

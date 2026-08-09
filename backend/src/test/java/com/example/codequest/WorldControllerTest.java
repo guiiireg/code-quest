@@ -66,8 +66,8 @@ class WorldControllerTest {
     @Test
     void shouldReturnAllWorlds() throws Exception {
         Mockito.when(worldRepository.findAll()).thenReturn(List.of(
-            new World("world-test", "Monde test", "Maitrister", List.of(
-                new Quest("quest-1", "corriger", "api", 150, "EASY")
+            new World("world-1", "Terre du Code", "Le point de départ", List.of(
+                new Quest("q1", "Syntaxe & Variables", "Desc", 100, "EASY")
             ))
         ));
 
@@ -75,12 +75,12 @@ class WorldControllerTest {
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].id").value("world-test"))
-                .andExpect(jsonPath("$[0].name").value("Monde test"))
-                .andExpect(jsonPath("$[0].description").value("Maitrister"))
+                .andExpect(jsonPath("$[0].id").value("world-1"))
+                .andExpect(jsonPath("$[0].name").value("Terre du Code"))
+                .andExpect(jsonPath("$[0].description").value("Le point de départ"))
                 .andExpect(jsonPath("$[0].quests", hasSize(1)))
-                .andExpect(jsonPath("$[0].quests[0].id").value("quest-1"))
-                .andExpect(jsonPath("$[0].quests[0].title").value("corriger"));
+                .andExpect(jsonPath("$[0].quests[0].id").value("q1"))
+                .andExpect(jsonPath("$[0].quests[0].title").value("Syntaxe & Variables"));
     }
 
     /**
@@ -89,18 +89,18 @@ class WorldControllerTest {
      */
     @Test
     void shouldReturnWorldByIdWhenExists() throws Exception {
-        Mockito.when(worldRepository.findById("world-test")).thenReturn(Optional.of(
-            new World("world-test", "Monde test", "Maitrister", List.of(
-                new Quest("quest-1", "corriger", "api", 150, "EASY")
+        Mockito.when(worldRepository.findById("world-1")).thenReturn(Optional.of(
+            new World("world-1", "Terre du Code", "Le point de départ", List.of(
+                new Quest("q1", "Syntaxe & Variables", "Desc", 100, "EASY")
             ))
         ));
 
-        mockMvc.perform(get("/api/worlds/world-test")
+        mockMvc.perform(get("/api/worlds/world-1")
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value("world-test"))
-                .andExpect(jsonPath("$.name").value("Monde test"))
-                .andExpect(jsonPath("$.description").value("Maitrister"));
+                .andExpect(jsonPath("$.id").value("world-1"))
+                .andExpect(jsonPath("$.name").value("Terre du Code"))
+                .andExpect(jsonPath("$.description").value("Le point de départ"));
     }
 
     /**
@@ -150,7 +150,7 @@ class WorldControllerTest {
                 .content(requestJson))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.output").value("Compilation réussie. Validation logicielle réussie !"))
+                .andExpect(jsonPath("$.output").value("Félicitations ! Épreuve accomplie avec succès."))
                 .andExpect(jsonPath("$.xpGained").value(100));
     }
 
@@ -173,7 +173,7 @@ class WorldControllerTest {
                 .content(requestJson))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.output").value("Erreur de compilation :\nLine 1: syntax error"))
+                .andExpect(jsonPath("$.output").value("Erreur de compilation Java :\nLine 1: syntax error"))
                 .andExpect(jsonPath("$.xpGained").value(0));
     }
 
@@ -197,7 +197,7 @@ class WorldControllerTest {
                 .content(requestJson))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.output").value("Compilation réussie, mais la logique de la solution est incorrecte."))
+                .andExpect(jsonPath("$.output").value("Échec de la validation : Le code soumis ne respecte pas les consignes ou les balises demandées."))
                 .andExpect(jsonPath("$.xpGained").value(0));
     }
 
@@ -217,18 +217,23 @@ class WorldControllerTest {
                 .content(requestJson))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.output").value("Erreur : Code manquant."));
+                .andExpect(jsonPath("$.output").value("Échec de la validation : Aucun code soumis."));
     }
 
     /**
-     * Vérifie qu'un utilisateur non authentifié ne peut pas soumettre de quête (HTTP 401 Unauthorized).
+     * Vérifie qu'un joueur non connecté (anonyme / invité) peut également soumettre du code (HTTP 200 OK).
      */
     @Test
     @org.springframework.security.test.context.support.WithAnonymousUser
-    void shouldDenyUnauthenticatedQuestSubmission() throws Exception {
+    void shouldAllowUnauthenticatedQuestSubmission() throws Exception {
+        Quest mockQuest = new Quest("quest-test", "Titre", "Desc", 100, "EASY");
+        mockQuest.setTestValidationRegex(".*test.*");
+        Mockito.when(questRepository.findById("quest-test")).thenReturn(Optional.of(mockQuest));
+        Mockito.when(compilerService.compile("test")).thenReturn(new CodeCompilerService.CompilationResult(true, "OK"));
+
         mockMvc.perform(post("/api/quests/quest-test/submit")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"questId\":\"quest-test\",\"code\":\"test\"}"))
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().isOk());
     }
 }

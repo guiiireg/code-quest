@@ -9,6 +9,10 @@ export interface Quest {
   difficulty: string;
   codeTemplate?: string;
   testValidationRegex?: string;
+  category?: string;
+  languages?: string;
+  concept?: string;
+  theory?: string;
 }
 
 /**
