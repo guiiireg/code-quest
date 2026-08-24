@@ -1,37 +1,50 @@
 # Code Quest
 
+[![Live Demo](https://img.shields.io/badge/demo-online-brightgreen.svg)](https://code-quest-bv1.pages.dev)
+[![Backend API](https://img.shields.io/badge/API-Render-46E3B7.svg)](https://code-quest-api-klr7.onrender.com/api/worlds)
+[![Frontend](https://img.shields.io/badge/Frontend-Cloudflare_Pages-F38020.svg)](https://code-quest-bv1.pages.dev)
+[![Database](https://img.shields.io/badge/Database-Neon_PostgreSQL-00E599.svg)](https://neon.tech)
+
 **Code Quest** est une plateforme d'apprentissage et d'entraînement au développement web et logiciel sous forme de jeu de rôle (RPG).
 Les développeurs explorent des régions thématiques, résolvent des épreuves de programmation interactives dans un éditeur de code embarqué, gagnent des points d'expérience (XP) et montent en niveau.
+
+🔗 **Démo en ligne** : [https://code-quest-bv1.pages.dev](https://code-quest-bv1.pages.dev)  
+🔗 **API Backend (Render)** : [https://code-quest-api-klr7.onrender.com](https://code-quest-api-klr7.onrender.com)
 
 ---
 
 ## Architecture du Projet
 
-Le projet est structuré sous forme de monorepo composé de deux modules applicatifs indépendants et d'une base de données conteneurisée :
+Le projet est structuré sous forme de monorepo composé de deux modules applicatifs indépendants et d'une base de données relationnelle :
 
 ```text
 code-quest/
-├── backend/          # API REST Java 21 / Spring Boot 4.1.0
-├── frontend/         # Application Web SPA Angular 19 / TypeScript
-├── docker-compose.yml # Service de persistance PostgreSQL 16 Alpine
+├── backend/          # API REST Java 21 / Spring Boot 4.1.0 (Déployé sur Render)
+├── frontend/         # Application Web SPA Angular 19 / TypeScript (Déployé sur Cloudflare Pages)
+├── docker-compose.yml # Service de persistance PostgreSQL 16 local
 └── README.md         # Documentation du projet
 ```
 
-### Flux de Données & Communication
+### Déploiement Cloud (Production)
+* **Frontend** : Hébergé sur **Cloudflare Pages** (`https://code-quest-bv1.pages.dev`), servi via CDN mondial ultra-rapide avec routage SPA et proxying `/api/*`.
+* **Backend** : Conteneurisé via Docker sur **Render** (`https://code-quest-api-klr7.onrender.com`) avec allocation mémoire JVM optimisée pour le free tier.
+* **Base de Données** : Instance managée **PostgreSQL 16** serverless sur **Neon.tech**.
+
+### Flux de Données & Communication Locale
 * **Frontend (Angular 19)** :
-  - Écoute sur `http://localhost:4200`.
+  - Écoute sur `http://localhost:4200` en développement local.
   - Architecture moderne en composants **Standalone** et réactivité par **Angular Signals**.
   - Éditeur de code intégré **Monaco Editor** avec coloration syntaxique adaptative.
-  - Proxy de développement (`proxy.conf.json`) redirigeant automatiquement les appels `/api` vers `http://localhost:8081`.
+  - Proxy de développement (`proxy.conf.json`) ou proxy Cloudflare (`_redirects`) redirigeant automatiquement les appels `/api` vers le backend.
   - Authentification sans état via jeton JWT transmis par en-tête HTTP (`Authorization: Bearer <token>`).
 * **Backend (Spring Boot 4.1.0)** :
-  - Écoute sur le port `8081`.
+  - Écoute sur le port `8081` en local (port dynamique `PORT` sur Render).
   - Sécurité stateless via **Spring Security** et validation des jetons JWT.
   - Modélisation des requêtes/réponses d'API via les **Java Records**.
   - Évaluation et validation dynamique du code soumis (Sandbox sécurisée conteneurisée ou analyse structurelle par Regex).
-* **Base de Données (PostgreSQL 16 Alpine)** :
-  - Écoute sur le port `5432` (Base : `codequest`).
-  - Schéma et jeux de données d'apprentissage initialisés via `schema.sql` et `data.sql`.
+* **Base de Données (PostgreSQL 16 Alpine / Neon)** :
+  - Port `5432` en local ou pooler SSL distant.
+  - Schéma et jeux de données d'apprentissage initialisés via `schema.sql` et `data.sql` sans écrasement des utilisateurs existants (`CREATE TABLE IF NOT EXISTS` et `ON CONFLICT`).
 
 ---
 
