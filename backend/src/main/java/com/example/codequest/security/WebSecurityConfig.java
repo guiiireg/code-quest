@@ -4,6 +4,7 @@ import com.example.codequest.security.jwt.AuthEntryPointJwt;
 import com.example.codequest.security.jwt.AuthTokenFilter;
 import com.example.codequest.security.services.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -22,6 +23,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Configuration principale de la sécurité de l'application.
@@ -29,6 +31,9 @@ import java.util.Arrays;
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig {
+
+    @Value("${codequest.app.corsOrigins:http://localhost:4200,https://*.pages.dev,https://*.onrender.com}")
+    private String corsOrigins;
 
     @Autowired
     UserDetailsServiceImpl userDetailsService;
@@ -88,9 +93,13 @@ public class WebSecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+        List<String> origins = Arrays.stream(corsOrigins.split(","))
+                                     .map(String::trim)
+                                     .filter(s -> !s.isEmpty())
+                                     .toList();
+        configuration.setAllowedOriginPatterns(origins);
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"));
+        configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

@@ -1,28 +1,25 @@
--- Nettoyage des anciennes données
-DELETE FROM user_roles;
-DELETE FROM roles;
-DELETE FROM users;
-DELETE FROM quests;
-DELETE FROM worlds;
-
 -- Insertion des rôles
 INSERT INTO roles (id, name) VALUES
 ('role-user', 'ROLE_USER'),
-('role-admin', 'ROLE_ADMIN');
+('role-admin', 'ROLE_ADMIN')
+ON CONFLICT (id) DO NOTHING;
 
 -- Insertion de l'utilisateur Administrateur 'gui' (Mot de passe: password)
 INSERT INTO users (id, username, email, password) VALUES
-('user-gui-admin', 'gui', 'gui@codequest.dev', '$2a$10$LZ/agDfAw49HxZQW/boRquU9w9ZqnqemD.ERvXl7HCP3j0n8mTYd.');
+('user-gui-admin', 'gui', 'gui@codequest.dev', '$2a$10$LZ/agDfAw49HxZQW/boRquU9w9ZqnqemD.ERvXl7HCP3j0n8mTYd.')
+ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO user_roles (user_id, role_id) VALUES
 ('user-gui-admin', 'role-admin'),
-('user-gui-admin', 'role-user');
+('user-gui-admin', 'role-user')
+ON CONFLICT (user_id, role_id) DO NOTHING;
 
 -- Insertion des mondes (Régions du parcours Full-Stack)
 INSERT INTO worlds (id, name, description) VALUES
 ('world-1', '📜 Région 1 — HTML5', 'Le point de départ fondamental du développement Web. Apprenez à structurer le web sémantique, créer des formulaires et maîtriser l’accessibilité.'),
 ('world-2', '♿ Région 2 — Accessibilité Web', 'Le Royaume de l’Inclusion. Maîtrisez les WCAG 2.2 AA, le HTML sémantique, la navigation au clavier, les lecteurs d’écran et WAI-ARIA.'),
-('world-3', '🎨 Région 3 — CSS3', 'Le Domaine des Formes & des Couleurs. Maîtrisez Flexbox, Grid, les animations, le responsive design, les variables CSS et les fonctionnalités modernes.');
+('world-3', '🎨 Région 3 — CSS3', 'Le Domaine des Formes & des Couleurs. Maîtrisez Flexbox, Grid, les animations, le responsive design, les variables CSS et les fonctionnalités modernes.')
+ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, description = EXCLUDED.description;
 
 -- Insertion des quêtes pour Région 1, Région 2 et Région 3
 INSERT INTO quests (id, title, description, xp_reward, difficulty, code_template, test_validation_regex, world_id, category, languages, concept, theory) VALUES
@@ -725,5 +722,17 @@ input[type="checkbox"] { }
 <!-- Q2: Quelle pseudo-classe affiche le focus uniquement au clavier ? A: :focus | B: :focus-visible | C: :active | D: :hover -->
 <question id="2" data-reponse=""></question>
 <!-- Q3: Quelle directive déclare des couches d''architecture CSS ? A: @import | B: @layer | C: @media | D: @scope -->
-<question id="3" data-reponse=""></question>', '(?s).*<question\s+id=\"1\"\s+data-reponse=\"B\"\s*></question\s*>.*<question\s+id=\"2\"\s+data-reponse=\"B\"\s*></question\s*>.*<question\s+id=\"3\"\s+data-reponse=\"B\"\s*></question\s*>.*', 'world-3', '26. 🎓 Quiz & Évaluation des Connaissances CSS3', 'Quiz, CSS3', 'Quiz CSS 5', 'Validation finale du module CSS3.');
+<question id="3" data-reponse=""></question>', '(?s).*<question\s+id=\"1\"\s+data-reponse=\"B\"\s*></question\s*>.*<question\s+id=\"2\"\s+data-reponse=\"B\"\s*></question\s*>.*<question\s+id=\"3\"\s+data-reponse=\"B\"\s*></question\s*>.*', 'world-3', '26. 🎓 Quiz & Évaluation des Connaissances CSS3', 'Quiz, CSS3', 'Quiz CSS 5', 'Validation finale du module CSS3.')
+ON CONFLICT (id) DO UPDATE SET
+    title = EXCLUDED.title,
+    description = EXCLUDED.description,
+    xp_reward = EXCLUDED.xp_reward,
+    difficulty = EXCLUDED.difficulty,
+    code_template = EXCLUDED.code_template,
+    test_validation_regex = EXCLUDED.test_validation_regex,
+    world_id = EXCLUDED.world_id,
+    category = EXCLUDED.category,
+    languages = EXCLUDED.languages,
+    concept = EXCLUDED.concept,
+    theory = EXCLUDED.theory;
 

@@ -1,16 +1,10 @@
-DROP TABLE IF EXISTS user_roles;
-DROP TABLE IF EXISTS roles;
-DROP TABLE IF EXISTS users;
-DROP TABLE IF EXISTS quests;
-DROP TABLE IF EXISTS worlds;
-
-CREATE TABLE worlds (
+CREATE TABLE IF NOT EXISTS worlds (
     id VARCHAR(255) PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     description TEXT
 );
 
-CREATE TABLE quests (
+CREATE TABLE IF NOT EXISTS quests (
     id VARCHAR(255) PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     description TEXT,
@@ -26,19 +20,19 @@ CREATE TABLE quests (
     CONSTRAINT fk_world FOREIGN KEY (world_id) REFERENCES worlds(id) ON DELETE CASCADE
 );
 
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
     id VARCHAR(255) PRIMARY KEY,
     username VARCHAR(255) NOT NULL UNIQUE,
     email VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE roles (
+CREATE TABLE IF NOT EXISTS roles (
     id VARCHAR(255) PRIMARY KEY,
     name VARCHAR(50) NOT NULL UNIQUE
 );
 
-CREATE TABLE user_roles (
+CREATE TABLE IF NOT EXISTS user_roles (
     user_id VARCHAR(255) NOT NULL,
     role_id VARCHAR(255) NOT NULL,
     PRIMARY KEY (user_id, role_id),
