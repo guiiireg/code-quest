@@ -1,2 +1,5 @@
-# Redirection SPA pour Angular sur Cloudflare Pages
-/*    /index.html   200
+# Proxy API vers le backend Render
+/api/*    https://code-quest-api-klr7.onrender.com/api/:splat    200
+
+# Routage SPA Angular pour toutes les autres routes
+/*        /index.html                                           200
