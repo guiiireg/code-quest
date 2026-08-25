@@ -37,7 +37,7 @@ import com.example.codequest.security.jwt.JwtUtils;
 import com.example.codequest.security.services.UserDetailsServiceImpl;
 
 /**
- * Tests d'intégration pour le contrôleur REST des mondes (WorldController).
+ * Integration and web layer tests for the WorldController REST API.
  */
 @WebMvcTest(WorldController.class)
 @Import({WorldService.class, QuestService.class, WebSecurityConfig.class, AuthEntryPointJwt.class, AuthTokenFilter.class, JwtUtils.class})
@@ -60,8 +60,7 @@ class WorldControllerTest {
     private CodeCompilerService compilerService;
 
     /**
-     * Vérifie que la récupération de tous les mondes retourne la liste complète
-     * avec un code de retour HTTP 200 (OK).
+     * Verifies that retrieving all worlds returns the full list with HTTP 200 OK.
      */
     @Test
     void shouldReturnAllWorlds() throws Exception {
@@ -84,8 +83,7 @@ class WorldControllerTest {
     }
 
     /**
-     * Vérifie que la récupération d'un monde existant par son ID retourne les détails
-     * attendus avec un code HTTP 200 (OK).
+     * Verifies that retrieving an existing world by ID returns the expected details with HTTP 200 OK.
      */
     @Test
     void shouldReturnWorldByIdWhenExists() throws Exception {
@@ -104,7 +102,7 @@ class WorldControllerTest {
     }
 
     /**
-     * Vérifie que la récupération d'un monde inexistant retourne un code d'erreur HTTP 404 (Not Found).
+     * Verifies that requesting a non-existent world returns HTTP 404 Not Found.
      */
     @Test
     void shouldReturn404WhenWorldDoesNotExist() throws Exception {
@@ -114,8 +112,9 @@ class WorldControllerTest {
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
+
     /**
-     * Vérifie que la récupération d'une quête existante par son ID retourne les détails attendus.
+     * Verifies that retrieving an existing quest by ID returns the expected details.
      */
     @Test
     void shouldReturnQuestByIdWhenExists() throws Exception {
@@ -131,7 +130,7 @@ class WorldControllerTest {
     }
 
     /**
-     * Vérifie que la soumission d'un code correct compile et passe la validation.
+     * Verifies that valid submitted code compiles and passes validation regex.
      */
     @Test
     void shouldReturnSuccessWhenCompilationAndRegexPass() throws Exception {
@@ -150,12 +149,12 @@ class WorldControllerTest {
                 .content(requestJson))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.output").value("Félicitations ! Épreuve accomplie avec succès."))
+                .andExpect(jsonPath("$.output").value("Congratulations! Quest completed successfully."))
                 .andExpect(jsonPath("$.xpGained").value(100));
     }
 
     /**
-     * Vérifie que la soumission d'un code incorrect échoue à la compilation.
+     * Verifies that code with syntax errors fails Java compilation.
      */
     @Test
     void shouldReturnFailureWhenCompilationFails() throws Exception {
@@ -173,12 +172,12 @@ class WorldControllerTest {
                 .content(requestJson))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.output").value("Erreur de compilation Java :\nLine 1: syntax error"))
+                .andExpect(jsonPath("$.output").value("Java compilation error:\nLine 1: syntax error"))
                 .andExpect(jsonPath("$.xpGained").value(0));
     }
 
     /**
-     * Vérifie que la soumission d'un code incorrect compile mais échoue la logique.
+     * Verifies that code compiling but failing validation regex returns a failure response.
      */
     @Test
     void shouldReturnFailureWhenCompilationPassesButRegexFails() throws Exception {
@@ -197,12 +196,12 @@ class WorldControllerTest {
                 .content(requestJson))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.output").value("Échec de la validation : Le code soumis ne respecte pas les consignes ou les balises demandées."))
+                .andExpect(jsonPath("$.output").value("Validation failure: The submitted code does not meet the requirements or expected tags."))
                 .andExpect(jsonPath("$.xpGained").value(0));
     }
 
     /**
-     * Vérifie que la soumission d'un code nul renvoie une erreur.
+     * Verifies that submitting null code returns a validation failure.
      */
     @Test
     void shouldReturnFailureWhenSubmittedCodeIsNull() throws Exception {
@@ -217,11 +216,11 @@ class WorldControllerTest {
                 .content(requestJson))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.output").value("Échec de la validation : Aucun code soumis."));
+                .andExpect(jsonPath("$.output").value("Validation failure: No code submitted."));
     }
 
     /**
-     * Vérifie qu'un joueur non connecté (anonyme / invité) peut également soumettre du code (HTTP 200 OK).
+     * Verifies that unauthenticated guest users can also submit code for evaluation (HTTP 200 OK).
      */
     @Test
     @org.springframework.security.test.context.support.WithAnonymousUser
@@ -237,3 +236,4 @@ class WorldControllerTest {
                 .andExpect(status().isOk());
     }
 }
+

@@ -1,8 +1,9 @@
 package com.example.codequest.payload.response;
 
 /**
- * Payload response pour un message générique.
+ * Response payload for generic API string messages.
  * 
- * @param message Le message textuel retourné
+ * @param message The returned text message
  */
 public record MessageResponse(String message) {}
+

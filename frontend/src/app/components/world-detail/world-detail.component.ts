@@ -19,7 +19,7 @@ export interface SubRegionGroup {
 }
 
 /**
- * Page de détail d'une région / monde affichant le journal de quêtes.
+ * Realm/world details view displaying thematic quest logs and chapters.
  */
 @Component({
   selector: 'app-world-detail',
@@ -29,7 +29,7 @@ export interface SubRegionGroup {
     MatButtonModule, 
     MatIconModule, 
     MatDividerModule, 
-    MatTooltipModule,
+    MatTooltipModule, 
     RouterModule
   ],
   templateUrl: './world-detail.component.html',
@@ -57,13 +57,13 @@ export class WorldDetailComponent implements OnInit {
           this.loading = false;
         },
         error: (err) => {
-          this.errorMessage = "Monde introuvable ou erreur de chargement.";
+          this.errorMessage = "Realm not found or error while loading.";
           this.loading = false;
           console.error(err);
         }
       });
     } else {
-      this.errorMessage = "ID de la région manquant.";
+      this.errorMessage = "Realm identifier missing.";
       this.loading = false;
     }
   }
@@ -73,13 +73,13 @@ export class WorldDetailComponent implements OnInit {
   }
 
   isQuestUnlocked(quest: Quest): boolean {
-    if (this.authService.isAdmin()) return true; // L'administrateur (ex: 'gui') a toutes les quêtes débloquées sans restriction !
+    if (this.authService.isAdmin()) return true; // Administrator has all quests unlocked without restriction
 
     if (!this.world || !this.world.quests) return false;
     if (this.isCompleted(quest.id)) return true;
 
     const index = this.world.quests.findIndex(q => q.id === quest.id);
-    if (index <= 0) return true; // La première quête est toujours débloquée
+    if (index <= 0) return true; // The first quest is always unlocked
 
     const previousQuest = this.world.quests[index - 1];
     return this.isCompleted(previousQuest.id);
@@ -190,3 +190,4 @@ export class WorldDetailComponent implements OnInit {
     return groups;
   }
 }
+

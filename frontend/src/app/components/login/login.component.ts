@@ -9,7 +9,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
 /**
- * Composant de connexion permettant aux utilisateurs de s'authentifier.
+ * Login component enabling user authentication.
  */
 @Component({
   selector: 'app-login',
@@ -39,7 +39,7 @@ export class LoginComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Redirige vers l'accueil si déjà connecté
+    // Redirect to worlds if already authenticated
     if (this.authService.isAuthenticated()) {
       this.router.navigate(['/worlds']);
       return;
@@ -52,7 +52,7 @@ export class LoginComponent implements OnInit {
   }
 
   /**
-   * Gère la soumission du formulaire de connexion.
+   * Handles submission of the login form.
    */
   onSubmit(): void {
     if (this.loginForm.invalid) {
@@ -70,12 +70,13 @@ export class LoginComponent implements OnInit {
       error: (err) => {
         this.loading = false;
         if (err.status === 401) {
-          this.errorMessage = "Nom d'utilisateur ou mot de passe incorrect.";
+          this.errorMessage = "Invalid username or password.";
         } else {
-          this.errorMessage = "Une erreur s'est produite lors de la connexion. Veuillez réessayer.";
+          this.errorMessage = "An error occurred during authentication. Please try again.";
         }
         console.error(err);
       }
     });
   }
 }
+

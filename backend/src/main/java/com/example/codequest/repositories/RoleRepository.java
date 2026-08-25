@@ -6,16 +6,17 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 /**
- * Repository pour l'entité Role.
+ * Spring Data JPA repository for the Role entity.
  */
 @Repository
 public interface RoleRepository extends JpaRepository<Role, String> {
 
     /**
-     * Recherche un rôle par son nom.
+     * Finds a role by its unique name.
      * 
-     * @param name Le nom du rôle à rechercher (par exemple, "ROLE_USER")
-     * @return Un Optional contenant le rôle s'il est trouvé, sinon vide
+     * @param name The role name to look up (e.g., "ROLE_USER")
+     * @return An Optional containing the role if found, or empty otherwise
      */
     Optional<Role> findByName(String name);
 }
+

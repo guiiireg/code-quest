@@ -4,7 +4,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
 
 /**
- * Composant affiché en cas de route introuvable (Erreur 404) avec le thème RPG.
+ * 404 Not Found component with RPG quest exploration theme.
  */
 @Component({
   selector: 'app-not-found',
@@ -18,3 +18,4 @@ import { RouterModule } from '@angular/router';
   styleUrl: './not-found.component.css'
 })
 export class NotFoundComponent {}
+

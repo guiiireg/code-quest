@@ -4,13 +4,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 /**
- * Test de chargement du contexte de l'application CodeQuest.
+ * Spring application context loading integration test.
  */
 @SpringBootTest
 class CodeQuestApplicationTests {
 
     /**
-     * Vérifie que le contexte de l'application Spring se charge correctement.
+     * Verifies that the Spring Boot application context loads properly.
      */
     @Test
     void contextLoads() {
@@ -19,3 +19,4 @@ class CodeQuestApplicationTests {
     }
 
 }
+

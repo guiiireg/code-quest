@@ -8,7 +8,7 @@ import com.example.codequest.payload.response.SubmissionResponse;
 import org.springframework.stereotype.Service;
 
 /**
- * Service gérant la logique métier pour les quêtes et les soumissions de code.
+ * Service managing domain logic for quests and code submissions.
  */
 @Service
 public class QuestService {
@@ -17,10 +17,10 @@ public class QuestService {
     private final CodeCompilerService compilerService;
 
     /**
-     * Injection par constructeur des dépendances.
+     * Constructor dependency injection.
      * 
-     * @param questRepository Le repository des quêtes
-     * @param compilerService Le service de compilation
+     * @param questRepository Quest repository
+     * @param compilerService Code compiler service
      */
     public QuestService(QuestRepository questRepository, CodeCompilerService compilerService) {
         this.questRepository = questRepository;
@@ -28,37 +28,37 @@ public class QuestService {
     }
 
     /**
-     * Récupère une quête par son identifiant.
+     * Retrieves a quest by its unique identifier.
      * 
-     * @param id L'identifiant de la quête
-     * @return La quête trouvée
+     * @param id The quest identifier
+     * @return The found quest
      */
     public Quest getQuestById(String id) {
         return questRepository.findById(id)
-                .orElseThrow(() -> new QuestNotFoundException("Quête non trouvée avec l'id : " + id));
+                .orElseThrow(() -> new QuestNotFoundException("Quest not found with id: " + id));
     }
 
     /**
-     * Traite la soumission de code pour une quête.
+     * Processes code submission for a quest.
      * 
-     * @param id L'identifiant de la quête
-     * @param request Les données de soumission
-     * @return Le résultat de la soumission
+     * @param id The quest identifier
+     * @param request The submission payload
+     * @return The submission evaluation response
      */
     public SubmissionResponse submitQuest(String id, SubmissionDTO request) {
         Quest quest = getQuestById(id);
 
         String code = request.code();
         if (code == null || code.isBlank()) {
-            return new SubmissionResponse(false, "Échec de la validation : Aucun code soumis.", 0);
+            return new SubmissionResponse(false, "Validation failure: No code submitted.", 0);
         }
 
-        // Vérification si le code n'a pas été modifié par rapport au template de départ
+        // Verify that the code was modified from the starter template
         if (quest.getCodeTemplate() != null && code.trim().equalsIgnoreCase(quest.getCodeTemplate().trim())) {
-            return new SubmissionResponse(false, "Échec de la validation : Vous n'avez pas encore complété l'exercice. Modifiez le code de départ pour réussir l'épreuve.", 0);
+            return new SubmissionResponse(false, "Validation failure: You have not completed the exercise yet. Modify the starter code to succeed.", 0);
         }
 
-        // 1. Compilation Java (ignorée pour les quêtes purement HTML/CSS)
+        // 1. Java compilation (skipped for purely HTML/CSS web quests)
         boolean isWebQuest = quest.getLanguages() != null && 
             (quest.getLanguages().toUpperCase().contains("HTML") || quest.getLanguages().toUpperCase().contains("CSS")) &&
             !quest.getLanguages().toUpperCase().contains("JAVA");
@@ -66,20 +66,21 @@ public class QuestService {
         if (!isWebQuest) {
             CodeCompilerService.CompilationResult compileResult = compilerService.compile(code);
             if (!compileResult.success()) {
-                return new SubmissionResponse(false, "Erreur de compilation Java :\n" + compileResult.output(), 0);
+                return new SubmissionResponse(false, "Java compilation error:\n" + compileResult.output(), 0);
             }
         }
 
-        // 2. Validation Logique & Structurelle (Regex)
+        // 2. Logical & structural validation (Regex matching)
         String regex = quest.getTestValidationRegex();
         if (regex != null && !regex.isBlank()) {
             if (code.matches(regex)) {
-                return new SubmissionResponse(true, "Félicitations ! Épreuve accomplie avec succès.", quest.getXpReward());
+                return new SubmissionResponse(true, "Congratulations! Quest completed successfully.", quest.getXpReward());
             } else {
-                return new SubmissionResponse(false, "Échec de la validation : Le code soumis ne respecte pas les consignes ou les balises demandées.", 0);
+                return new SubmissionResponse(false, "Validation failure: The submitted code does not meet the requirements or expected tags.", 0);
             }
         }
 
-        return new SubmissionResponse(true, "Épreuve accomplie avec succès.", quest.getXpReward());
+        return new SubmissionResponse(true, "Quest completed successfully.", quest.getXpReward());
     }
 }
+

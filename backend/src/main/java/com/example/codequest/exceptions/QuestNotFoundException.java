@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
- * Exception levée lorsqu'une quête n'est pas trouvée.
+ * Exception thrown when a quest is not found.
  */
 @ResponseStatus(HttpStatus.NOT_FOUND)
 public class QuestNotFoundException extends RuntimeException {
@@ -12,3 +12,4 @@ public class QuestNotFoundException extends RuntimeException {
         super(message);
     }
 }
+

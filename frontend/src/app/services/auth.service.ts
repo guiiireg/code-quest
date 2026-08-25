@@ -4,7 +4,7 @@ import { Observable, tap } from 'rxjs';
 import { LoginRequest, SignupRequest, JwtResponse } from '../models/auth.model';
 
 /**
- * Service pour gérer l'authentification des utilisateurs (connexion, inscription, déconnexion).
+ * Service managing user authentication (signin, signup, logout, session state).
  */
 @Injectable({
   providedIn: 'root'
@@ -12,16 +12,16 @@ import { LoginRequest, SignupRequest, JwtResponse } from '../models/auth.model';
 export class AuthService {
   private apiUrl = '/api/auth';
   
-  // Utilisation d'un Signal pour stocker l'utilisateur actuellement connecté
+  // Signal holding the currently logged-in user details
   private currentUserSignal = signal<JwtResponse | null>(null);
   
-  // Exposer l'utilisateur courant de manière publique et en lecture seule
+  // Public readonly access to the current user signal
   readonly currentUser = this.currentUserSignal.asReadonly();
   
-  // Signal calculé pour savoir si l'utilisateur est connecté
+  // Computed signal indicating if a user is authenticated
   readonly isAuthenticated = computed(() => this.currentUser() !== null);
 
-  // Signal calculé pour savoir si l'utilisateur est Administrateur (pseudo 'gui' ou rôle ROLE_ADMIN)
+  // Computed signal determining if the user is an Administrator
   readonly isAdmin = computed(() => {
     const user = this.currentUser();
     if (!user) return false;
@@ -33,11 +33,11 @@ export class AuthService {
   }
 
   /**
-   * Tente de connecter l'utilisateur avec ses identifiants.
-   * En cas de succès, stocke les informations et le jeton en local.
+   * Authenticates the user with credentials.
+   * On success, persists user profile and JWT token locally.
    * 
-   * @param credentials Les identifiants de connexion
-   * @returns Un Observable de JwtResponse
+   * @param credentials The login credentials
+   * @returns Observable of JwtResponse
    */
   login(credentials: LoginRequest): Observable<JwtResponse> {
     return this.http.post<JwtResponse>(`${this.apiUrl}/signin`, credentials).pipe(
@@ -46,17 +46,17 @@ export class AuthService {
   }
 
   /**
-   * Enregistre un nouvel utilisateur.
+   * Registers a new user account.
    * 
-   * @param user Les données d'inscription de l'utilisateur
-   * @returns Un Observable contenant le message de succès
+   * @param user Registration data
+   * @returns Observable of success message response
    */
   register(user: SignupRequest): Observable<any> {
     return this.http.post(`${this.apiUrl}/signup`, user);
   }
 
   /**
-   * Déconnecte l'utilisateur en effaçant les données du stockage local.
+   * Logs out the user and clears local storage session.
    */
   logout(): void {
     localStorage.removeItem('codequest_user');
@@ -64,9 +64,9 @@ export class AuthService {
   }
 
   /**
-   * Récupère le jeton JWT actuel de l'utilisateur connecté.
+   * Retrieves the current JWT bearer token.
    * 
-   * @returns Le jeton sous forme de chaîne de caractères ou null
+   * @returns Token string or null
    */
   getToken(): string | null {
     const user = this.currentUser();
@@ -74,7 +74,7 @@ export class AuthService {
   }
 
   /**
-   * Charge l'utilisateur depuis le localStorage au démarrage de l'application.
+   * Loads user session from localStorage on application startup.
    */
   private loadUserFromStorage(): void {
     const storedUser = localStorage.getItem('codequest_user');
@@ -83,19 +83,20 @@ export class AuthService {
         const user = JSON.parse(storedUser) as JwtResponse;
         this.currentUserSignal.set(user);
       } catch (e) {
-        console.error("Erreur lors de la lecture de la session utilisateur :", e);
+        console.error('Error parsing user session from local storage:', e);
         this.logout();
       }
     }
   }
 
   /**
-   * Sauvegarde les informations de l'utilisateur dans le stockage local.
+   * Saves user session to localStorage.
    * 
-   * @param user Les informations de l'utilisateur à stocker
+   * @param user The user response object
    */
   private saveUser(user: JwtResponse): void {
     localStorage.setItem('codequest_user', JSON.stringify(user));
     this.currentUserSignal.set(user);
   }
 }
+

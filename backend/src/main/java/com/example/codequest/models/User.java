@@ -5,38 +5,38 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Représente un utilisateur dans l'application.
+ * Represents a user in the application.
  */
 @Entity
 @Table(name = "users")
 public class User {
 
     /**
-     * Identifiant unique de l'utilisateur.
+     * Unique identifier for the user.
      */
     @Id
     private String id;
 
     /**
-     * Nom d'utilisateur unique.
+     * Unique username.
      */
     @Column(nullable = false, unique = true)
     private String username;
 
     /**
-     * Adresse email unique.
+     * Unique email address.
      */
     @Column(nullable = false, unique = true)
     private String email;
 
     /**
-     * Mot de passe hashé.
+     * Encrypted/hashed password.
      */
     @Column(nullable = false)
     private String password;
 
     /**
-     * Liste des rôles attribués à l'utilisateur.
+     * Set of roles assigned to the user.
      */
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -47,17 +47,17 @@ public class User {
     private Set<Role> roles = new HashSet<>();
 
     /**
-     * Constructeur par défaut requis par JPA.
+     * Default constructor required by JPA.
      */
     public User() {}
 
     /**
-     * Constructeur complet pour créer un utilisateur.
+     * Full constructor to initialize a user.
      * 
-     * @param id       L'identifiant unique de l'utilisateur
-     * @param username Le nom de l'utilisateur
-     * @param email    L'adresse email de l'utilisateur
-     * @param password Le mot de passe hashé de l'utilisateur
+     * @param id       The unique user identifier
+     * @param username The username
+     * @param email    The email address
+     * @param password The encrypted password
      */
     public User(String id, String username, String email, String password) {
         this.id = id;
@@ -67,92 +67,93 @@ public class User {
     }
 
     /**
-     * Récupère l'identifiant de l'utilisateur.
+     * Gets the user identifier.
      * 
-     * @return L'identifiant unique
+     * @return The unique identifier
      */
     public String getId() {
         return id;
     }
 
     /**
-     * Définit l'identifiant de l'utilisateur.
+     * Sets the user identifier.
      * 
-     * @param id Le nouvel identifiant unique
+     * @param id The new unique identifier
      */
     public void setId(String id) {
         this.id = id;
     }
 
     /**
-     * Récupère le nom d'utilisateur.
+     * Gets the username.
      * 
-     * @return Le nom d'utilisateur
+     * @return The username
      */
     public String getUsername() {
         return username;
     }
 
     /**
-     * Définit le nom d'utilisateur.
+     * Sets the username.
      * 
-     * @param username Le nouveau nom d'utilisateur
+     * @param username The new username
      */
     public void setUsername(String username) {
         this.username = username;
     }
 
     /**
-     * Récupère l'adresse email de l'utilisateur.
+     * Gets the email address.
      * 
-     * @return L'adresse email
+     * @return The email address
      */
     public String getEmail() {
         return email;
     }
 
     /**
-     * Définit l'adresse email de l'utilisateur.
+     * Sets the email address.
      * 
-     * @param email La nouvelle adresse email
+     * @param email The new email address
      */
     public void setEmail(String email) {
         this.email = email;
     }
 
     /**
-     * Récupère le mot de passe hashé de l'utilisateur.
+     * Gets the hashed password.
      * 
-     * @return Le mot de passe hashé
+     * @return The hashed password
      */
     public String getPassword() {
         return password;
     }
 
     /**
-     * Définit le mot de passe hashé de l'utilisateur.
+     * Sets the hashed password.
      * 
-     * @param password Le nouveau mot de passe hashé
+     * @param password The new hashed password
      */
     public void setPassword(String password) {
         this.password = password;
     }
 
     /**
-     * Récupère la liste des rôles associés à l'utilisateur.
+     * Gets the set of roles assigned to the user.
      * 
-     * @return Les rôles de l'utilisateur
+     * @return User roles
      */
     public Set<Role> getRoles() {
         return roles;
     }
 
     /**
-     * Définit la liste des rôles de l'utilisateur.
+     * Sets the roles for the user.
      * 
-     * @param roles L'ensemble des rôles de l'utilisateur
+     * @param roles Set of assigned roles
      */
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
 }
+

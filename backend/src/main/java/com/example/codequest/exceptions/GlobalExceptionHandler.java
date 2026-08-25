@@ -9,13 +9,13 @@ import org.springframework.web.context.request.WebRequest;
 import java.util.Date;
 
 /**
- * Gestionnaire global des exceptions pour centraliser le traitement des erreurs API.
+ * Global exception handler to centralize API error handling.
  */
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
     /**
-     * Gère l'exception WorldNotFoundException et QuestNotFoundException.
+     * Handles WorldNotFoundException and QuestNotFoundException.
      */
     @ExceptionHandler({WorldNotFoundException.class, QuestNotFoundException.class})
     public ResponseEntity<ErrorMessage> resourceNotFoundException(RuntimeException ex, WebRequest request) {
@@ -29,7 +29,7 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Gère l'exception UserAlreadyExistsException.
+     * Handles UserAlreadyExistsException.
      */
     @ExceptionHandler(UserAlreadyExistsException.class)
     public ResponseEntity<ErrorMessage> userAlreadyExistsException(UserAlreadyExistsException ex, WebRequest request) {
@@ -43,7 +43,7 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Gère toutes les autres exceptions non capturées spécifiquement.
+     * Handles all uncaught general exceptions.
      */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorMessage> globalExceptionHandler(Exception ex, WebRequest request) {
@@ -56,3 +56,4 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
+

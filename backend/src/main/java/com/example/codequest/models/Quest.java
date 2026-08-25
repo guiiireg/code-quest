@@ -8,73 +8,72 @@ import jakarta.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
- * Représente une quête dans l'application.
- * Une quête contient un id unique, un titre, une description, une récompense en
- * expérience et une difficulté.
+ * Represents a quest in the application.
+ * A quest contains a unique id, title, description, XP reward, and difficulty.
  */
 @Entity
 @Table(name = "quests")
 public class Quest {
 
     /**
-     * Id unique de la quête.
+     * Unique identifier for the quest.
      */
     @Id
     private String id;
 
     /**
-     * Titre de la quête.
+     * Title of the quest.
      */
     private String title;
 
     /**
-     * Description de la quête.
+     * Detailed quest instructions and description.
      */
     private String description;
 
     /**
-     * Récompense en expérience de la quête.
+     * Experience points (XP) rewarded upon completion.
      */
     private int xpReward;
 
     /**
-     * Niveau de difficulté de la quête.
+     * Difficulty level (e.g. EASY, MEDIUM, HARD).
      */
     private String difficulty;
 
     /**
-     * Modèle de code initial fourni à l'utilisateur.
+     * Starter code template provided to the user.
      */
     private String codeTemplate;
 
     /**
-     * Expression régulière de validation pour vérifier la soumission.
+     * Regular expression used to validate user code submission.
      */
     private String testValidationRegex;
 
     /**
-     * Sous-région ou catégorie de la quête.
+     * Sub-region or category name of the quest.
      */
     private String category;
 
     /**
-     * Langage(s) utilisé(s) dans la quête.
+     * Programming languages associated with this quest.
      */
     private String languages;
 
     /**
-     * Concept technique abordé par la quête.
+     * Technical concept taught by the quest.
      */
     private String concept;
 
     /**
-     * Explications théoriques détaillées fournies à l'élève.
+     * Theoretical course content provided to the student.
      */
     @jakarta.persistence.Column(columnDefinition = "TEXT")
     private String theory;
 
     /**
-     * Le monde auquel appartient cette quête.
+     * The realm (world) this quest belongs to.
      */
     @ManyToOne
     @JoinColumn(name = "world_id")
@@ -82,37 +81,37 @@ public class Quest {
     private World world;
 
     /**
-     * Constructeur par défaut requis par JPA.
+     * Default constructor required by JPA.
      */
     public Quest() {}
 
     /**
-     * Constructeur pour créer une quête sans modèle de code de départ.
+     * Constructor to create a quest without starter code.
      * 
-     * @param id          L'id unique de la quête
-     * @param title       Le titre de la quête
-     * @param description La description détaillée de la quête
-     * @param xpReward    La récompense en expérience de la quête
-     * @param difficulty  Le niveau de difficulté de la quête
+     * @param id          Unique quest identifier
+     * @param title       Quest title
+     * @param description Quest description
+     * @param xpReward    Experience reward
+     * @param difficulty  Difficulty level
      */
     public Quest(String id, String title, String description, int xpReward, String difficulty) {
         this(id, title, description, xpReward, difficulty, null, null, null, null, null, null);
     }
 
     /**
-     * Constructeur complet pour créer une instance de quête avec tous les détails.
+     * Full constructor to initialize a quest with all metadata.
      * 
-     * @param id                  L'id unique de la quête
-     * @param title               Le titre de la quête
-     * @param description         La description détaillée de la quête
-     * @param xpReward            La récompense en expérience de la quête
-     * @param difficulty          Le niveau de difficulté de la quête
-     * @param codeTemplate        Le modèle de code de départ
-     * @param testValidationRegex L'expression de validation de la quête
-     * @param category            La sous-région ou catégorie de la quête
-     * @param languages           Les langages associés à l'épreuve
-     * @param concept             Le concept théorique/pratique enseigné
-     * @param theory              Le contenu du cours théorique
+     * @param id                  Unique quest identifier
+     * @param title               Quest title
+     * @param description         Detailed description and instructions
+     * @param xpReward            Experience points reward
+     * @param difficulty          Difficulty level
+     * @param codeTemplate        Initial starter code
+     * @param testValidationRegex Regex validation pattern
+     * @param category            Sub-region or category name
+     * @param languages           Associated languages
+     * @param concept             Technical concept taught
+     * @param theory              Theoretical lesson content
      */
     public Quest(String id, String title, String description, int xpReward, String difficulty, String codeTemplate, String testValidationRegex, String category, String languages, String concept, String theory) {
         this.id = id;
@@ -141,216 +140,216 @@ public class Quest {
     }
 
     /**
-     * Récupère l'identifiant unique de la quête.
+     * Gets the unique quest identifier.
      * 
-     * @return L'identifiant de la quête
+     * @return The quest identifier
      */
     public String getId() {
         return id;
     }
 
     /**
-     * Définit l'identifiant de la quête.
+     * Sets the unique quest identifier.
      * 
-     * @param id Le nouvel identifiant de la quête
+     * @param id The new quest identifier
      */
     public void setId(String id) {
         this.id = id;
     }
 
     /**
-     * Récupère le titre de la quête.
+     * Gets the quest title.
      * 
-     * @return Le titre de la quête
+     * @return The quest title
      */
     public String getTitle() {
         return title;
     }
 
     /**
-     * Définit le titre de la quête.
+     * Sets the quest title.
      * 
-     * @param title Le nouveau titre de la quête
+     * @param title The new quest title
      */
     public void setTitle(String title) {
         this.title = title;
     }
 
     /**
-     * Récupère la description de la quête.
+     * Gets the quest description.
      * 
-     * @return La description de la quête
+     * @return The quest description
      */
     public String getDescription() {
         return description;
     }
 
     /**
-     * Définit la description de la quête.
+     * Sets the quest description.
      * 
-     * @param description La nouvelle description de la quête
+     * @param description The new description
      */
     public void setDescription(String description) {
         this.description = description;
     }
 
     /**
-     * Récupère l'expérience gagnée comme récompense de la quête.
+     * Gets the experience points reward.
      * 
-     * @return Le nombre de points d'expérience
+     * @return The XP reward
      */
     public int getXpReward() {
         return xpReward;
     }
 
     /**
-     * Définit l'expérience gagnée comme récompense de la quête.
+     * Sets the experience points reward.
      * 
-     * @param xpReward Le nombre de points d'expérience de récompense
+     * @param xpReward The new XP reward
      */
     public void setXpReward(int xpReward) {
         this.xpReward = xpReward;
     }
 
     /**
-     * Récupère la difficulté de la quête.
+     * Gets the difficulty level.
      * 
-     * @return La difficulté de la quête
+     * @return The difficulty level
      */
     public String getDifficulty() {
         return difficulty;
     }
 
     /**
-     * Définit la difficulté de la quête.
+     * Sets the difficulty level.
      * 
-     * @param difficulty La nouvelle difficulté de la quête
+     * @param difficulty The new difficulty level
      */
     public void setDifficulty(String difficulty) {
         this.difficulty = difficulty;
     }
 
     /**
-     * Récupère le monde auquel appartient cette quête.
+     * Gets the world this quest belongs to.
      * 
-     * @return Le monde associé
+     * @return The associated world
      */
     public World getWorld() {
         return world;
     }
 
     /**
-     * Définit le monde auquel appartient cette quête.
+     * Sets the world this quest belongs to.
      * 
-     * @param world Le nouveau monde associé
+     * @param world The new associated world
      */
     public void setWorld(World world) {
         this.world = world;
     }
 
     /**
-     * Récupère le modèle de code fourni pour démarrer la quête.
+     * Gets the initial starter code template.
      * 
-     * @return Le modèle de code source
+     * @return The code template
      */
     public String getCodeTemplate() {
         return codeTemplate;
     }
 
     /**
-     * Définit le modèle de code fourni pour démarrer la quête.
+     * Sets the initial starter code template.
      * 
-     * @param codeTemplate Le nouveau modèle de code source
+     * @param codeTemplate The new starter code template
      */
     public void setCodeTemplate(String codeTemplate) {
         this.codeTemplate = codeTemplate;
     }
 
     /**
-     * Récupère l'expression régulière de validation de la quête.
+     * Gets the validation regex pattern.
      * 
-     * @return L'expression régulière de validation
+     * @return The validation regex
      */
     public String getTestValidationRegex() {
         return testValidationRegex;
     }
 
     /**
-     * Définit l'expression régulière de validation de la quête.
+     * Sets the validation regex pattern.
      * 
-     * @param testValidationRegex La nouvelle expression de validation
+     * @param testValidationRegex The new validation regex pattern
      */
     public void setTestValidationRegex(String testValidationRegex) {
         this.testValidationRegex = testValidationRegex;
     }
 
     /**
-     * Récupère la sous-région ou catégorie de la quête.
+     * Gets the sub-region or category name.
      * 
-     * @return La sous-région ou catégorie de la quête
+     * @return The category name
      */
     public String getCategory() {
         return category;
     }
 
     /**
-     * Définit la sous-région ou catégorie de la quête.
+     * Sets the sub-region or category name.
      * 
-     * @param category La nouvelle sous-région ou catégorie
+     * @param category The new category name
      */
     public void setCategory(String category) {
         this.category = category;
     }
 
     /**
-     * Récupère les langages associés à la quête.
+     * Gets the programming languages associated with this quest.
      * 
-     * @return Les langages de la quête
+     * @return The quest languages
      */
     public String getLanguages() {
         return languages;
     }
 
     /**
-     * Définit les langages associés à la quête.
+     * Sets the programming languages associated with this quest.
      * 
-     * @param languages Les nouveaux langages
+     * @param languages The new languages string
      */
     public void setLanguages(String languages) {
         this.languages = languages;
     }
 
     /**
-     * Récupère le concept technique enseigné par la quête.
+     * Gets the technical concept taught by this quest.
      * 
-     * @return Le concept technique de la quête
+     * @return The concept
      */
     public String getConcept() {
         return concept;
     }
 
     /**
-     * Définit le concept technique enseigné par la quête.
+     * Sets the technical concept taught by this quest.
      * 
-     * @param concept Le nouveau concept technique
+     * @param concept The new concept
      */
     public void setConcept(String concept) {
         this.concept = concept;
     }
 
     /**
-     * Récupère le contenu théorique du cours de la quête.
+     * Gets the theoretical lesson content.
      * 
-     * @return Le cours théorique
+     * @return The theory text
      */
     public String getTheory() {
         return theory;
     }
 
     /**
-     * Définit le contenu théorique du cours de la quête.
+     * Sets the theoretical lesson content.
      * 
-     * @param theory Le nouveau cours théorique
+     * @param theory The new theory text
      */
     public void setTheory(String theory) {
         this.theory = theory;

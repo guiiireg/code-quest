@@ -1,5 +1,5 @@
 /**
- * Requête pour l'authentification (connexion).
+ * Login request payload.
  */
 export interface LoginRequest {
   username: string;
@@ -7,7 +7,7 @@ export interface LoginRequest {
 }
 
 /**
- * Requête pour l'enregistrement (inscription).
+ * Registration request payload.
  */
 export interface SignupRequest {
   username: string;
@@ -17,7 +17,7 @@ export interface SignupRequest {
 }
 
 /**
- * Réponse du serveur après une authentification réussie contenant le jeton JWT.
+ * Server authentication response containing the JWT bearer token.
  */
 export interface JwtResponse {
   token: string;
@@ -26,3 +26,4 @@ export interface JwtResponse {
   email: string;
   roles: string[];
 }
+

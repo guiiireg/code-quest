@@ -3,11 +3,12 @@ package com.example.codequest.payload.request;
 import java.util.Set;
 
 /**
- * Payload request pour l'inscription (signup).
+ * Request payload for user registration (signup).
  * 
- * @param username Le nom d'utilisateur souhaité
- * @param email    L'adresse email de l'utilisateur
- * @param password Le mot de passe
- * @param roles    L'ensemble des rôles demandés (par exemple : admin, user)
+ * @param username The desired username
+ * @param email    The user email address
+ * @param password The raw password
+ * @param roles    Set of requested roles (e.g. admin, user)
  */
 public record SignupRequest(String username, String email, String password, Set<String> roles) {}
+

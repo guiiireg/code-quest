@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * Contrôleur REST pour la gestion des mondes et des quêtes.
+ * REST Controller for managing realms (worlds) and quests.
  */
 @RestController
 @RequestMapping("/api")
@@ -21,10 +21,10 @@ public class WorldController {
     private final QuestService questService;
 
     /**
-     * Constructeur pour l'injection des services.
+     * Constructor for service dependency injection.
      * 
-     * @param worldService Le service des mondes
-     * @param questService Le service des quêtes
+     * @param worldService The world domain service
+     * @param questService The quest domain service
      */
     public WorldController(WorldService worldService, QuestService questService) {
         this.worldService = worldService;
@@ -32,9 +32,9 @@ public class WorldController {
     }
 
     /**
-     * Récupère la liste de tous les mondes.
+     * Retrieves all available worlds.
      * 
-     * @return La liste complète des mondes
+     * @return Complete list of worlds
      */
     @GetMapping("/worlds")
     public List<World> getAllWorlds() {
@@ -42,10 +42,10 @@ public class WorldController {
     }
 
     /**
-     * Récupère un monde spécifique par son identifiant.
+     * Retrieves a specific world by its unique identifier.
      * 
-     * @param id L'identifiant unique du monde à rechercher
-     * @return Le monde correspondant à l'identifiant
+     * @param id The unique world identifier
+     * @return The corresponding world
      */
     @GetMapping("/worlds/{id}")
     public World getWorldById(@PathVariable String id) {
@@ -53,10 +53,10 @@ public class WorldController {
     }
 
     /**
-     * Récupère une quête spécifique par son identifiant.
+     * Retrieves a specific quest by its unique identifier.
      * 
-     * @param id L'identifiant unique de la quête à rechercher
-     * @return La quête correspondante
+     * @param id The unique quest identifier
+     * @return The corresponding quest
      */
     @GetMapping("/quests/{id}")
     public Quest getQuestById(@PathVariable String id) {
@@ -64,14 +64,15 @@ public class WorldController {
     }
 
     /**
-     * Valide le code soumis pour une quête spécifique.
+     * Validates and evaluates submitted code for a specific quest.
      * 
-     * @param id L'identifiant de la quête
-     * @param request La requête contenant le code utilisateur
-     * @return Le résultat de la soumission
+     * @param id The quest identifier
+     * @param request The request payload containing submitted code
+     * @return The submission result with validation details and XP reward
      */
     @PostMapping("/quests/{id}/submit")
     public SubmissionResponse submitQuest(@PathVariable String id, @RequestBody SubmissionDTO request) {
         return questService.submitQuest(id, request);
     }
 }
+

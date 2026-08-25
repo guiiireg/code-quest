@@ -1,186 +1,177 @@
 # Code Quest
 
-[![Live Demo](https://img.shields.io/badge/demo-online-brightgreen.svg)](https://code-quest-bv1.pages.dev)
-[![Backend API](https://img.shields.io/badge/API-Render-46E3B7.svg)](https://code-quest-api-klr7.onrender.com/api/worlds)
-[![Frontend](https://img.shields.io/badge/Frontend-Cloudflare_Pages-F38020.svg)](https://code-quest-bv1.pages.dev)
-[![Database](https://img.shields.io/badge/Database-Neon_PostgreSQL-00E599.svg)](https://neon.tech)
-
-**Code Quest** est une plateforme d'apprentissage et d'entraînement au développement web et logiciel sous forme de jeu de rôle (RPG).
-Les développeurs explorent des régions thématiques, résolvent des épreuves de programmation interactives dans un éditeur de code embarqué, gagnent des points d'expérience (XP) et montent en niveau.
-
-🔗 **Démo en ligne** : [https://code-quest-bv1.pages.dev](https://code-quest-bv1.pages.dev)  
-🔗 **API Backend (Render)** : [https://code-quest-api-klr7.onrender.com](https://code-quest-api-klr7.onrender.com)
+> **Note pour les recruteurs (FR) :** *Code Quest est une plateforme full-stack gamifiée (style RPG) d'apprentissage du développement web et logiciel (Angular 19, Spring Boot 4.1, Java 21, PostgreSQL 16). La documentation et l'intégralité du code source sont rédigées en anglais conformément aux standards professionnels de l'ingénierie logicielle.*
 
 ---
 
-## Architecture du Projet
+**Code Quest** is an interactive, gamified RPG-style learning and training platform for web and software development.
+Developers explore thematic regions, solve interactive coding challenges directly within an embedded code editor, earn experience points (XP), and level up.
 
-Le projet est structuré sous forme de monorepo composé de deux modules applicatifs indépendants et d'une base de données relationnelle :
+---
+
+## System Architecture
+
+The project is structured as a monorepo containing two decoupled application modules and a containerized database service:
 
 ```text
 code-quest/
-├── backend/          # API REST Java 21 / Spring Boot 4.1.0 (Déployé sur Render)
-├── frontend/         # Application Web SPA Angular 19 / TypeScript (Déployé sur Cloudflare Pages)
-├── docker-compose.yml # Service de persistance PostgreSQL 16 local
-└── README.md         # Documentation du projet
+├── backend/           # REST API (Java 21 / Spring Boot 4.1.0)
+├── frontend/          # Single Page Application (Angular 19 / TypeScript 5.7)
+├── docker-compose.yml # PostgreSQL 16 Alpine Database Service
+└── README.md          # Project Documentation
 ```
 
-### Déploiement Cloud (Production)
-* **Frontend** : Hébergé sur **Cloudflare Pages** (`https://code-quest-bv1.pages.dev`), servi via CDN mondial ultra-rapide avec routage SPA et proxying `/api/*`.
-* **Backend** : Conteneurisé via Docker sur **Render** (`https://code-quest-api-klr7.onrender.com`) avec allocation mémoire JVM optimisée pour le free tier.
-* **Base de Données** : Instance managée **PostgreSQL 16** serverless sur **Neon.tech**.
-
-### Flux de Données & Communication Locale
-* **Frontend (Angular 19)** :
-  - Écoute sur `http://localhost:4200` en développement local.
-  - Architecture moderne en composants **Standalone** et réactivité par **Angular Signals**.
-  - Éditeur de code intégré **Monaco Editor** avec coloration syntaxique adaptative.
-  - Proxy de développement (`proxy.conf.json`) ou proxy Cloudflare (`_redirects`) redirigeant automatiquement les appels `/api` vers le backend.
-  - Authentification sans état via jeton JWT transmis par en-tête HTTP (`Authorization: Bearer <token>`).
-* **Backend (Spring Boot 4.1.0)** :
-  - Écoute sur le port `8081` en local (port dynamique `PORT` sur Render).
-  - Sécurité stateless via **Spring Security** et validation des jetons JWT.
-  - Modélisation des requêtes/réponses d'API via les **Java Records**.
-  - Évaluation et validation dynamique du code soumis (Sandbox sécurisée conteneurisée ou analyse structurelle par Regex).
-* **Base de Données (PostgreSQL 16 Alpine / Neon)** :
-  - Port `5432` en local ou pooler SSL distant.
-  - Schéma et jeux de données d'apprentissage initialisés via `schema.sql` et `data.sql` sans écrasement des utilisateurs existants (`CREATE TABLE IF NOT EXISTS` et `ON CONFLICT`).
+### Data Flow & Communication
+* **Frontend (Angular 19)**:
+  - Runs on `http://localhost:4200`.
+  - Built with modern **Standalone Components** and reactive state management via **Angular Signals**.
+  - Integrated **Monaco Editor** with dynamic language syntax highlighting.
+  - Development proxy (`proxy.conf.json`) forwarding `/api` requests to `http://localhost:8081`.
+  - Stateless authentication via JWT tokens injected into outgoing HTTP headers (`Authorization: Bearer <token>`).
+* **Backend (Spring Boot 4.1.0)**:
+  - Runs on port `8081`.
+  - Stateless security using **Spring Security** and JWT token validation.
+  - Data transfer objects modeled with modern **Java Records**.
+  - Dynamic code evaluation engine (isolated containerized sandbox or structural regex-based validation).
+* **Database (PostgreSQL 16 Alpine)**:
+  - Runs on port `5432` (Database: `codequest`).
+  - Schema and educational quest dataset automatically initialized on startup via `schema.sql` and `data.sql`.
 
 ---
 
-## Stack Technique
+## Tech Stack
 
-| Composant | Technologie | Rôle & Description |
+| Component | Technology | Description |
 | :--- | :--- | :--- |
-| **Backend** | **Java 21** / **Spring Boot 4.1.0** | API REST, gestion des mondes/quêtes, sécurité et évaluation de code. |
-| **Sécurité** | **Spring Security** / **JJWT 0.11.5** | Authentification JWT sans état, contrôle d'accès et hashage BCrypt. |
-| **ORM & BDD** | **Spring Data JPA** / **Hibernate** | Gestion des entités relationnelles et repositories. |
-| **Base de Données** | **PostgreSQL 16 Alpine** | Persistance relationnelle (mondes, quêtes, utilisateurs, rôles). |
-| **Frontend** | **Angular 19** / **TypeScript 5.7** | Interface Single Page Application (SPA), Standalone Components, Signals. |
-| **Interface UI** | **Angular Material 19** | Thème RPG Dark Fantasy (`azure-blue.css`), composants graphiques et navigation. |
-| **Éditeur de Code** | **Monaco Editor** | Éditeur de code interactif avec support multi-langages et raccourcis. |
-| **Build & Tooling** | **Maven Wrapper 3.9.6** / **npm** | Gestion des dépendances et cycles de vie de compilation. |
-| **Conteneurisation** | **Docker Compose** | Orchestration de l'environnement local de base de données. |
+| **Backend** | **Java 21** / **Spring Boot 4.1.0** | REST API, quest/world domain logic, security, and code evaluation. |
+| **Security** | **Spring Security** / **JJWT 0.11.5** | Stateless JWT authentication, role-based authorization, BCrypt hashing. |
+| **Persistence** | **Spring Data JPA** / **Hibernate** | Relational entity mappings, CRUD repositories, cascading relationships. |
+| **Database** | **PostgreSQL 16 Alpine** | Relational data storage for worlds, quests, users, and roles. |
+| **Frontend** | **Angular 19** / **TypeScript 5.7** | Single Page Application (SPA), Standalone architecture, Angular Signals. |
+| **UI Library** | **Angular Material 19** | RPG Dark Fantasy theme (`azure-blue.css`), responsive layouts. |
+| **Code Editor** | **Monaco Editor** | Embedded in-browser code editor with multi-language syntax support. |
+| **Build & Tooling** | **Maven Wrapper 3.9.6** / **npm** | Dependency management, compilation, and automated packaging. |
+| **Containerization**| **Docker Compose** | Local orchestration for the PostgreSQL 16 database instance. |
 
 ---
 
-## Contenu & Parcours Pédagogique
+## Educational Curriculum & Quest Content
 
-L'application propose un cursus complet d'apprentissage découpé en régions thématiques et sous-domaines :
+The platform features a structured learning pathway divided into thematic realms:
 
-### 1. 📜 Région 1 — HTML5 (`world-1`)
-Le point de départ fondamental du développement web et de la structuration sémantique :
-- **Structure ancestrale** : Modèle Client / Serveur, interprétation HTML, arbre DOM, DOCTYPE et attributs fondamentaux (`id`, `class`, `lang`).
-- **Grimoire du `<head>`** : Métadonnées, encodage UTF-8, viewport responsive, `title`, SEO meta description, favicon, canonical et Open Graph.
-- **Texte & Hiérarchie** : Titres `<h1>` à `<h6>`, paragraphes `<p>`, sauts de ligne `<br>`, emphase sémantique `<strong>`/`<em>`, surlignage `<mark>`, citations `<blockquote>`.
-- **Listes & Inventaires** : Listes non ordonnées `<ul>`, ordonnées `<ol>`, imbrications et listes de définitions `<dl>`.
-- **Liens & Navigation** : Balise `<a>`, chemins relatifs/absolus, ancres intra-page, protocoles `mailto:`/`tel:`, attributs de sécurité `target="_blank"` et `rel="noopener noreferrer"`.
-- **Médias & Intégrations** : Images `<img>` avec texte alternatif `alt`, légendes `<figure>`/`<figcaption>`, images responsives `<picture>`/`srcset`, lecteurs audio `<audio controls>` et vidéo `<video controls>`, sous-titres `<track>` et intégrations `<iframe>`.
-- **Sémantique HTML5** : Découpage structurel moderne (`<header>`, `<nav>`, `<main>`, `<section>`, `<article>`, `<aside>`, `<footer>`, `<address>`, `<time>`).
-- **Formulaires & Collecte** : Formulaires `<form>`, champs `<input>`, zones de texte `<textarea>`, menus déroulants `<select>`, suggestions `<datalist>`, validation native et groupements `<fieldset>`/`<legend>`.
-- **Tableaux de Données** : Structuration `<table>`, `<thead>`, `<tbody>`, `<tfoot>`, cellules d'en-tête `<th>`, attributs de portée `scope` et fusions `colspan`/`rowspan`.
-- **Éléments Interactifs Natifs** : Accordéons repliables `<details>`/`<summary>`, modales natives `<dialog>` et API Popover.
-- **Accessibilité (a11y)** : Balises sémantiques vs génériques, attributs `alt`, rôles et noms accessibles `aria-label`.
-- **Performance Web** : Chargement asynchrone des scripts `defer`/`async`, resource hints `preload`/`preconnect`, lazy loading `loading="lazy"` et formats modernes WebP.
-- **Sécurité Web** : Neutralisation des injections XSS, sandbox `<iframe>`, politiques CSP (`Content-Security-Policy`) et contraintes de validation `pattern`.
-- **Qualité & Évaluation** : Validation standard W3C, nettoyage d'éléments obsolètes, inspection DevTools et quiz de validation de connaissances.
+### 1. 📜 Realm 1 — HTML5 (`world-1`)
+Foundational web architecture and semantic structuring:
+- **Core Structure**: Client / Server architecture, HTML parsing, DOM tree, DOCTYPE declaration, and core attributes (`id`, `class`, `lang`).
+- **The `<head>` Grimoire**: Metadata, UTF-8 charset, responsive viewport, `<title>`, SEO description, favicon, canonical links, and Open Graph protocol.
+- **Text & Hierarchy**: Headings `<h1>` to `<h6>`, paragraphs `<p>`, line breaks `<br>`, semantic emphasis `<strong>`/`<em>`, highlighting `<mark>`, blockquotes `<blockquote>`.
+- **Lists & Inventories**: Unordered lists `<ul>`, ordered lists `<ol>`, nested structures, definition lists `<dl>`.
+- **Hyperlinks & Navigation**: Anchor tags `<a>`, relative/absolute paths, fragment identifiers (anchors), `mailto:`/`tel:`, security attributes `target="_blank"` and `rel="noopener noreferrer"`.
+- **Media & Embedding**: Images `<img>` with accessible `alt` text, `<figure>`/`<figcaption>`, responsive `<picture>`/`srcset`, native `<audio controls>` and `<video controls>`, subtitles `<track>`, and `<iframe>` embeds.
+- **Semantic HTML5**: Modern structural landmarks (`<header>`, `<nav>`, `<main>`, `<section>`, `<article>`, `<aside>`, `<footer>`, `<address>`, `<time>`).
+- **Forms & User Input**: Forms `<form>`, inputs `<input>`, multiline `<textarea>`, select menus `<select>`, autocompletion `<datalist>`, native validation, and fieldsets `<fieldset>`/`<legend>`.
+- **Data Tables**: Table layouts `<table>`, `<thead>`, `<tbody>`, `<tfoot>`, header cells `<th>`, accessibility `scope`, cell spans `colspan`/`rowspan`.
+- **Native Interactive Elements**: Collapsible accordions `<details>`/`<summary>`, modal dialogs `<dialog>`, Popover API.
+- **Web Accessibility (A11y)**: Semantic landmarks vs generic containers, `alt` descriptions, ARIA roles, and accessible naming with `aria-label`.
+- **Web Performance**: Asynchronous script execution `defer`/`async`, resource hints `preload`/`preconnect`, lazy loading `loading="lazy"`, modern WebP image formats.
+- **Web Security**: Cross-Site Scripting (XSS) mitigation, `<iframe>` sandbox isolation, Content Security Policy (CSP), input pattern constraints.
+- **Standards & Quality**: W3C compliance, deprecation cleanup, DevTools DOM inspection, and knowledge evaluation quizzes.
 
-### 2. ♿ Région 2 — Accessibilité Web (A11y) (`world-2`)
-Le Royaume de l'Inclusion et des standards WCAG 2.2 AA :
-- **Fondements de l'A11y** : Noms accessibles, attributs `aria-label`, typologie des handicaps et design universel.
-- **Navigation au Clavier** : Ordre naturel du focus, gestion du `tabindex`, pièges au clavier et raccourcis de saut de contenu (*Skip Links*).
-- **Lecteurs d'Écran & WAI-ARIA** : Rôles sémantiques, alertes dynamiques `aria-live="polite"`/`assertive`, états interactifs `aria-expanded`, descriptions `aria-describedby` et masquage contrôlé `aria-hidden`.
-- **Formulaires & Contrastes** : Associations strictes `<label for>`, messages d'erreur accessibles et ratios de contraste conformes aux normes WCAG.
+### 2. ♿ Realm 2 — Web Accessibility (A11y) (`world-2`)
+Universal design and WCAG 2.2 AA standards:
+- **A11y Fundamentals**: Accessible names, `aria-label`, disability spectrums, inclusive design principles.
+- **Keyboard Navigation**: Natural tab order, focus management, `tabindex` rules, keyboard trap prevention, Skip Links.
+- **Screen Readers & WAI-ARIA**: Semantic roles, dynamic live regions `aria-live="polite"`/`assertive`, interactive state flags `aria-expanded`, descriptions `aria-describedby`, hidden elements `aria-hidden`.
+- **Accessible Forms & Color Contrast**: Explicit `<label for>` bindings, error message associations, WCAG-compliant contrast ratios.
 
-### 3. 🎨 Région 3 — CSS3 (`world-3`)
-Le Domaine des Formes, des Couleurs et de la Mise en Page moderne :
-- **Box Model & Fondations** : Marges, bordures, espacements internes (`padding`) et `box-sizing: border-box`.
-- **Mise en Page Flexbox** : Axes principaux et secondaires, alignements, justifications, direction et flexibilité réactive.
-- **Mise en Page CSS Grid** : Grilles bidimensionnelles, zones nommées `grid-template-areas`, unités fractionnaires `fr` et fonctions `minmax()`.
-- **Responsive Design** : Media queries `@media`, approches *Mobile-First*, unités relatives (`rem`, `vw`, `vh`, `cqw`).
-- **Variables & Thèmes** : Custom properties CSS (`--rpg-gold`, etc.), cascades et thématisation dynamique.
-- **Animations & Effets** : Transitions fluides, transformations 2D/3D et animations temporelles `@keyframes`.
-
----
-
-## Système de Gamification RPG
-
-- **Expérience & Niveaux** :
-  1. *Niveau 1* — **Initié du Code** (0 à 199 XP)
-  2. *Niveau 2* — **Apprenti Développeur** (200 à 499 XP)
-  3. *Niveau 3* — **Compagnon du Code** (500 à 999 XP)
-  4. *Niveau 4* — **Archimage** (1000 à 1999 XP)
-  5. *Niveau 5* — **Légende de CodeQuest** (2000+ XP)
-- **Déverrouillage Séquentiel** : Chaque épreuve d'une région requiert l'accomplissement de l'épreuve précédente pour être débloquée.
-- **Fiche de Personnage** : Visualisation en temps réel de la progression d'XP, du niveau actuel, du total de quêtes réussies, des trophées obtenus et des compétences acquises.
-- **Sauvegarde Locale des Brouillons** : Tous les codes saisis dans l'éditeur sont persistés en continu dans le stockage local du navigateur.
+### 3. 🎨 Realm 3 — CSS3 (`world-3`)
+Styling, modern layout systems, and responsive visual design:
+- **Box Model & Fundamentals**: Margins, borders, padding, and `box-sizing: border-box`.
+- **Flexbox Layout**: Main and cross axes, alignments, justifications, direction, flex wrap and item ordering.
+- **CSS Grid Layout**: Two-dimensional grids, named template areas `grid-template-areas`, fractional units `fr`, `minmax()` functions.
+- **Responsive Web Design**: Media queries `@media`, mobile-first paradigms, relative viewport units (`rem`, `vw`, `vh`, `cqw`).
+- **CSS Variables & Theming**: Custom properties (`--rpg-gold`, etc.), cascading inheritance, dynamic theme switching.
+- **Transitions & Keyframe Animations**: Smooth state transitions, 2D/3D transforms, `@keyframes` timeline animations.
 
 ---
 
-## Contrats d'API REST
+## RPG Gamification System
 
-### Authentification (`/api/auth`)
-* `POST /api/auth/signup` : Inscription d'un nouvel utilisateur (nom d'utilisateur, email, mot de passe).
-* `POST /api/auth/signin` : Connexion et récupération du jeton JWT (`token`, `username`, `email`, `roles`).
-
-### Mondes & Quêtes (`/api`)
-* `GET /api/worlds` : Récupération de la liste complète des mondes avec leurs quêtes associées.
-* `GET /api/worlds/{id}` : Récupération des détails d'un monde spécifique.
-* `GET /api/quests/{id}` : Récupération des données d'une quête (consignes, cours théorique, template initial, XP, difficulté).
-* `POST /api/quests/{id}/submit` : Soumission de code utilisateur pour évaluation et attribution d'XP.
-
----
-
-## Guide de Démarrage Rapide
-
-### Prérequis
-- **Java 21** (OpenJDK ou équivalent).
-- **Node.js** (v20+ ou v26) et **npm**.
-- **Docker** et **Docker Compose**.
+- **Levels & Experience (XP) Thresholds**:
+  1. *Level 1* — **Code Initiate** (0 to 199 XP)
+  2. *Level 2* — **Apprentice Developer** (200 to 499 XP)
+  3. *Level 3* — **Code Journeyman** (500 to 999 XP)
+  4. *Level 4* — **Archmage** (1000 to 1999 XP)
+  5. *Level 5* — **Legend of CodeQuest** (2000+ XP)
+- **Sequential Progression**: Quests in each realm unlock sequentially upon successful completion of prerequisite quests.
+- **Character Dashboard**: Real-time visualization of current level, XP progress bar, completed quest counter, unlocked skills, and achievement trophies.
+- **Persistent Code Drafts**: In-progress code solutions are continuously auto-saved in local browser storage per quest.
 
 ---
 
-### 1. Démarrer la Base de Données (PostgreSQL 16)
-Assurez-vous que le service Docker est actif, puis lancez le conteneur PostgreSQL :
+## REST API Specification
+
+### Authentication (`/api/auth`)
+* `POST /api/auth/signup`: Register a new user (`username`, `email`, `password`).
+* `POST /api/auth/signin`: Authenticate credentials and receive JWT bearer token (`token`, `id`, `username`, `email`, `roles`).
+
+### Worlds & Quests (`/api`)
+* `GET /api/worlds`: List all available realms with nested quest metadata.
+* `GET /api/worlds/{id}`: Retrieve realm details and its quest list.
+* `GET /api/quests/{id}`: Retrieve quest details (instructions, theory lesson, initial template, XP reward, difficulty).
+* `POST /api/quests/{id}/submit`: Submit solution code for validation and experience attribution.
+
+---
+
+## Quick Start Guide
+
+### Prerequisites
+- **Java 21** (OpenJDK or compatible distribution).
+- **Node.js** (v20+ or v26) and **npm**.
+- **Docker** and **Docker Compose**.
+
+---
+
+### 1. Start the Database (PostgreSQL 16)
+Ensure Docker is running, then start the PostgreSQL container:
 ```bash
 docker compose up -d
 ```
-> Le serveur de base de données sera disponible sur `localhost:5432` (Base : `codequest`, utilisateur : `postgres`).
+> The database will be available on `localhost:5432` (Database: `codequest`, username: `postgres`, password: `postgres`).
 
 ---
 
-### 2. Démarrer le Backend (Spring Boot)
-Dans un premier terminal :
+### 2. Start the Backend (Spring Boot)
+In a first terminal:
 ```bash
 cd backend
 ./mvnw spring-boot:run
 ```
-> L'API REST sera accessible sur **`http://localhost:8081`**. Spring Boot initialise et pré-remplit les mondes et quêtes via `schema.sql` et `data.sql`.
+> The REST API will be accessible on **`http://localhost:8081`**. The database tables and seed data are initialized automatically via `schema.sql` and `data.sql`.
 
 ---
 
-### 3. Démarrer le Frontend (Angular 19)
-Dans un second terminal :
+### 3. Start the Frontend (Angular 19)
+In a second terminal:
 ```bash
 cd frontend
 npm install
 npm start
 ```
-> L'application web démarre sur **`http://localhost:4200`** avec redirection transparente des requêtes `/api` vers le backend via le proxy de développement.
+> Open your browser and navigate to **`http://localhost:4200`**. Outgoing API calls to `/api` are automatically proxied to the backend.
 
 ---
 
-## Exécution des Tests
+## Running Tests
 
-### Backend (JUnit 5 & MockMvc)
-Pour exécuter la suite de tests automatisés Spring Boot (contrôleurs, validation et sécurité) :
+### Backend Tests (JUnit 5 & MockMvc)
+To run the automated backend test suite:
 ```bash
 cd backend
 ./mvnw test
 ```
 
-### Frontend (Karma & Jasmine)
-Pour lancer les tests unitaires des composants et services Angular :
+### Frontend Tests (Karma & Jasmine)
+To run unit tests for Angular components and services:
 ```bash
 cd frontend
 npm test
@@ -190,4 +181,4 @@ npm test
 
 ## Maintenance & Conventions
 
-- **Règle de Synchronisation** : Toute modification de l'architecture, ajout de dépendances majeures, évolution du schéma relationnel, changement de ports ou ajout de nouvelles quêtes pédagogiques doit obligatoirement s'accompagner de la mise à jour de ce fichier `README.md`.
+- **Documentation Synchronization Rule**: Any update to the architecture, dependencies, endpoints, database schema, or quest curriculum must be reflected immediately in this `README.md` file.

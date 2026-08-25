@@ -3,8 +3,8 @@ import { inject } from '@angular/core';
 import { AuthService } from './auth.service';
 
 /**
- * Intercepteur HTTP pour ajouter automatiquement le jeton JWT d'authentification
- * à toutes les requêtes HTTP sortantes sous le format Bearer Token.
+ * Functional HTTP interceptor that automatically attaches the JWT Bearer token
+ * to outgoing HTTP requests.
  */
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
@@ -20,3 +20,4 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(req);
 };
+

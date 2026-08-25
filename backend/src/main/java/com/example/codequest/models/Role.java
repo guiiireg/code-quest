@@ -3,34 +3,34 @@ package com.example.codequest.models;
 import jakarta.persistence.*;
 
 /**
- * Représente un rôle dans l'application (ex: ROLE_USER, ROLE_ADMIN).
+ * Represents a user role in the application (e.g. ROLE_USER, ROLE_ADMIN).
  */
 @Entity
 @Table(name = "roles")
 public class Role {
 
     /**
-     * Identifiant unique du rôle.
+     * Unique identifier for the role.
      */
     @Id
     private String id;
 
     /**
-     * Nom du rôle (par exemple : ROLE_USER, ROLE_ADMIN).
+     * Name of the role (e.g. ROLE_USER, ROLE_ADMIN).
      */
     @Column(nullable = false, unique = true, length = 50)
     private String name;
 
     /**
-     * Constructeur par défaut requis par JPA.
+     * Default constructor required by JPA.
      */
     public Role() {}
 
     /**
-     * Constructeur pour créer un rôle avec son identifiant et son nom.
+     * Constructor to create a role with its identifier and name.
      * 
-     * @param id   L'identifiant unique du rôle
-     * @param name Le nom du rôle
+     * @param id   The unique role identifier
+     * @param name The name of the role
      */
     public Role(String id, String name) {
         this.id = id;
@@ -38,38 +38,39 @@ public class Role {
     }
 
     /**
-     * Récupère l'identifiant du rôle.
+     * Gets the role identifier.
      * 
-     * @return L'identifiant unique du rôle
+     * @return The unique role identifier
      */
     public String getId() {
         return id;
     }
 
     /**
-     * Définit l'identifiant du rôle.
+     * Sets the role identifier.
      * 
-     * @param id Le nouvel identifiant unique du rôle
+     * @param id The new unique role identifier
      */
     public void setId(String id) {
         this.id = id;
     }
 
     /**
-     * Récupère le nom du rôle.
+     * Gets the name of the role.
      * 
-     * @return Le nom du rôle
+     * @return The name of the role
      */
     public String getName() {
         return name;
     }
 
     /**
-     * Définit le nom du rôle.
+     * Sets the name of the role.
      * 
-     * @param name Le nouveau nom du rôle
+     * @param name The new name of the role
      */
     public void setName(String name) {
         this.name = name;
     }
 }
+

@@ -66,7 +66,7 @@ export class UserProgressService {
   }
 
   /**
-   * Marque une quête comme terminée et attribue l'XP.
+   * Marks a quest as completed and awards experience points.
    */
   completeQuest(questId: string, xpReward: number): void {
     const current = this.progressSignal();
@@ -102,7 +102,7 @@ export class UserProgressService {
   }
 
   /**
-   * Sauvegarde le brouillon de code d'une quête dans le localStorage.
+   * Saves in-progress code draft for a quest in localStorage.
    */
   saveQuestCode(questId: string, code: string): void {
     const user = this.authService.currentUser();
@@ -111,7 +111,7 @@ export class UserProgressService {
   }
 
   /**
-   * Récupère le brouillon de code sauvegardé pour une quête.
+   * Retrieves saved in-progress code draft for a quest.
    */
   getSavedQuestCode(questId: string): string | null {
     const user = this.authService.currentUser();
@@ -120,7 +120,7 @@ export class UserProgressService {
   }
 
   /**
-   * Efface le brouillon sauvegardé pour réinitialiser le code.
+   * Clears saved code draft to reset starter template.
    */
   clearSavedQuestCode(questId: string): void {
     const user = this.authService.currentUser();
@@ -137,7 +137,7 @@ export class UserProgressService {
         const parsed = JSON.parse(stored);
         this.progressSignal.set(parsed);
       } catch (e) {
-        console.error('Erreur chargement progression:', e);
+        console.error('Error loading progress from storage:', e);
       }
     }
   }
@@ -148,3 +148,4 @@ export class UserProgressService {
     localStorage.setItem(key, JSON.stringify(state));
   }
 }
+

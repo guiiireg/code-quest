@@ -4,17 +4,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
- * Exception levée lorsqu'un monde n'est pas trouvé.
+ * Exception thrown when a realm (world) is not found.
  */
-@ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Monde non trouvé")
+@ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "World not found")
 public class WorldNotFoundException extends RuntimeException {
 
     /**
-     * Construit une nouvelle exception avec le message spécifié.
+     * Constructs a new exception with the specified detail message.
      * 
-     * @param message Le message détaillant l'erreur
+     * @param message The detail message
      */
     public WorldNotFoundException(String message) {
         super(message);
     }
 }
+

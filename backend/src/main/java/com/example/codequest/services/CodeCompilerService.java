@@ -24,24 +24,24 @@ import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Service gérant la compilation et l'exécution dynamique sécurisée du code Java soumis par les utilisateurs.
+ * Service managing dynamic and secure compilation and execution of user-submitted Java code.
  */
 @Service
 public class CodeCompilerService {
 
     /**
-     * Record représentant le résultat d'une compilation et exécution.
+     * Record representing compilation and execution result.
      * 
-     * @param success Indique si la compilation et l'exécution ont réussi
-     * @param output Les messages de diagnostic ou logs de compilation/exécution
+     * @param success Indicates whether compilation and execution succeeded
+     * @param output Diagnostic messages or execution output logs
      */
     public record CompilationResult(boolean success, String output) {}
 
     /**
-     * Compile et exécute de manière isolée (Sandbox Container) le code source Java.
+     * Compiles and executes Java source code in an isolated container sandbox.
      * 
-     * @param sourceCode Le code source Java à compiler
-     * @return Le résultat de la compilation contenant le statut et la sortie
+     * @param sourceCode The Java source code to compile
+     * @return The compilation result containing execution status and output logs
      */
     public CompilationResult compile(String sourceCode) {
         String className = extractClassName(sourceCode);
@@ -110,7 +110,7 @@ public class CodeCompilerService {
     }
 
     /**
-     * Détermine si podman ou docker est disponible sur la machine.
+     * Determines whether podman or docker is available on the host machine.
      */
     private String getContainerRuntime() {
         if (isExecutableAvailable("podman")) {
@@ -166,10 +166,10 @@ public class CodeCompilerService {
     }
 
     /**
-     * Extrait le nom de la classe publique depuis le code source.
+     * Extracts public class name from Java source code.
      * 
-     * @param sourceCode Le code source Java
-     * @return Le nom de la classe, ou null si non trouvé
+     * @param sourceCode Java source code
+     * @return The extracted class name, or null if not found
      */
     private String extractClassName(String sourceCode) {
         Pattern pattern = Pattern.compile("public\\s+class\\s+(\\w+)");
@@ -181,19 +181,19 @@ public class CodeCompilerService {
     }
 
     /**
-     * Classe interne représentant un fichier source Java en mémoire.
+     * Inner class representing an in-memory Java source file.
      */
     private static class JavaSourceFromString extends SimpleJavaFileObject {
         /**
-         * Le code source Java sous forme de chaîne de caractères.
+         * Java source code string.
          */
         final String code;
 
         /**
-         * Constructeur pour initialiser le fichier source.
+         * Constructor to initialize the in-memory source file.
          * 
-         * @param name Le nom de la classe
-         * @param code Le code source
+         * @param name Class name
+         * @param code Source code
          */
         JavaSourceFromString(String name, String code) {
             super(URI.create("string:///" + name.replace('.', '/') + JavaFileObject.Kind.SOURCE.extension),
@@ -202,10 +202,10 @@ public class CodeCompilerService {
         }
 
         /**
-         * Renvoie le contenu du code source.
+         * Returns the source code character content.
          * 
-         * @param ignoreEncodingErrors Si vrai, ignore les erreurs d'encodage
-         * @return Le contenu sous forme de séquence de caractères
+         * @param ignoreEncodingErrors If true, ignore encoding errors
+         * @return The source code character sequence
          */
         @Override
         public CharSequence getCharContent(boolean ignoreEncodingErrors) {
@@ -213,3 +213,4 @@ public class CodeCompilerService {
         }
     }
 }
+

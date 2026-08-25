@@ -16,7 +16,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 /**
- * Filtre qui intercepte les requêtes pour valider le token JWT.
+ * Filter that intercepts HTTP requests to validate JWT bearer tokens.
  */
 public class AuthTokenFilter extends OncePerRequestFilter {
     @Autowired
@@ -26,14 +26,14 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     private UserDetailsServiceImpl userDetailsService;
 
     /**
-     * Intercepte chaque requête HTTP entrante pour extraire et valider le jeton JWT.
-     * Si le jeton est valide, configure l'authentification de l'utilisateur dans le contexte de sécurité Spring.
+     * Intercepts incoming HTTP requests to extract and validate the JWT token.
+     * If valid, configures user authentication in the Spring SecurityContext.
      * 
-     * @param request     La requête HTTP
-     * @param response    La réponse HTTP
-     * @param filterChain La chaîne de filtres de servlet
-     * @throws ServletException En cas d'erreur générale de servlet
-     * @throws IOException      En cas d'erreur d'entrée/sortie
+     * @param request     The HTTP request
+     * @param response    The HTTP response
+     * @param filterChain The servlet filter chain
+     * @throws ServletException In case of servlet error
+     * @throws IOException      In case of I/O error
      */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -58,10 +58,10 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     }
 
     /**
-     * Extrait le jeton JWT de l'en-tête Authorization de la requête HTTP.
+     * Extracts the JWT token from the Authorization HTTP header.
      * 
-     * @param request La requête HTTP
-     * @return Le jeton JWT sous forme de chaîne de caractères, ou null s'il est absent ou mal formé
+     * @param request The HTTP request
+     * @return The JWT token string, or null if missing or invalid
      */
     private String parseJwt(HttpServletRequest request) {
         String headerAuth = request.getHeader("Authorization");
@@ -73,3 +73,4 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         return null;
     }
 }
+

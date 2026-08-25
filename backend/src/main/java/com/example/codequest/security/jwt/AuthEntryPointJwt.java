@@ -10,20 +10,20 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 
 /**
- * Gère les erreurs d'authentification (erreur 401).
+ * Handles unauthorized authentication errors (HTTP 401).
  */
 @Component
 public class AuthEntryPointJwt implements AuthenticationEntryPoint {
 
     /**
-     * Se déclenche lorsqu'un utilisateur non authentifié tente d'accéder à une ressource protégée.
-     * Renvoie une erreur HTTP 401 (Unauthorized).
+     * Triggered when an unauthenticated user attempts to access a protected resource.
+     * Returns an HTTP 401 Unauthorized response.
      * 
-     * @param request       La requête HTTP
-     * @param response      La réponse HTTP
-     * @param authException L'exception d'authentification levée
-     * @throws IOException      En cas d'erreur d'entrée/sortie
-     * @throws ServletException En cas d'erreur de servlet générale
+     * @param request       The HTTP request
+     * @param response      The HTTP response
+     * @param authException The authentication exception thrown
+     * @throws IOException      In case of I/O error
+     * @throws ServletException In case of servlet error
      */
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
@@ -31,3 +31,4 @@ public class AuthEntryPointJwt implements AuthenticationEntryPoint {
         response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Error: Unauthorized");
     }
 }
+

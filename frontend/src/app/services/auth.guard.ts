@@ -3,8 +3,8 @@ import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from './auth.service';
 
 /**
- * Garde de route pour interdire l'accès aux pages protégées aux utilisateurs
- * non authentifiés, en les redirigeant vers la page de connexion.
+ * Route guard restricting access to authenticated users only.
+ * Redirects unauthenticated users to the login page.
  */
 export const authGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
@@ -14,7 +14,8 @@ export const authGuard: CanActivateFn = (route, state) => {
     return true;
   }
 
-  // Rediriger vers la page de connexion
+  // Redirect to login page
   router.navigate(['/login']);
   return false;
 };
+
