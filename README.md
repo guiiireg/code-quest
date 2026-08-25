@@ -1,5 +1,8 @@
 # Code Quest
 
+**Live Website / Demo:** [https://code-quest-bv1.pages.dev](https://code-quest-bv1.pages.dev)  
+**REST API (Backend):** [https://code-quest-api-klr7.onrender.com](https://code-quest-api-klr7.onrender.com)
+
 > **Note pour les recruteurs (FR) :** *Code Quest est une plateforme full-stack gamifiée (style RPG) d'apprentissage du développement web et logiciel (Angular 19, Spring Boot 4.1, Java 21, PostgreSQL 16). La documentation et l'intégralité du code source sont rédigées en anglais conformément aux standards professionnels de l'ingénierie logicielle.*
 
 ---
@@ -59,7 +62,7 @@ code-quest/
 
 The platform features a structured learning pathway divided into thematic realms:
 
-### 1. 📜 Realm 1 — HTML5 (`world-1`)
+### 1. Realm 1 — HTML5 (`world-1`)
 Foundational web architecture and semantic structuring:
 - **Core Structure**: Client / Server architecture, HTML parsing, DOM tree, DOCTYPE declaration, and core attributes (`id`, `class`, `lang`).
 - **The `<head>` Grimoire**: Metadata, UTF-8 charset, responsive viewport, `<title>`, SEO description, favicon, canonical links, and Open Graph protocol.
@@ -76,14 +79,14 @@ Foundational web architecture and semantic structuring:
 - **Web Security**: Cross-Site Scripting (XSS) mitigation, `<iframe>` sandbox isolation, Content Security Policy (CSP), input pattern constraints.
 - **Standards & Quality**: W3C compliance, deprecation cleanup, DevTools DOM inspection, and knowledge evaluation quizzes.
 
-### 2. ♿ Realm 2 — Web Accessibility (A11y) (`world-2`)
+### 2. Realm 2 — Web Accessibility (A11y) (`world-2`)
 Universal design and WCAG 2.2 AA standards:
 - **A11y Fundamentals**: Accessible names, `aria-label`, disability spectrums, inclusive design principles.
 - **Keyboard Navigation**: Natural tab order, focus management, `tabindex` rules, keyboard trap prevention, Skip Links.
 - **Screen Readers & WAI-ARIA**: Semantic roles, dynamic live regions `aria-live="polite"`/`assertive`, interactive state flags `aria-expanded`, descriptions `aria-describedby`, hidden elements `aria-hidden`.
 - **Accessible Forms & Color Contrast**: Explicit `<label for>` bindings, error message associations, WCAG-compliant contrast ratios.
 
-### 3. 🎨 Realm 3 — CSS3 (`world-3`)
+### 3. Realm 3 — CSS3 (`world-3`)
 Styling, modern layout systems, and responsive visual design:
 - **Box Model & Fundamentals**: Margins, borders, padding, and `box-sizing: border-box`.
 - **Flexbox Layout**: Main and cross axes, alignments, justifications, direction, flex wrap and item ordering.
