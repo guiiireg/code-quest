@@ -9,7 +9,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
 /**
- * Validateur personnalisé pour vérifier que les deux mots de passe correspondent.
+ * Custom validator checking that password and confirmPassword fields match.
  */
 export const passwordMatchValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
   const password = control.get('password');
@@ -18,7 +18,7 @@ export const passwordMatchValidator: ValidatorFn = (control: AbstractControl): V
 };
 
 /**
- * Composant d'inscription permettant à un nouvel utilisateur de créer un compte.
+ * Registration component enabling new adventurers to create an account.
  */
 @Component({
   selector: 'app-register',
@@ -64,7 +64,7 @@ export class RegisterComponent implements OnInit {
   }
 
   /**
-   * Gère la soumission du formulaire d'inscription.
+   * Handles submission of the registration form.
    */
   onSubmit(): void {
     if (this.registerForm.invalid) {
@@ -77,11 +77,11 @@ export class RegisterComponent implements OnInit {
 
     const { username, email, password } = this.registerForm.value;
     
-    // Rôle USER par défaut envoyé au serveur
+    // Default ROLE_USER sent to the backend
     this.authService.register({ username, email, password }).subscribe({
       next: () => {
         this.loading = false;
-        this.successMessage = "Inscription réussie ! Redirection vers la page de connexion...";
+        this.successMessage = "Registration successful! Redirecting to login page...";
         setTimeout(() => {
           this.router.navigate(['/login']);
         }, 2000);
@@ -91,10 +91,11 @@ export class RegisterComponent implements OnInit {
         if (err.error && err.error.message) {
           this.errorMessage = err.error.message;
         } else {
-          this.errorMessage = "Une erreur s'est produite lors de l'inscription. Pseudo ou email déjà utilisé ?";
+          this.errorMessage = "An error occurred during registration. Username or email already in use?";
         }
         console.error(err);
       }
     });
   }
 }
+

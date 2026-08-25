@@ -1,5 +1,5 @@
 /**
- * Représente une quête dans le frontend.
+ * Represents a quest model in the frontend.
  */
 export interface Quest {
   id: string;
@@ -16,7 +16,7 @@ export interface Quest {
 }
 
 /**
- * Représente la réponse de soumission de code.
+ * Represents a code submission evaluation response.
  */
 export interface SubmissionResponse {
   success: boolean;
@@ -25,7 +25,7 @@ export interface SubmissionResponse {
 }
 
 /**
- * Représente un monde dans le frontend.
+ * Represents a world/realm model in the frontend.
  */
 export interface World {
   id: string;
@@ -33,3 +33,4 @@ export interface World {
   description: string;
   quests: Quest[];
 }
+

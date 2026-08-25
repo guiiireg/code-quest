@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
- * Service gérant la logique métier pour les mondes.
+ * Service managing domain logic for worlds/realms.
  */
 @Service
 public class WorldService {
@@ -16,32 +16,33 @@ public class WorldService {
     private final WorldRepository worldRepository;
 
     /**
-     * Injection par constructeur du repository des mondes.
+     * Constructor dependency injection of the world repository.
      * 
-     * @param worldRepository Le repository des mondes
+     * @param worldRepository The world repository
      */
     public WorldService(WorldRepository worldRepository) {
         this.worldRepository = worldRepository;
     }
 
     /**
-     * Récupère tous les mondes disponibles.
+     * Retrieves all available worlds.
      * 
-     * @return La liste de tous les mondes
+     * @return List of all worlds
      */
     public List<World> getAllWorlds() {
         return worldRepository.findAll();
     }
 
     /**
-     * Récupère un monde par son identifiant.
+     * Retrieves a world by its unique identifier.
      * 
-     * @param id L'identifiant du monde
-     * @return Le monde trouvé
-     * @throws WorldNotFoundException si le monde n'est pas trouvé
+     * @param id The world identifier
+     * @return The found world
+     * @throws WorldNotFoundException If the world is not found
      */
     public World getWorldById(String id) {
         return worldRepository.findById(id)
-                .orElseThrow(() -> new WorldNotFoundException("Monde non trouvé avec l'id : " + id));
+                .orElseThrow(() -> new WorldNotFoundException("World not found with id: " + id));
     }
 }
+

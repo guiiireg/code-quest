@@ -26,7 +26,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
- * Service gérant l'authentification et l'enregistrement des utilisateurs.
+ * Service managing user authentication and registration.
  */
 @Service
 public class AuthService {
@@ -47,10 +47,10 @@ public class AuthService {
     }
 
     /**
-     * Authentifie un utilisateur.
+     * Authenticates a user with given credentials.
      * 
-     * @param loginRequest Requête de connexion
-     * @return Informations JWT et utilisateur
+     * @param loginRequest Login credentials
+     * @return User details and JWT token response
      */
     public JwtResponse authenticateUser(LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
@@ -72,10 +72,10 @@ public class AuthService {
     }
 
     /**
-     * Enregistre un nouvel utilisateur.
+     * Registers a new user account.
      * 
-     * @param signUpRequest Requête d'inscription
-     * @return Message de succès ou d'erreur
+     * @param signUpRequest User registration data
+     * @return Success message response
      */
     public MessageResponse registerUser(SignupRequest signUpRequest) {
         if (userRepository.existsByUsername(signUpRequest.username())) {
@@ -101,3 +101,4 @@ public class AuthService {
         return new MessageResponse("User registered successfully!");
     }
 }
+

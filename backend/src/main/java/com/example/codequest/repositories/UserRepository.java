@@ -6,32 +6,33 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 /**
- * Repository pour l'entité User.
+ * Spring Data JPA repository for the User entity.
  */
 @Repository
 public interface UserRepository extends JpaRepository<User, String> {
 
     /**
-     * Recherche un utilisateur par son nom d'utilisateur.
+     * Finds a user by their unique username.
      * 
-     * @param username Le nom d'utilisateur à rechercher
-     * @return Un Optional contenant l'utilisateur s'il est trouvé, sinon vide
+     * @param username The username to search for
+     * @return An Optional containing the user if found, or empty otherwise
      */
     Optional<User> findByUsername(String username);
 
     /**
-     * Vérifie si un utilisateur existe déjà avec ce nom d'utilisateur.
+     * Checks if a user exists with the given username.
      * 
-     * @param username Le nom d'utilisateur à tester
-     * @return Vrai si l'utilisateur existe déjà, faux sinon
+     * @param username The username to check
+     * @return True if the user exists, false otherwise
      */
     Boolean existsByUsername(String username);
 
     /**
-     * Vérifie si un utilisateur existe déjà avec cette adresse email.
+     * Checks if a user exists with the given email address.
      * 
-     * @param email L'adresse email à tester
-     * @return Vrai si l'adresse email est déjà prise, faux sinon
+     * @param email The email address to check
+     * @return True if the email already exists, false otherwise
      */
     Boolean existsByEmail(String email);
 }
+

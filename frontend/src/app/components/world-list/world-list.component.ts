@@ -12,7 +12,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 
 /**
- * Dashboard principal du joueur : Interface de progression RPG moderne.
+ * Main player dashboard: Modern RPG progression map interface.
  */
 @Component({
   selector: 'app-world-list',
@@ -50,7 +50,7 @@ export class WorldListComponent implements OnInit {
         this.loading = false;
       },
       error: (err) => {
-        this.errorMessage = "Impossible de charger les territoires de CodeQuest. Veuillez vérifier votre connexion au serveur.";
+        this.errorMessage = "Unable to load CodeQuest realms. Please check your backend connection.";
         this.loading = false;
         console.error(err);
       }
@@ -58,7 +58,7 @@ export class WorldListComponent implements OnInit {
   }
 
   /**
-   * Trouve la quête active recommandée pour le joueur.
+   * Identifies the recommended active quest for the player.
    */
   private findActiveQuest(worlds: World[]): void {
     const completed = this.progressService.progress().completedQuests;
@@ -71,7 +71,7 @@ export class WorldListComponent implements OnInit {
         }
       }
     }
-    // Si toutes les quêtes sont accomplies, prendre la première
+    // If all quests are completed, fallback to the first quest
     if (worlds.length > 0 && worlds[0].quests.length > 0) {
       this.activeQuest = worlds[0].quests[0];
       this.activeWorldId = worlds[0].id;

@@ -10,7 +10,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { RouterModule } from '@angular/router';
 
 /**
- * Composant de la Fiche de Personnage RPG du joueur.
+ * Player RPG Character sheet and progression overview component.
  */
 @Component({
   selector: 'app-profile',
@@ -39,3 +39,4 @@ export class ProfileComponent implements OnInit {
     this.userSession = this.authService.currentUser();
   }
 }
+

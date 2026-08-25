@@ -9,7 +9,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 /**
- * Composant racine de l'application gérant la barre de navigation globale avec le thème RPG.
+ * Root component managing global navigation and RPG theme layout.
  */
 @Component({
   selector: 'app-root',
@@ -48,3 +48,4 @@ export class AppComponent {
     this.closeMobileMenu();
   }
 }
+

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Service pour charger les détails de l'utilisateur.
+ * Service to load user-specific security data.
  */
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
@@ -19,12 +19,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     UserRepository userRepository;
 
     /**
-     * Charge les détails d'un utilisateur à partir de son nom d'utilisateur.
-     * Utilisé par Spring Security pour vérifier les informations d'identification.
+     * Loads user details by their username.
+     * Used by Spring Security to verify credentials.
      * 
-     * @param username Le nom d'utilisateur à charger
-     * @return Les détails de l'utilisateur correspondants sous la forme d'un objet UserDetails
-     * @throws UsernameNotFoundException Si l'utilisateur n'est pas trouvé dans la base de données
+     * @param username The username to load
+     * @return The corresponding UserDetails object
+     * @throws UsernameNotFoundException If the user is not found in the database
      */
     @Override
     @Transactional
@@ -35,3 +35,4 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         return UserDetailsImpl.build(user);
     }
 }
+

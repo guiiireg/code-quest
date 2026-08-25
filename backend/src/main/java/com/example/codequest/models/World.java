@@ -9,48 +9,47 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Représente un monde dans l'application.
- * Un monde contient un id unique, un nom, une description et une liste de
- * quêtes.
+ * Represents a world/realm in the application.
+ * A world contains a unique id, name, description, and a list of quests.
  */
 @Entity
 @Table(name = "worlds")
 public class World {
 
     /**
-     * Id unique du monde.
+     * Unique identifier for the world.
      */
     @Id
     private String id;
 
     /**
-     * Nom du monde.
+     * Name of the world.
      */
     private String name;
 
     /**
-     * Description du monde.
+     * Description of the world.
      */
     private String description;
 
     /**
-     * Liste des quêtes associées à ce monde.
+     * List of quests associated with this world.
      */
     @OneToMany(mappedBy = "world", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Quest> quests = new ArrayList<>();
 
     /**
-     * Constructeur par défaut requis par JPA.
+     * Default constructor required by JPA.
      */
     public World() {}
 
     /**
-     * Constructeur complet pour créer un monde avec ses quêtes.
+     * Full constructor to initialize a world with its quests.
      * 
-     * @param id          L'id unique du monde
-     * @param name        Le nom du monde
-     * @param description La description détaillée du monde
-     * @param quests      La liste des quêtes dispo dans ce monde
+     * @param id          Unique world identifier
+     * @param name        World name
+     * @param description Detailed world description
+     * @param quests      List of quests available in this world
      */
     public World(String id, String name, String description, List<Quest> quests) {
         this.id = id;
@@ -60,78 +59,79 @@ public class World {
     }
 
     /**
-     * Récupère l'identifiant unique du monde.
+     * Gets the unique identifier of the world.
      * 
-     * @return L'identifiant unique du monde
+     * @return The unique identifier
      */
     public String getId() {
         return id;
     }
 
     /**
-     * Définit l'identifiant unique du monde.
+     * Sets the unique identifier of the world.
      * 
-     * @param id Le nouvel identifiant du monde
+     * @param id The new identifier
      */
     public void setId(String id) {
         this.id = id;
     }
 
     /**
-     * Récupère le nom du monde.
+     * Gets the name of the world.
      * 
-     * @return Le nom du monde
+     * @return The world name
      */
     public String getName() {
         return name;
     }
 
     /**
-     * Définit le nom du monde.
+     * Sets the name of the world.
      * 
-     * @param name Le nouveau nom du monde
+     * @param name The new world name
      */
     public void setName(String name) {
         this.name = name;
     }
 
     /**
-     * Récupère la description du monde.
+     * Gets the world description.
      * 
-     * @return La description du monde
+     * @return The world description
      */
     public String getDescription() {
         return description;
     }
 
     /**
-     * Définit la description du monde.
+     * Sets the world description.
      * 
-     * @param description La nouvelle description du monde
+     * @param description The new description
      */
     public void setDescription(String description) {
         this.description = description;
     }
 
     /**
-     * Récupère la liste des quêtes associées à ce monde.
+     * Gets the list of quests belonging to this world.
      * 
-     * @return La liste des quêtes
+     * @return The list of quests
      */
     public List<Quest> getQuests() {
         return quests;
     }
 
     /**
-     * Définit la liste des quêtes associées à ce monde et assure la cohérence bidirectionnelle.
+     * Sets the list of quests for this world and ensures bidirectional relationship consistency.
      * 
-     * @param quests La nouvelle liste de quêtes
+     * @param quests The new list of quests
      */
     public void setQuests(List<Quest> quests) {
         this.quests = quests != null ? quests : new ArrayList<>();
-        // Assure la cohérence de la relation bidirectionnelle
+        // Maintain bidirectional relationship consistency
         for (Quest quest : this.quests) {
             quest.setWorld(this);
         }
     }
 }
+

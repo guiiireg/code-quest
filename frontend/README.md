@@ -1,59 +1,75 @@
-# Frontend
+# Code Quest — Frontend Application
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.27.
+> **Note pour les recruteurs (FR) :** *Application Web Single Page (SPA) moderne conçue avec Angular 19, TypeScript 5.7, composants Standalone, gestion d'état réactive par Angular Signals, intégration de Monaco Editor et thème Dark Fantasy avec Angular Material.*
 
-## Development server
+---
 
-To start a local development server, run:
+## Overview
 
-```bash
-ng serve
+The `frontend` module is the user-facing web application for Code Quest. It provides:
+- A gamified RPG player experience (interactive dashboard, level progression bar, character sheet, quest log).
+- An embedded code editor powered by **Monaco Editor** with dynamic language syntax highlighting and automatic local draft saving.
+- Secure routing with functional route guards (`authGuard`) and automatic JWT Bearer token injection via `authInterceptor`.
+- Modern, clean state management leveraging **Angular Signals** (`signal()`, `computed()`).
+
+---
+
+## Technical Stack & Versions
+
+- **Framework**: Angular 19 (`@angular/core: ^19.2.0`, `@angular/cli: ^19.2.27`)
+- **Language**: TypeScript ~5.7.2
+- **UI Components**: Angular Material & CDK `^19.2.19` (Azure Blue RPG Theme)
+- **State & Reactivity**: Angular Signals & RxJS ~7.8.0
+- **Code Editor**: Monaco Editor (asynchronously loaded via AMD loader)
+- **Unit Testing**: Jasmine 5.6 & Karma 6.4 (Headless runner)
+
+---
+
+## Project Structure (`src/app`)
+
+```text
+src/app/
+├── app.component.ts            # Root component with navigation bar & router outlet
+├── app.component.html
+├── app.component.css
+├── app.component.spec.ts       # Root component unit tests
+├── app.config.ts               # ApplicationConfig (provideRouter, provideHttpClient, interceptors)
+├── app.routes.ts               # Route definitions and auth guards
+├── components/                 # Standalone UI Components
+│   ├── login/                  # User login form
+│   ├── register/               # New player registration form
+│   ├── profile/                # RPG Character Sheet & statistics dashboard
+│   ├── world-list/             # Available realms & active quest recommendation
+│   ├── world-detail/           # Realm quest journal and sub-region breakdown
+│   ├── quest-play/             # Monaco code playground & submission console
+│   └── not-found/              # 404 Error page
+├── models/                     # Strongly-typed TypeScript interfaces
+│   ├── auth.model.ts           # LoginRequest, SignupRequest, JwtResponse
+│   └── world.model.ts          # World, Quest, SubmissionResponse
+└── services/                   # Injectable root services and functional guards
+    ├── auth.service.ts         # User session & authentication state signals
+    ├── auth.guard.ts           # Functional route guard
+    ├── auth.interceptor.ts     # Functional HTTP interceptor (Bearer JWT)
+    ├── world.service.ts        # REST API client for realms and quests
+    └── user-progress.service.ts # XP, level thresholds, and completed quest tracking
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+---
 
-## Code scaffolding
+## Development & Build Commands
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+All commands should be executed from the `frontend/` directory:
 
 ```bash
-ng generate --help
+# Install dependencies
+npm install
+
+# Start local development server (port 4200 with API proxy)
+npm start
+
+# Build for production (output in dist/frontend)
+npm run build
+
+# Run unit tests with Karma / Jasmine
+npm test
 ```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.

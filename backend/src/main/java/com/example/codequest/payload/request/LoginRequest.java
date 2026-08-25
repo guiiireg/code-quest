@@ -1,9 +1,10 @@
 package com.example.codequest.payload.request;
 
 /**
- * Payload request pour la connexion (signin).
+ * Request payload for user authentication (signin).
  * 
- * @param username Le nom d'utilisateur
- * @param password Le mot de passe de l'utilisateur
+ * @param username The username
+ * @param password The user password
  */
 public record LoginRequest(String username, String password) {}
+

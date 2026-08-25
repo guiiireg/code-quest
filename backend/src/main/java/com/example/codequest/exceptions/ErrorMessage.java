@@ -3,12 +3,12 @@ package com.example.codequest.exceptions;
 import java.util.Date;
 
 /**
- * DTO pour standardiser les messages d'erreur renvoyés par l'API.
+ * DTO to standardize error responses returned by the API.
  * 
- * @param statusCode Le code de statut HTTP
- * @param timestamp  La date et l'heure de l'erreur
- * @param message    Le message d'erreur détaillé
- * @param description La description de la requête (URL, etc.)
+ * @param statusCode HTTP status code
+ * @param timestamp  Timestamp when the error occurred
+ * @param message    Detailed error message
+ * @param description Request description (URL, path, etc.)
  */
 public record ErrorMessage(
     int statusCode,
@@ -16,3 +16,4 @@ public record ErrorMessage(
     String message,
     String description
 ) {}
+

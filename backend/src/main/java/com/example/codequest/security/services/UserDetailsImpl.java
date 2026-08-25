@@ -11,44 +11,44 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Implémentation de UserDetails pour Spring Security.
+ * Spring Security UserDetails implementation.
  */
 public class UserDetailsImpl implements UserDetails {
 
     /**
-     * Identifiant de l'utilisateur.
+     * User identifier.
      */
     private String id;
 
     /**
-     * Nom d'utilisateur.
+     * Username.
      */
     private String username;
 
     /**
-     * Adresse email.
+     * Email address.
      */
     private String email;
 
     /**
-     * Mot de passe hashé.
+     * Encrypted password.
      */
     @JsonIgnore
     private String password;
 
     /**
-     * Rôles et habilitations de l'utilisateur.
+     * Granted authorities (roles and permissions).
      */
     private Collection<? extends GrantedAuthority> authorities;
 
     /**
-     * Constructeur pour initialiser les détails de sécurité de l'utilisateur.
+     * Constructor to initialize user security details.
      * 
-     * @param id          L'identifiant de l'utilisateur
-     * @param username    Le nom d'utilisateur
-     * @param email       L'adresse email
-     * @param password    Le mot de passe hashé
-     * @param authorities La liste des habilitations/rôles
+     * @param id          User identifier
+     * @param username    Username
+     * @param email       Email address
+     * @param password    Hashed password
+     * @param authorities Collection of granted authorities
      */
     public UserDetailsImpl(String id, String username, String email, String password,
                            Collection<? extends GrantedAuthority> authorities) {
@@ -60,10 +60,10 @@ public class UserDetailsImpl implements UserDetails {
     }
 
     /**
-     * Méthode de fabrication (factory method) pour construire UserDetailsImpl à partir d'un objet User JPA.
+     * Factory method to build a UserDetailsImpl instance from a JPA User entity.
      * 
-     * @param user L'entité User JPA à convertir
-     * @return L'instance UserDetailsImpl correspondante
+     * @param user The JPA User entity
+     * @return Corresponding UserDetailsImpl instance
      */
     public static UserDetailsImpl build(User user) {
         List<GrantedAuthority> authorities = user.getRoles().stream()
@@ -79,27 +79,27 @@ public class UserDetailsImpl implements UserDetails {
     }
 
     /**
-     * Récupère l'identifiant de l'utilisateur.
+     * Gets the user identifier.
      * 
-     * @return L'identifiant de l'utilisateur
+     * @return The user identifier
      */
     public String getId() {
         return id;
     }
 
     /**
-     * Récupère l'adresse email de l'utilisateur.
+     * Gets the user email address.
      * 
-     * @return L'adresse email
+     * @return The email address
      */
     public String getEmail() {
         return email;
     }
 
     /**
-     * Récupère les rôles/habilitations accordés à l'utilisateur.
+     * Gets granted authorities for the user.
      * 
-     * @return Les habilitations accordées
+     * @return Granted authorities collection
      */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -107,9 +107,9 @@ public class UserDetailsImpl implements UserDetails {
     }
 
     /**
-     * Récupère le mot de passe de l'utilisateur.
+     * Gets the hashed user password.
      * 
-     * @return Le mot de passe
+     * @return The password
      */
     @Override
     public String getPassword() {
@@ -117,9 +117,9 @@ public class UserDetailsImpl implements UserDetails {
     }
 
     /**
-     * Récupère le nom d'utilisateur.
+     * Gets the username.
      * 
-     * @return Le nom d'utilisateur
+     * @return The username
      */
     @Override
     public String getUsername() {
@@ -127,9 +127,9 @@ public class UserDetailsImpl implements UserDetails {
     }
 
     /**
-     * Indique si le compte de l'utilisateur a expiré.
+     * Indicates whether the user's account has expired.
      * 
-     * @return Vrai par défaut
+     * @return True by default
      */
     @Override
     public boolean isAccountNonExpired() {
@@ -137,9 +137,9 @@ public class UserDetailsImpl implements UserDetails {
     }
 
     /**
-     * Indique si l'utilisateur est verrouillé.
+     * Indicates whether the user is locked or unlocked.
      * 
-     * @return Vrai par défaut (non verrouillé)
+     * @return True by default (unlocked)
      */
     @Override
     public boolean isAccountNonLocked() {
@@ -147,9 +147,9 @@ public class UserDetailsImpl implements UserDetails {
     }
 
     /**
-     * Indique si les identifiants (mot de passe) de l'utilisateur ont expiré.
+     * Indicates whether the user's credentials (password) have expired.
      * 
-     * @return Vrai par défaut
+     * @return True by default
      */
     @Override
     public boolean isCredentialsNonExpired() {
@@ -157,12 +157,13 @@ public class UserDetailsImpl implements UserDetails {
     }
 
     /**
-     * Indique si l'utilisateur est activé.
+     * Indicates whether the user is enabled or disabled.
      * 
-     * @return Vrai par défaut
+     * @return True by default
      */
     @Override
     public boolean isEnabled() {
         return true;
     }
 }
+

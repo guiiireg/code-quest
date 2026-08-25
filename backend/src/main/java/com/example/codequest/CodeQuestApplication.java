@@ -4,19 +4,20 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * Classe principale de l'application CodeQuest.
- * Point d'entrée de l'application Spring Boot.
+ * Main application class for CodeQuest.
+ * Entry point for the Spring Boot application.
  */
 @SpringBootApplication
 public class CodeQuestApplication {
 
 	/**
-	 * Méthode principale qui lance l'application.
+	 * Main method to launch the application.
 	 * 
-	 * @param args Arguments de la ligne de commande
+	 * @param args Command-line arguments
 	 */
 	public static void main(String[] args) {
 		SpringApplication.run(CodeQuestApplication.class, args);
 	}
 
 }
+

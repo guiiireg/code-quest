@@ -1,10 +1,10 @@
--- Insertion des rôles
+-- Insert roles
 INSERT INTO roles (id, name) VALUES
 ('role-user', 'ROLE_USER'),
 ('role-admin', 'ROLE_ADMIN')
 ON CONFLICT (id) DO NOTHING;
 
--- Insertion de l'utilisateur Administrateur 'gui' (Mot de passe: password)
+-- Insert administrator user 'gui' (Password: password)
 INSERT INTO users (id, username, email, password) VALUES
 ('user-gui-admin', 'gui', 'gui@codequest.dev', '$2a$10$LZ/agDfAw49HxZQW/boRquU9w9ZqnqemD.ERvXl7HCP3j0n8mTYd.')
 ON CONFLICT (id) DO NOTHING;
@@ -14,14 +14,14 @@ INSERT INTO user_roles (user_id, role_id) VALUES
 ('user-gui-admin', 'role-user')
 ON CONFLICT (user_id, role_id) DO NOTHING;
 
--- Insertion des mondes (Régions du parcours Full-Stack)
+-- Insert realms/worlds
 INSERT INTO worlds (id, name, description) VALUES
 ('world-1', '📜 Région 1 — HTML5', 'Le point de départ fondamental du développement Web. Apprenez à structurer le web sémantique, créer des formulaires et maîtriser l’accessibilité.'),
 ('world-2', '♿ Région 2 — Accessibilité Web', 'Le Royaume de l’Inclusion. Maîtrisez les WCAG 2.2 AA, le HTML sémantique, la navigation au clavier, les lecteurs d’écran et WAI-ARIA.'),
 ('world-3', '🎨 Région 3 — CSS3', 'Le Domaine des Formes & des Couleurs. Maîtrisez Flexbox, Grid, les animations, le responsive design, les variables CSS et les fonctionnalités modernes.')
 ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, description = EXCLUDED.description;
 
--- Insertion des quêtes pour Région 1, Région 2 et Région 3
+-- Insert quests for Realm 1, Realm 2, and Realm 3
 INSERT INTO quests (id, title, description, xp_reward, difficulty, code_template, test_validation_regex, world_id, category, languages, concept, theory) VALUES
 ('html-1-1', '1.1 L''Échange des Realms (Client / Serveur)', 'Complétez la balise <span> ci-dessous en lui ajoutant les attributs suivants :
 1. data-methode="GET"

@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * Contrôleur pour l'authentification des utilisateurs.
+ * Controller for user authentication and registration.
  */
 @RestController
 @RequestMapping("/api/auth")
@@ -22,10 +22,10 @@ public class AuthController {
     }
 
     /**
-     * Authentifie un utilisateur.
+     * Authenticates a user.
      * 
-     * @param loginRequest Requête de connexion
-     * @return Informations utilisateur et jeton JWT
+     * @param loginRequest Login credentials
+     * @return User details and JWT token
      */
     @PostMapping("/signin")
     public ResponseEntity<JwtResponse> authenticateUser(@RequestBody LoginRequest loginRequest) {
@@ -33,13 +33,14 @@ public class AuthController {
     }
 
     /**
-     * Enregistre un nouvel utilisateur.
+     * Registers a new user.
      * 
-     * @param signUpRequest Requête d'inscription
-     * @return Message de succès ou d'erreur
+     * @param signUpRequest Registration details
+     * @return Success message response
      */
     @PostMapping("/signup")
     public ResponseEntity<MessageResponse> registerUser(@RequestBody SignupRequest signUpRequest) {
         return ResponseEntity.ok(authService.registerUser(signUpRequest));
     }
 }
+

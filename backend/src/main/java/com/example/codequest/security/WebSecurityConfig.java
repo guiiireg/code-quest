@@ -26,7 +26,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Configuration principale de la sécurité de l'application.
+ * Main security configuration for the application.
  */
 @Configuration
 @EnableWebSecurity
@@ -42,9 +42,9 @@ public class WebSecurityConfig {
     private AuthEntryPointJwt unauthorizedHandler;
 
     /**
-     * Crée le filtre de validation des jetons JWT.
+     * Creates the JWT token validation filter.
      * 
-     * @return L'instance du filtre AuthTokenFilter
+     * @return AuthTokenFilter instance
      */
     @Bean
     public AuthTokenFilter authenticationJwtTokenFilter() {
@@ -52,9 +52,9 @@ public class WebSecurityConfig {
     }
 
     /**
-     * Configure le fournisseur d'authentification avec le service d'utilisateurs et l'encodeur de mot de passe.
+     * Configures the DaoAuthenticationProvider with userDetailsService and password encoder.
      * 
-     * @return Le fournisseur d'authentification DaoAuthenticationProvider
+     * @return Configured DaoAuthenticationProvider
      */
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
@@ -64,11 +64,11 @@ public class WebSecurityConfig {
     }
 
     /**
-     * Récupère le gestionnaire d'authentification Spring Security par défaut.
+     * Retrieves the default Spring Security AuthenticationManager.
      * 
-     * @param authConfig La configuration d'authentification
-     * @return Le gestionnaire d'authentification AuthenticationManager
-     * @throws Exception En cas d'erreur de configuration
+     * @param authConfig AuthenticationConfiguration instance
+     * @return The AuthenticationManager
+     * @throws Exception If configuration fails
      */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
@@ -76,9 +76,9 @@ public class WebSecurityConfig {
     }
 
     /**
-     * Définit l'algorithme de hashage des mots de passe.
+     * Defines the password hashing encoder (BCrypt).
      * 
-     * @return L'encodeur de mot de passe PasswordEncoder (BCrypt)
+     * @return PasswordEncoder instance
      */
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -86,9 +86,9 @@ public class WebSecurityConfig {
     }
 
     /**
-     * Configure les règles de partage de ressources d'origines croisées (CORS).
+     * Configures Cross-Origin Resource Sharing (CORS) rules.
      * 
-     * @return La source de configuration CORS
+     * @return The CORS configuration source
      */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
@@ -107,11 +107,11 @@ public class WebSecurityConfig {
     }
 
     /**
-     * Configure la chaîne de filtres de sécurité HTTP (CORS, CSRF, gestion de session, règles d'accès aux URLs).
+     * Configures the HTTP security filter chain (CORS, CSRF, stateless session, route authorizations).
      * 
-     * @param http L'objet HttpSecurity permettant de configurer la sécurité
-     * @return La chaîne de filtres configurée
-     * @throws Exception En cas d'erreur de configuration
+     * @param http The HttpSecurity instance
+     * @return The built SecurityFilterChain
+     * @throws Exception If configuration fails
      */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -133,3 +133,4 @@ public class WebSecurityConfig {
         return http.build();
     }
 }
+

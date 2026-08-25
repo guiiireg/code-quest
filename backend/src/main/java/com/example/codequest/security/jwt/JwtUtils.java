@@ -12,28 +12,28 @@ import java.security.Key;
 import java.util.Date;
 
 /**
- * Utilitaire pour la gestion des tokens JWT.
+ * Utility class for generating and validating JSON Web Tokens (JWT).
  */
 @Component
 public class JwtUtils {
 
     /**
-     * Clé secrète utilisée pour signer les tokens JWT (encodée en Base64).
+     * Secret key used to sign JWT tokens (Base64 encoded).
      */
     @Value("${codequest.app.jwtSecret}")
     private String jwtSecret;
 
     /**
-     * Durée de validité en millisecondes d'un jeton JWT.
+     * Token expiration duration in milliseconds.
      */
     @Value("${codequest.app.jwtExpirationMs}")
     private int jwtExpirationMs;
 
     /**
-     * Génère un jeton JWT basé sur l'authentification de l'utilisateur.
+     * Generates a signed JWT token based on the user authentication.
      * 
-     * @param authentication L'objet d'authentification contenant l'utilisateur connecté
-     * @return Le jeton JWT généré sous forme de chaîne de caractères
+     * @param authentication Authentication object containing the logged-in user principal
+     * @return Signed JWT compact string
      */
     public String generateJwtToken(Authentication authentication) {
         UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
@@ -47,19 +47,19 @@ public class JwtUtils {
     }
     
     /**
-     * Décode la clé secrète Base64 et retourne une clé cryptographique HMAC utilisable pour la signature.
+     * Decodes the Base64 secret key and returns an HMAC cryptographic Key instance.
      * 
-     * @return La clé cryptographique pour JWT
+     * @return Cryptographic Key for JWT signing
      */
     private Key key() {
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
     }
 
     /**
-     * Extrait le nom d'utilisateur contenu dans un jeton JWT.
+     * Extracts the username (subject) from a JWT token string.
      * 
-     * @param token Le jeton JWT
-     * @return Le nom d'utilisateur extrait
+     * @param token The JWT token string
+     * @return The extracted username
      */
     public String getUserNameFromJwtToken(String token) {
         return Jwts.parserBuilder().setSigningKey(key()).build()
@@ -67,10 +67,10 @@ public class JwtUtils {
     }
 
     /**
-     * Valide la signature et la durée de validité du jeton JWT.
+     * Validates the cryptographic signature and expiration of a JWT token.
      * 
-     * @param authToken Le jeton JWT à valider
-     * @return Vrai si le jeton est valide, faux sinon
+     * @param authToken The JWT token string to validate
+     * @return True if valid, false otherwise
      */
     public boolean validateJwtToken(String authToken) {
         try {
@@ -88,3 +88,4 @@ public class JwtUtils {
         return false;
     }
 }
+

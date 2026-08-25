@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
- * Exception levée lorsqu'un nom d'utilisateur ou un email est déjà utilisé.
+ * Exception thrown when a username or email is already taken.
  */
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 public class UserAlreadyExistsException extends RuntimeException {
@@ -12,3 +12,4 @@ public class UserAlreadyExistsException extends RuntimeException {
         super(message);
     }
 }
+

@@ -12,7 +12,7 @@ import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 
 /**
- * Espace d'Épreuve / Playground de Code RPG avec Éditeur Monaco (VSCode).
+ * Quest playground and code execution workspace with Monaco Editor (VSCode).
  */
 @Component({
   selector: 'app-quest-play',
@@ -60,7 +60,7 @@ export class QuestPlayComponent implements OnInit, AfterViewInit, OnDestroy {
           const savedCode = this.progressService.getSavedQuestCode(data.id);
           this.code = (savedCode !== null && savedCode !== undefined) ? savedCode : (data.codeTemplate || '');
           
-          // Vérification de la progression séquentielle (ignorée si l'utilisateur est Admin)
+          // Verify sequential progression (unlocked if user has Admin privileges)
           if (this.worldId && !this.authService.isAdmin()) {
             this.worldService.getWorldById(this.worldId).subscribe({
               next: (worldData) => {
@@ -70,7 +70,7 @@ export class QuestPlayComponent implements OnInit, AfterViewInit, OnDestroy {
                   const isCompletedCurrent = this.progressService.isQuestCompleted(data.id);
                   const isCompletedPrev = this.progressService.isQuestCompleted(prevQuest.id);
                   if (!isCompletedPrev && !isCompletedCurrent) {
-                    this.errorMessage = `Cette épreuve est verrouillée ! Vous devez d'abord accomplir la quête précédente : "${prevQuest.title}".`;
+                    this.errorMessage = `This trial is locked! You must complete the previous quest first: "${prevQuest.title}".`;
                   }
                 }
                 this.loading = false;
@@ -90,13 +90,13 @@ export class QuestPlayComponent implements OnInit, AfterViewInit, OnDestroy {
           }
         },
         error: (err) => {
-          this.errorMessage = "Impossible de charger les instructions de la quête.";
+          this.errorMessage = "Unable to load quest instructions.";
           this.loading = false;
           console.error(err);
         }
       });
     } else {
-      this.errorMessage = "Identifiants de la quête manquants.";
+      this.errorMessage = "Quest identifier is missing.";
       this.loading = false;
     }
   }
@@ -209,7 +209,7 @@ export class QuestPlayComponent implements OnInit, AfterViewInit, OnDestroy {
       error: (err) => {
         this.result = {
           success: false,
-          output: "Erreur lors de l'évaluation du code par le compilateur.",
+          output: "Error during code evaluation by the compiler sandbox.",
           xpGained: 0
         };
         this.submitting = false;
@@ -236,3 +236,4 @@ export class QuestPlayComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 }
+

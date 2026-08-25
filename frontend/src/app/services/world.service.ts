@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { World, Quest, SubmissionResponse } from '../models/world.model';
 
 /**
- * Service pour interagir avec les endpoints de l'API /api.
+ * Service to interact with the /api world and quest endpoints.
  */
 @Injectable({
   providedIn: 'root'
@@ -15,42 +15,43 @@ export class WorldService {
   constructor(private http: HttpClient) {}
 
   /**
-   * Récupère la liste de tous les mondes disponibles.
+   * Retrieves all available worlds.
    * 
-   * @returns Un Observable contenant un tableau de World
+   * @returns An Observable containing an array of World objects
    */
   getAllWorlds(): Observable<World[]> {
     return this.http.get<World[]>(this.apiUrl);
   }
 
   /**
-   * Récupère un monde spécifique par son identifiant unique.
+   * Retrieves a specific world by its unique identifier.
    * 
-   * @param id L'identifiant unique du monde à rechercher
-   * @returns Un Observable contenant le World correspondant
+   * @param id The unique world identifier
+   * @returns An Observable containing the corresponding World
    */
   getWorldById(id: string): Observable<World> {
     return this.http.get<World>(`${this.apiUrl}/${id}`);
   }
 
   /**
-   * Récupère les détails d'une quête spécifique par son identifiant unique.
+   * Retrieves details of a specific quest by its unique identifier.
    * 
-   * @param id L'identifiant unique de la quête
-   * @returns Un Observable contenant les détails de la Quest
+   * @param id The unique quest identifier
+   * @returns An Observable containing the Quest details
    */
   getQuestById(id: string): Observable<Quest> {
     return this.http.get<Quest>(`/api/quests/${id}`);
   }
 
   /**
-   * Soumet le code de l'utilisateur pour évaluation et validation.
+   * Submits user solution code for validation and evaluation.
    * 
-   * @param id L'identifiant unique de la quête
-   * @param code Le code source soumis par l'utilisateur
-   * @returns Un Observable contenant la réponse d'évaluation SubmissionResponse
+   * @param id The unique quest identifier
+   * @param code The submitted source code string
+   * @returns An Observable containing the SubmissionResponse
    */
   submitQuest(id: string, code: string): Observable<SubmissionResponse> {
     return this.http.post<SubmissionResponse>(`/api/quests/${id}/submit`, { code });
   }
 }
+

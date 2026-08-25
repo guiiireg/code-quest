@@ -1,9 +1,10 @@
 package com.example.codequest.payload.request;
 
 /**
- * Record représentant les données de soumission d'une quête (DTO moderne et immuable).
+ * Record representing quest code submission payload (immutable DTO).
  * 
- * @param questId L'identifiant de la quête
- * @param code Le code source soumis
+ * @param questId The quest identifier
+ * @param code The submitted source code
  */
 public record SubmissionDTO(String questId, String code) {}
+

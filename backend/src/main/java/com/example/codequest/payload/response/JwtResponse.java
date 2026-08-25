@@ -3,12 +3,13 @@ package com.example.codequest.payload.response;
 import java.util.List;
 
 /**
- * Payload response contenant le JWT et les informations de l'utilisateur.
+ * Response payload containing the JWT authentication token and user profile details.
  * 
- * @param token    Le token JWT généré
- * @param id       L'identifiant de l'utilisateur connecté
- * @param username Le nom d'utilisateur
- * @param email    L'adresse email de l'utilisateur
- * @param roles    La liste des rôles de l'utilisateur
+ * @param token    The generated JWT token
+ * @param id       The unique user identifier
+ * @param username The username
+ * @param email    The email address
+ * @param roles    List of user roles
  */
 public record JwtResponse(String token, String id, String username, String email, List<String> roles) {}
+

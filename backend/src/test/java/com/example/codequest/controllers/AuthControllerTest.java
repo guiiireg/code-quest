@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.mockito.ArgumentMatchers.any;
 
 /**
- * Tests d'intégration et de sécurité pour le contrôleur d'authentification AuthController.
+ * Integration and security tests for AuthController.
  */
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -47,7 +47,7 @@ class AuthControllerTest {
     private PasswordEncoder encoder;
 
     /**
-     * Initialise les mocks requis avant l'exécution de chaque test.
+     * Sets up mock repositories before each test execution.
      */
     @BeforeEach
     void setup() {
@@ -59,10 +59,9 @@ class AuthControllerTest {
     }
 
     /**
-     * Vérifie que l'inscription d'un nouvel utilisateur réussit lorsque
-     * le nom d'utilisateur et l'email ne sont pas encore pris.
+     * Verifies that registering a new user succeeds when username and email are available.
      * 
-     * @throws Exception En cas d'erreur lors de l'exécution de la requête MockMvc
+     * @throws Exception In case of MockMvc request failure
      */
     @Test
     void shouldRegisterUserSuccessfully() throws Exception {
@@ -80,10 +79,9 @@ class AuthControllerTest {
     }
 
     /**
-     * Vérifie que l'inscription échoue avec un code de retour HTTP 400 (Bad Request)
-     * si le nom d'utilisateur demandé est déjà pris.
+     * Verifies that registration fails with HTTP 400 Bad Request when the username is already taken.
      * 
-     * @throws Exception En cas d'erreur lors de l'exécution de la requête MockMvc
+     * @throws Exception In case of MockMvc request failure
      */
     @Test
     void shouldFailRegistrationIfUsernameTaken() throws Exception {
@@ -99,9 +97,9 @@ class AuthControllerTest {
     }
 
     /**
-     * Vérifie qu'un utilisateur existant peut s'authentifier avec succès et obtenir un token JWT.
+     * Verifies that an existing user can authenticate successfully and receive a JWT token.
      * 
-     * @throws Exception En cas d'erreur lors de l'exécution de la requête MockMvc
+     * @throws Exception In case of MockMvc request failure
      */
     @Test
     void shouldAuthenticateUserSuccessfully() throws Exception {
@@ -122,3 +120,4 @@ class AuthControllerTest {
                 .andExpect(jsonPath("$.roles[0]").value("ROLE_USER"));
     }
 }
+
