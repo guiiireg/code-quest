@@ -119,5 +119,19 @@ class AuthControllerTest {
                 .andExpect(jsonPath("$.username").value("testuser"))
                 .andExpect(jsonPath("$.roles[0]").value("ROLE_USER"));
     }
+
+    @Test
+    void shouldRejectIncorrectPasswordWithUnauthorized() throws Exception {
+        User user = new User("123", "testuser", "test@test.com", encoder.encode("password"));
+        Mockito.when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(user));
+
+        LoginRequest loginRequest = new LoginRequest("testuser", "wrong-password");
+
+        mockMvc.perform(post("/api/auth/signin")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(loginRequest)))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.message").value("Invalid username or password."));
+    }
 }
 

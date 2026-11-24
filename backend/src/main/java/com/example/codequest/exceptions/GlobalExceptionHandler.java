@@ -2,6 +2,7 @@ package com.example.codequest.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -13,6 +14,17 @@ import java.util.Date;
  */
 @ControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ErrorMessage> badCredentialsException(BadCredentialsException ex, WebRequest request) {
+        ErrorMessage message = new ErrorMessage(
+            HttpStatus.UNAUTHORIZED.value(),
+            new Date(),
+            "Invalid username or password.",
+            request.getDescription(false));
+
+        return new ResponseEntity<>(message, HttpStatus.UNAUTHORIZED);
+    }
 
     /**
      * Handles WorldNotFoundException and QuestNotFoundException.
