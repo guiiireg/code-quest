@@ -4,15 +4,12 @@ INSERT INTO roles (id, name) VALUES
 ('role-admin', 'ROLE_ADMIN')
 ON CONFLICT (id) DO NOTHING;
 
--- Insert administrator user 'gui' (Password: password)
-INSERT INTO users (id, username, email, password) VALUES
-('user-gui-admin', 'gui', 'gui@codequest.dev', '$2a$10$LZ/agDfAw49HxZQW/boRquU9w9ZqnqemD.ERvXl7HCP3j0n8mTYd.')
-ON CONFLICT (id) DO NOTHING;
-
-INSERT INTO user_roles (user_id, role_id) VALUES
-('user-gui-admin', 'role-admin'),
-('user-gui-admin', 'role-user')
-ON CONFLICT (user_id, role_id) DO NOTHING;
+-- Disable password authentication for the legacy demo account if it still
+-- uses the seeded BCrypt hash. Preserve any password already changed.
+UPDATE users
+SET password = '!'
+WHERE id = 'user-gui-admin'
+  AND password = '$2a$10$LZ/agDfAw49HxZQW/boRquU9w9ZqnqemD.ERvXl7HCP3j0n8mTYd.';
 
 -- Insert realms/worlds
 INSERT INTO worlds (id, name, description) VALUES

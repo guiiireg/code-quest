@@ -22,11 +22,7 @@ export class AuthService {
   readonly isAuthenticated = computed(() => this.currentUser() !== null);
 
   // Computed signal determining if the user is an Administrator
-  readonly isAdmin = computed(() => {
-    const user = this.currentUser();
-    if (!user) return false;
-    return user.username.toLowerCase() === 'gui' || (user.roles && user.roles.includes('ROLE_ADMIN'));
-  });
+  readonly isAdmin = computed(() => this.currentUser()?.roles?.includes('ROLE_ADMIN') ?? false);
 
   constructor(private http: HttpClient) {
     this.loadUserFromStorage();
