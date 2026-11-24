@@ -38,7 +38,7 @@ code-quest/
   - Dynamic code evaluation engine (isolated containerized sandbox or structural regex-based validation).
 * **Database (PostgreSQL 16 Alpine)**:
   - Runs on port `5432` (Database: `codequest`).
-  - Schema and educational quest dataset automatically initialized on startup via `schema.sql` and `data.sql`.
+  - Flyway applies versioned schema and catalogue migrations at startup.
 
 ---
 
@@ -121,7 +121,14 @@ Styling, modern layout systems, and responsive visual design:
 * `GET /api/worlds`: List all available realms with nested quest metadata.
 * `GET /api/worlds/{id}`: Retrieve realm details and its quest list.
 * `GET /api/quests/{id}`: Retrieve quest details (instructions, theory lesson, initial template, XP reward, difficulty).
-* `POST /api/quests/{id}/submit`: Submit solution code for validation and experience attribution.
+* `POST /api/quests/{id}/submit` (Bearer token): Validate a solution and award XP once per player and quest.
+* `GET /api/progress` (Bearer token): Retrieve the signed-in player's total XP and completed quest IDs, oldest first.
+
+### Backend operations
+
+Flyway migrations live in `backend/src/main/resources/db/migration`. The existing CodeQuest database is baselined at version 1. The initial catalogue migration fills missing rows and preserves existing catalogue entries. Earlier browser-only achievements remain in local storage and can be earned again through server validation. Drafts stay in the browser.
+
+Render can use `GET /actuator/health` as its health check. Both `/actuator/metrics` and `/actuator/prometheus` require an administrator bearer token. Use `http.server.requests` for request timing and errors, `application.started.time` for application startup, and `jvm.memory.used` and `hikaricp.connections.active` for JVM and database pool usage. Prometheus can compute p95 by route with `histogram_quantile(0.95, sum by (le, uri) (rate(http_server_requests_seconds_bucket[5m])))`.
 
 ---
 
@@ -149,7 +156,7 @@ In a first terminal:
 cd backend
 ./mvnw spring-boot:run
 ```
-> The REST API will be accessible on **`http://localhost:8081`**. The database tables and seed data are initialized automatically via `schema.sql` and `data.sql`.
+> The REST API will be accessible on **`http://localhost:8081`**. Flyway creates the database tables and seeds the catalogue on first startup.
 
 ---
 

@@ -315,6 +315,10 @@
   min-height: calc(100vh - 70px);
 }
 
+.rpg-navbar:has(+ .app-main-content app-landing) {
+  display: none;
+}
+
 /* Drawer mobile */
 .mobile-only {
   display: none;

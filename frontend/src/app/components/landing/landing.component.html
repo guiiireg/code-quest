@@ -1,0 +1,48 @@
+<div class="landing">
+  <div class="scenery" aria-hidden="true">
+    @for (world of worlds; track world.name; let index = $index) {
+      <div class="panel" [class.is-active]="activeWorld() === index">
+        <div class="panel-art" [style.background-image]="'url(' + world.image + ')'"></div>
+      </div>
+    }
+  </div>
+
+  <nav class="landing-nav" aria-label="Navigation principale">
+    <a class="landing-brand" routerLink="/">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span>CodeQuest</span>
+    </a>
+    @if (auth.isAuthenticated()) {
+      <a class="nav-action" routerLink="/worlds">Mes quêtes</a>
+    } @else {
+      <a class="nav-action" routerLink="/login">Connexion</a>
+    }
+  </nav>
+
+  <section class="hero" aria-labelledby="landing-title">
+    <div class="orbit" aria-hidden="true"><span></span></div>
+    <div class="hero-copy">
+      <h1 id="landing-title">Code<span>Quest</span></h1>
+      <p>Apprends le développement web, une quête à la fois.</p>
+      @if (auth.isAuthenticated()) {
+        <a class="hero-action" routerLink="/worlds">Reprendre l’aventure</a>
+      } @else {
+        <a class="hero-action" routerLink="/register">Commencer l’aventure</a>
+      }
+    </div>
+  </section>
+
+  <section class="world-picker" aria-label="Découvrir les mondes">
+    <div class="world-details" aria-live="polite">
+      <h2>{{ worlds[activeWorld()].title }}</h2>
+      <p>{{ worlds[activeWorld()].description }}</p>
+    </div>
+    <div class="world-options" role="group" aria-label="Choisir un monde à découvrir">
+      @for (world of worlds; track world.name; let index = $index) {
+        <button type="button" [attr.aria-pressed]="activeWorld() === index" (click)="activeWorld.set(index)">
+          {{ world.name }}
+        </button>
+      }
+    </div>
+  </section>
+</div>

@@ -16,7 +16,7 @@ INSERT INTO worlds (id, name, description) VALUES
 ('world-1', '📜 Région 1 — HTML5', 'Le point de départ fondamental du développement Web. Apprenez à structurer le web sémantique, créer des formulaires et maîtriser l’accessibilité.'),
 ('world-2', '♿ Région 2 — Accessibilité Web', 'Le Royaume de l’Inclusion. Maîtrisez les WCAG 2.2 AA, le HTML sémantique, la navigation au clavier, les lecteurs d’écran et WAI-ARIA.'),
 ('world-3', '🎨 Région 3 — CSS3', 'Le Domaine des Formes & des Couleurs. Maîtrisez Flexbox, Grid, les animations, le responsive design, les variables CSS et les fonctionnalités modernes.')
-ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, description = EXCLUDED.description;
+ON CONFLICT (id) DO NOTHING;
 
 -- Insert quests for Realm 1, Realm 2, and Realm 3
 INSERT INTO quests (id, title, description, xp_reward, difficulty, code_template, test_validation_regex, world_id, category, languages, concept, theory) VALUES
@@ -720,16 +720,4 @@ input[type="checkbox"] { }
 <question id="2" data-reponse=""></question>
 <!-- Q3: Quelle directive déclare des couches d''architecture CSS ? A: @import | B: @layer | C: @media | D: @scope -->
 <question id="3" data-reponse=""></question>', '(?s).*<question\s+id=\"1\"\s+data-reponse=\"B\"\s*></question\s*>.*<question\s+id=\"2\"\s+data-reponse=\"B\"\s*></question\s*>.*<question\s+id=\"3\"\s+data-reponse=\"B\"\s*></question\s*>.*', 'world-3', '26. 🎓 Quiz & Évaluation des Connaissances CSS3', 'Quiz, CSS3', 'Quiz CSS 5', 'Validation finale du module CSS3.')
-ON CONFLICT (id) DO UPDATE SET
-    title = EXCLUDED.title,
-    description = EXCLUDED.description,
-    xp_reward = EXCLUDED.xp_reward,
-    difficulty = EXCLUDED.difficulty,
-    code_template = EXCLUDED.code_template,
-    test_validation_regex = EXCLUDED.test_validation_regex,
-    world_id = EXCLUDED.world_id,
-    category = EXCLUDED.category,
-    languages = EXCLUDED.languages,
-    concept = EXCLUDED.concept,
-    theory = EXCLUDED.theory;
-
+ON CONFLICT (id) DO NOTHING;

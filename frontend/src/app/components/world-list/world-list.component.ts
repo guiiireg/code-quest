@@ -1,15 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, computed, OnInit, signal } from '@angular/core';
 import { WorldService } from '../../services/world.service';
 import { AuthService } from '../../services/auth.service';
 import { UserProgressService } from '../../services/user-progress.service';
-import { World, Quest } from '../../models/world.model';
-import { MatCardModule } from '@angular/material/card';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatTooltipModule } from '@angular/material/tooltip';
+import { AtlasQuest, World } from '../../models/world.model';
 import { RouterModule } from '@angular/router';
+import { forkJoin } from 'rxjs';
+
+const BRANCHES = [
+  { id: 'world-1', label: 'HTML5', direction: 'left' },
+  { id: 'world-2', label: 'Accessibilité', direction: 'top' },
+  { id: 'world-3', label: 'CSS3', direction: 'right' }
+];
 
 /**
  * Main player dashboard: Modern RPG progression map interface.
@@ -17,23 +18,42 @@ import { RouterModule } from '@angular/router';
 @Component({
   selector: 'app-world-list',
   standalone: true,
-  imports: [
-    MatCardModule, 
-    MatButtonModule, 
-    MatIconModule, 
-    MatProgressBarModule,
-    MatDividerModule,
-    MatTooltipModule,
-    RouterModule
-  ],
+  imports: [RouterModule],
   templateUrl: './world-list.component.html',
   styleUrl: './world-list.component.css'
 })
 export class WorldListComponent implements OnInit {
-  worlds: World[] = [];
+  private readonly worlds = signal<World<AtlasQuest>[]>([]);
+  private readonly selectedWorldId = signal('world-1');
+
+  readonly branches = computed(() => BRANCHES.map(branch => {
+    const world = this.worlds().find(candidate => candidate.id === branch.id);
+    const quests = world?.quests ?? [];
+    const completedIds = this.progressService.progress().completedQuests;
+    const completed = quests.filter(quest => completedIds.includes(quest.id)).length;
+    return { ...branch, world, completed, total: quests.length, fraction: quests.length ? completed / quests.length : 0 };
+  }));
+
+  readonly selectedBranch = computed(() => this.branches().find(branch => branch.id === this.selectedWorldId() && branch.world)
+    ?? this.branches().find(branch => branch.world));
+
+  readonly overallProgress = computed(() => Math.round(
+    100 * this.branches().reduce((sum, branch) => sum + branch.fraction, 0) / BRANCHES.length
+  ));
+
+  readonly recentQuests = computed(() => {
+    const quests = this.selectedBranch()?.world?.quests ?? [];
+    const questsById = new Map(quests.map(quest => [quest.id, quest]));
+    return [...this.progressService.progress().completedQuests].reverse()
+      .map(id => questsById.get(id))
+      .filter(quest => quest !== undefined)
+      .slice(0, 3);
+  });
+
+  readonly extraWorlds = computed(() => this.worlds().filter(world => !BRANCHES.some(branch => branch.id === world.id)));
   errorMessage: string = '';
   loading: boolean = true;
-  activeQuest: Quest | null = null;
+  activeQuest: AtlasQuest | null = null;
   activeWorldId: string = 'world-1';
 
   constructor(
@@ -43,14 +63,20 @@ export class WorldListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.worldService.getAllWorlds().subscribe({
-      next: (data) => {
-        this.worlds = data;
+    forkJoin({
+      worlds: this.worldService.getAllWorlds(),
+      progress: this.progressService.loadProgress(true)
+    }).subscribe({
+      next: ({ worlds: data }) => {
+        this.worlds.set(data);
         this.findActiveQuest(data);
+        const latest = this.progressService.progress().completedQuests.at(-1);
+        const latestWorld = data.find(world => world.quests.some(quest => quest.id === latest));
+        this.selectedWorldId.set(latestWorld?.id ?? this.activeWorldId);
         this.loading = false;
       },
       error: (err) => {
-        this.errorMessage = "Unable to load CodeQuest realms. Please check your backend connection.";
+        this.errorMessage = "Impossible de charger les mondes. Vérifie la connexion au serveur, puis réessaie.";
         this.loading = false;
         console.error(err);
       }
@@ -60,7 +86,7 @@ export class WorldListComponent implements OnInit {
   /**
    * Identifies the recommended active quest for the player.
    */
-  private findActiveQuest(worlds: World[]): void {
+  private findActiveQuest(worlds: World<AtlasQuest>[]): void {
     const completed = this.progressService.progress().completedQuests;
     for (const world of worlds) {
       for (const quest of world.quests) {
@@ -71,20 +97,9 @@ export class WorldListComponent implements OnInit {
         }
       }
     }
-    // If all quests are completed, fallback to the first quest
-    if (worlds.length > 0 && worlds[0].quests.length > 0) {
-      this.activeQuest = worlds[0].quests[0];
-      this.activeWorldId = worlds[0].id;
-    }
   }
 
-  getCompletedQuestCountInWorld(world: World): number {
-    return world.quests.filter(q => this.progressService.isQuestCompleted(q.id)).length;
-  }
-
-  getWorldProgressPercentage(world: World): number {
-    if (!world.quests || world.quests.length === 0) return 0;
-    const done = this.getCompletedQuestCountInWorld(world);
-    return Math.round((done / world.quests.length) * 100);
+  selectWorld(id: string): void {
+    this.selectedWorldId.set(id);
   }
 }

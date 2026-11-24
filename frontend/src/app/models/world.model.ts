@@ -1,17 +1,22 @@
 /**
  * Represents a quest model in the frontend.
  */
-export interface Quest {
+export interface AtlasQuest {
   id: string;
   title: string;
-  description: string;
   xpReward: number;
+  concept?: string;
+}
+
+export interface JournalQuest extends AtlasQuest {
+  description: string;
   difficulty: string;
-  codeTemplate?: string;
-  testValidationRegex?: string;
   category?: string;
   languages?: string;
-  concept?: string;
+}
+
+export interface Quest extends JournalQuest {
+  codeTemplate?: string;
   theory?: string;
 }
 
@@ -27,10 +32,10 @@ export interface SubmissionResponse {
 /**
  * Represents a world/realm model in the frontend.
  */
-export interface World {
+export interface World<T extends AtlasQuest = JournalQuest> {
   id: string;
   name: string;
   description: string;
-  quests: Quest[];
+  quests: T[];
 }
 

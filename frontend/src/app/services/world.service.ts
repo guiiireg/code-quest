@@ -1,7 +1,16 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { World, Quest, SubmissionResponse } from '../models/world.model';
+import { map, Observable } from 'rxjs';
+import { AtlasQuest, World, Quest, SubmissionResponse } from '../models/world.model';
+
+const questOrder = new Intl.Collator('fr', { numeric: true });
+
+function orderQuests<T extends AtlasQuest>(world: World<T>): World<T> {
+  return {
+    ...world,
+    quests: [...world.quests].sort((left, right) => questOrder.compare(left.id, right.id))
+  };
+}
 
 /**
  * Service to interact with the /api world and quest endpoints.
@@ -19,8 +28,10 @@ export class WorldService {
    * 
    * @returns An Observable containing an array of World objects
    */
-  getAllWorlds(): Observable<World[]> {
-    return this.http.get<World[]>(this.apiUrl);
+  getAllWorlds(): Observable<World<AtlasQuest>[]> {
+    return this.http.get<World<AtlasQuest>[]>(this.apiUrl).pipe(
+      map(worlds => worlds.map(orderQuests).sort((left, right) => questOrder.compare(left.id, right.id)))
+    );
   }
 
   /**
@@ -30,7 +41,7 @@ export class WorldService {
    * @returns An Observable containing the corresponding World
    */
   getWorldById(id: string): Observable<World> {
-    return this.http.get<World>(`${this.apiUrl}/${id}`);
+    return this.http.get<World>(`${this.apiUrl}/${id}`).pipe(map(orderQuests));
   }
 
   /**

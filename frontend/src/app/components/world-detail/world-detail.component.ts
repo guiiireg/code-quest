@@ -2,17 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { WorldService } from '../../services/world.service';
 import { UserProgressService } from '../../services/user-progress.service';
-import { World, Quest } from '../../models/world.model';
-import { MatCardModule } from '@angular/material/card';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatTooltipModule } from '@angular/material/tooltip';
+import { World, JournalQuest } from '../../models/world.model';
+import { forkJoin } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 
 export interface SubRegionGroup {
   name: string;
-  quests: Quest[];
+  quests: JournalQuest[];
   completedCount: number;
   totalCount: number;
   totalXp: number;
@@ -24,14 +20,7 @@ export interface SubRegionGroup {
 @Component({
   selector: 'app-world-detail',
   standalone: true,
-  imports: [
-    MatCardModule, 
-    MatButtonModule, 
-    MatIconModule, 
-    MatDividerModule, 
-    MatTooltipModule, 
-    RouterModule
-  ],
+  imports: [RouterModule],
   templateUrl: './world-detail.component.html',
   styleUrl: './world-detail.component.css'
 })
@@ -51,19 +40,26 @@ export class WorldDetailComponent implements OnInit {
   ngOnInit(): void {
     const worldId = this.route.snapshot.paramMap.get('id');
     if (worldId) {
-      this.worldService.getWorldById(worldId).subscribe({
-        next: (data) => {
+      forkJoin({
+        world: this.worldService.getWorldById(worldId),
+        progress: this.progressService.loadProgress(true)
+      }).subscribe({
+        next: ({ world: data }) => {
           this.world = data;
+          const chapters = this.subRegionGroups;
+          const nextQuest = data.quests.find(quest => !this.isCompleted(quest.id));
+          const openChapter = nextQuest ? this.getCategoryForQuest(nextQuest) : chapters[0]?.name;
+          this.collapsedSubregions = new Set(chapters.filter(chapter => chapter.name !== openChapter).map(chapter => chapter.name));
           this.loading = false;
         },
         error: (err) => {
-          this.errorMessage = "Realm not found or error while loading.";
+          this.errorMessage = "Impossible de charger ce monde.";
           this.loading = false;
           console.error(err);
         }
       });
     } else {
-      this.errorMessage = "Realm identifier missing.";
+      this.errorMessage = "Identifiant du monde manquant.";
       this.loading = false;
     }
   }
@@ -72,7 +68,7 @@ export class WorldDetailComponent implements OnInit {
     return this.progressService.isQuestCompleted(questId);
   }
 
-  isQuestUnlocked(quest: Quest): boolean {
+  isQuestUnlocked(quest: JournalQuest): boolean {
     if (this.authService.isAdmin()) return true; // Administrator has all quests unlocked without restriction
 
     if (!this.world || !this.world.quests) return false;
@@ -85,7 +81,7 @@ export class WorldDetailComponent implements OnInit {
     return this.isCompleted(previousQuest.id);
   }
 
-  getPreviousQuestTitle(quest: Quest): string {
+  getPreviousQuestTitle(quest: JournalQuest): string {
     if (!this.world || !this.world.quests) return '';
     const index = this.world.quests.findIndex(q => q.id === quest.id);
     if (index > 0) {
@@ -106,11 +102,6 @@ export class WorldDetailComponent implements OnInit {
     return this.collapsedSubregions.has(groupName);
   }
 
-  getLanguagesList(languages?: string): string[] {
-    if (!languages) return [];
-    return languages.split(',').map(l => l.trim()).filter(l => l.length > 0);
-  }
-
   getCompletedQuestCount(): number {
     if (!this.world) return 0;
     return this.world.quests.filter(q => this.isCompleted(q.id)).length;
@@ -121,7 +112,7 @@ export class WorldDetailComponent implements OnInit {
     return this.world.quests.reduce((sum, q) => sum + q.xpReward, 0);
   }
 
-  getCategoryForQuest(quest: Quest): string {
+  getCategoryForQuest(quest: JournalQuest): string {
     if (quest.category && quest.category.trim().length > 0) {
       return quest.category;
     }
@@ -156,7 +147,7 @@ export class WorldDetailComponent implements OnInit {
   get subRegionGroups(): SubRegionGroup[] {
     if (!this.world || !this.world.quests) return [];
 
-    const groupsMap = new Map<string, Quest[]>();
+    const groupsMap = new Map<string, JournalQuest[]>();
 
     for (const quest of this.world.quests) {
       const cat = this.getCategoryForQuest(quest);

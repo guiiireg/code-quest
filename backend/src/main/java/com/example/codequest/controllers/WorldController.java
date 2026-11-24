@@ -1,11 +1,15 @@
 package com.example.codequest.controllers;
 
-import com.example.codequest.models.World;
-import com.example.codequest.models.Quest;
 import com.example.codequest.payload.request.SubmissionDTO;
+import com.example.codequest.payload.response.QuestResponse;
 import com.example.codequest.payload.response.SubmissionResponse;
+import com.example.codequest.payload.response.WorldResponse;
+import com.example.codequest.payload.response.WorldResponse.AtlasQuest;
+import com.example.codequest.payload.response.WorldResponse.JournalQuest;
+import com.example.codequest.security.services.UserDetailsImpl;
 import com.example.codequest.services.WorldService;
 import com.example.codequest.services.QuestService;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -37,7 +41,7 @@ public class WorldController {
      * @return Complete list of worlds
      */
     @GetMapping("/worlds")
-    public List<World> getAllWorlds() {
+    public List<WorldResponse<AtlasQuest>> getAllWorlds() {
         return worldService.getAllWorlds();
     }
 
@@ -48,7 +52,7 @@ public class WorldController {
      * @return The corresponding world
      */
     @GetMapping("/worlds/{id}")
-    public World getWorldById(@PathVariable String id) {
+    public WorldResponse<JournalQuest> getWorldById(@PathVariable String id) {
         return worldService.getWorldById(id);
     }
 
@@ -59,8 +63,8 @@ public class WorldController {
      * @return The corresponding quest
      */
     @GetMapping("/quests/{id}")
-    public Quest getQuestById(@PathVariable String id) {
-        return questService.getQuestById(id);
+    public QuestResponse getQuestById(@PathVariable String id) {
+        return QuestResponse.from(questService.getQuestById(id));
     }
 
     /**
@@ -71,8 +75,9 @@ public class WorldController {
      * @return The submission result with validation details and XP reward
      */
     @PostMapping("/quests/{id}/submit")
-    public SubmissionResponse submitQuest(@PathVariable String id, @RequestBody SubmissionDTO request) {
-        return questService.submitQuest(id, request);
+    public SubmissionResponse submitQuest(@PathVariable String id, @RequestBody SubmissionDTO request,
+                                          @AuthenticationPrincipal UserDetailsImpl player) {
+        return questService.submitQuest(id, request, player.getId());
     }
 }
 

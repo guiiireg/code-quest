@@ -1,216 +1,145 @@
 package com.example.codequest.services;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import javax.tools.Diagnostic;
-import javax.tools.DiagnosticCollector;
-import javax.tools.JavaCompiler;
-import javax.tools.JavaFileObject;
-import javax.tools.SimpleJavaFileObject;
-import javax.tools.ToolProvider;
-import javax.tools.StandardJavaFileManager;
-import java.io.File;
-import java.net.URI;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.time.Duration;
 import java.util.Comparator;
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.regex.Pattern;
 
-/**
- * Service managing dynamic and secure compilation and execution of user-submitted Java code.
- */
 @Service
 public class CodeCompilerService {
 
-    /**
-     * Record representing compilation and execution result.
-     * 
-     * @param success Indicates whether compilation and execution succeeded
-     * @param output Diagnostic messages or execution output logs
-     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(CodeCompilerService.class);
+    private static final Pattern PUBLIC_CLASS = Pattern.compile("\\bpublic\\s+class\\s+([a-zA-Z_][a-zA-Z0-9_]*)\\b");
+    private static final int MAX_OUTPUT_BYTES = 16 * 1024;
+    private static final Duration COMPILER_TIMEOUT = Duration.ofSeconds(5);
+    private static final Duration RUNTIME_TIMEOUT = Duration.ofSeconds(1);
+
     public record CompilationResult(boolean success, String output) {}
 
-    /**
-     * Compiles and executes Java source code in an isolated container sandbox.
-     * 
-     * @param sourceCode The Java source code to compile
-     * @return The compilation result containing execution status and output logs
-     */
     public CompilationResult compile(String sourceCode) {
-        String className = extractClassName(sourceCode);
-        if (className == null || !className.matches("^[a-zA-Z0-9_]+$")) {
+        var declaration = PUBLIC_CLASS.matcher(sourceCode);
+        if (!declaration.find()) {
             return new CompilationResult(false, "Compilation error: Could not find a valid public class declaration.");
         }
 
+        String className = declaration.group(1);
         Path tempDir = null;
         try {
             tempDir = Files.createTempDirectory("codequest-sandbox-");
-            Path javaFile = tempDir.resolve(className + ".java");
-            Files.writeString(javaFile, sourceCode, StandardCharsets.UTF_8);
+            Path javaFile = Files.writeString(tempDir.resolve(className + ".java"), sourceCode);
+            String runtime = findContainerRuntime(tempDir);
 
-            String containerRuntime = getContainerRuntime();
-            if (containerRuntime == null) {
-                return compileFallbackInProcess(className, sourceCode, tempDir);
+            CompilationResult result = runtime == null
+                    ? run(List.of(Path.of(System.getProperty("java.home"), "bin", "javac").toString(),
+                            "-J-Xmx64m", "-J-XX:ActiveProcessorCount=1", "-proc:none",
+                            javaFile.getFileName().toString()), tempDir, COMPILER_TIMEOUT)
+                    : compileInContainer(runtime, tempDir, className);
+
+            if (!result.success()) {
+                return result;
             }
-
-            ProcessBuilder pb = new ProcessBuilder(
-                containerRuntime, "run", "--rm",
-                "--net=none",
-                "--memory=128m",
-                "--cpus=0.5",
-                "--pids-limit=64",
-                "-v", tempDir.toAbsolutePath().toString() + ":/workspace:Z",
-                "-w", "/workspace",
-                "docker.io/library/eclipse-temurin:21-alpine",
-                "sh", "-c", "javac " + className + ".java && java " + className
-            );
-
-            pb.redirectErrorStream(true);
-            Process process = pb.start();
-
-            StringBuilder output = new StringBuilder();
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8))) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    output.append(line).append("\n");
-                }
-            }
-
-            boolean finished = process.waitFor(5, TimeUnit.SECONDS);
-            if (!finished) {
-                process.destroyForcibly();
-                return new CompilationResult(false, "Execution timed out (limit: 5 seconds).");
-            }
-
-            int exitCode = process.exitValue();
-            if (exitCode == 0) {
-                return new CompilationResult(true, "Compilation successful.\n" + output.toString().trim());
-            } else {
-                return new CompilationResult(false, output.toString().trim());
-            }
-        } catch (Exception e) {
-            return new CompilationResult(false, "Internal compiler error: " + e.getMessage());
+            String output = result.output().isBlank() ? "" : "\n" + result.output();
+            return new CompilationResult(true, "Compilation successful." + output);
+        } catch (InterruptedException exception) {
+            Thread.currentThread().interrupt();
+            return new CompilationResult(false, "Evaluation was interrupted.");
+        } catch (IOException exception) {
+            LOGGER.warn("Could not start Java evaluation", exception);
+            return new CompilationResult(false, "Java evaluation is temporarily unavailable.");
         } finally {
-            if (tempDir != null && Files.exists(tempDir)) {
-                try {
-                    Files.walk(tempDir)
-                         .sorted(Comparator.reverseOrder())
-                         .map(Path::toFile)
-                         .forEach(File::delete);
-                } catch (Exception ignored) {}
-            }
+            deleteWorkspace(tempDir);
         }
     }
 
-    /**
-     * Determines whether podman or docker is available on the host machine.
-     */
-    private String getContainerRuntime() {
-        if (isExecutableAvailable("podman")) {
-            return "podman";
-        } else if (isExecutableAvailable("docker")) {
-            return "docker";
-        }
-        return null;
-    }
-
-    private boolean isExecutableAvailable(String command) {
-        try {
-            Process p = new ProcessBuilder(command, "--version").start();
-            boolean finished = p.waitFor(2, TimeUnit.SECONDS);
-            return finished && p.exitValue() == 0;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    private CompilationResult compileFallbackInProcess(String className, String sourceCode, Path tempDir) {
-        JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-        if (compiler == null) {
-            return new CompilationResult(false, "Compilation error: System JavaCompiler not found.");
-        }
-
-        DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
-        JavaSourceFromString file = new JavaSourceFromString(className, sourceCode);
-        Iterable<? extends JavaFileObject> compilationUnits = Arrays.asList(file);
-
-        try {
-            StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnostics, null, null);
-            Iterable<String> options = Arrays.asList("-d", tempDir.toAbsolutePath().toString());
-
-            JavaCompiler.CompilationTask task = compiler.getTask(null, fileManager, diagnostics, options, null, compilationUnits);
-            boolean success = task.call();
-
-            StringBuilder output = new StringBuilder();
-            if (!success) {
-                for (Diagnostic<? extends JavaFileObject> diagnostic : diagnostics.getDiagnostics()) {
-                    output.append("Line ").append(diagnostic.getLineNumber())
-                          .append(": ").append(diagnostic.getMessage(null)).append("\n");
+    private String findContainerRuntime(Path directory) throws InterruptedException {
+        for (String runtime : List.of("podman", "docker")) {
+            try {
+                if (run(List.of(runtime, "info", "--format", "{{.ServerVersion}}"), directory, RUNTIME_TIMEOUT).success()) {
+                    return runtime;
                 }
-            } else {
-                output.append("Compilation successful.\n");
+            } catch (IOException ignored) {
+                // The executable is unavailable on this host.
             }
-
-            fileManager.close();
-            return new CompilationResult(success, output.toString().trim());
-        } catch (Exception e) {
-            return new CompilationResult(false, "Internal compiler error: " + e.getMessage());
-        }
-    }
-
-    /**
-     * Extracts public class name from Java source code.
-     * 
-     * @param sourceCode Java source code
-     * @return The extracted class name, or null if not found
-     */
-    private String extractClassName(String sourceCode) {
-        Pattern pattern = Pattern.compile("public\\s+class\\s+(\\w+)");
-        Matcher matcher = pattern.matcher(sourceCode);
-        if (matcher.find()) {
-            return matcher.group(1);
         }
         return null;
     }
 
-    /**
-     * Inner class representing an in-memory Java source file.
-     */
-    private static class JavaSourceFromString extends SimpleJavaFileObject {
-        /**
-         * Java source code string.
-         */
-        final String code;
-
-        /**
-         * Constructor to initialize the in-memory source file.
-         * 
-         * @param name Class name
-         * @param code Source code
-         */
-        JavaSourceFromString(String name, String code) {
-            super(URI.create("string:///" + name.replace('.', '/') + JavaFileObject.Kind.SOURCE.extension),
-                  JavaFileObject.Kind.SOURCE);
-            this.code = code;
+    private CompilationResult compileInContainer(String runtime, Path directory, String className)
+            throws IOException, InterruptedException {
+        String containerName = "codequest-" + UUID.randomUUID();
+        try {
+            return run(List.of(runtime, "run", "--rm", "--name", containerName,
+                    "--net=none", "--memory=128m", "--cpus=0.5", "--pids-limit=64",
+                    "-v", directory.toAbsolutePath() + ":/workspace:Z", "-w", "/workspace",
+                    "docker.io/library/eclipse-temurin:21-alpine",
+                    "sh", "-c", "javac -proc:none \"$1.java\" && exec java \"$1\"", "sh", className),
+                    directory, COMPILER_TIMEOUT);
+        } finally {
+            try {
+                run(List.of(runtime, "rm", "-f", containerName), directory, RUNTIME_TIMEOUT);
+            } catch (IOException exception) {
+                LOGGER.warn("Could not clean up the evaluation container", exception);
+            }
         }
+    }
 
-        /**
-         * Returns the source code character content.
-         * 
-         * @param ignoreEncodingErrors If true, ignore encoding errors
-         * @return The source code character sequence
-         */
-        @Override
-        public CharSequence getCharContent(boolean ignoreEncodingErrors) {
-            return code;
+    private CompilationResult run(List<String> command, Path directory, Duration timeout)
+            throws IOException, InterruptedException {
+        Process process = new ProcessBuilder(command)
+                .directory(directory.toFile())
+                .redirectErrorStream(true)
+                .start();
+        long deadline = System.nanoTime() + timeout.toNanos();
+        FutureTask<byte[]> output = new FutureTask<>(() -> {
+            try (var stream = process.getInputStream()) {
+                return stream.readNBytes(MAX_OUTPUT_BYTES + 1);
+            }
+        });
+        Thread.startVirtualThread(output);
+
+        try {
+            process.getOutputStream().close();
+            if (!process.waitFor(timeout.toNanos(), TimeUnit.NANOSECONDS)) {
+                return new CompilationResult(false, "Evaluation timed out.");
+            }
+            byte[] bytes = output.get(Math.max(0, deadline - System.nanoTime()), TimeUnit.NANOSECONDS);
+            if (bytes.length > MAX_OUTPUT_BYTES) {
+                return new CompilationResult(false, "Evaluation output exceeded the 16 KiB limit.");
+            }
+            return new CompilationResult(process.exitValue() == 0, new String(bytes, StandardCharsets.UTF_8).strip());
+        } catch (TimeoutException exception) {
+            return new CompilationResult(false, "Evaluation timed out.");
+        } catch (ExecutionException exception) {
+            throw new IOException("Could not read Java evaluation output", exception.getCause());
+        } finally {
+            process.destroyForcibly();
+            output.cancel(true);
+        }
+    }
+
+    private void deleteWorkspace(Path directory) {
+        if (directory == null) {
+            return;
+        }
+        try (var paths = Files.walk(directory)) {
+            for (Path path : paths.sorted(Comparator.reverseOrder()).toList()) {
+                Files.deleteIfExists(path);
+            }
+        } catch (IOException exception) {
+            LOGGER.warn("Could not clean up the evaluation workspace", exception);
         }
     }
 }
-

@@ -3,6 +3,7 @@ package com.example.codequest.security;
 import com.example.codequest.security.jwt.AuthEntryPointJwt;
 import com.example.codequest.security.jwt.AuthTokenFilter;
 import com.example.codequest.security.services.UserDetailsServiceImpl;
+import jakarta.servlet.DispatcherType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -120,10 +121,12 @@ public class WebSecurityConfig {
             .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> 
-                auth.requestMatchers("/api/auth/**").permitAll()
+                auth.dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
+                    .requestMatchers("/api/auth/**").permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/worlds", "/api/worlds/**").permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/quests/**").permitAll()
-                    .requestMatchers(HttpMethod.POST, "/api/quests/*/submit").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/actuator/health").permitAll()
+                    .requestMatchers("/actuator", "/actuator/**").hasRole("ADMIN")
                     .anyRequest().authenticated()
             );
         

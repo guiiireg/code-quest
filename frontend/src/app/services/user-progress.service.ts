@@ -1,13 +1,15 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable, signal, computed } from '@angular/core';
+import { Observable, of, shareReplay, tap } from 'rxjs';
+import { JwtResponse } from '../models/auth.model';
 import { AuthService } from './auth.service';
 
 export interface UserProgressState {
   xp: number;
-  level: number;
   completedQuests: string[];
-  unlockedSkills: string[];
-  activeQuestId: string | null;
 }
+
+const EMPTY_PROGRESS: UserProgressState = { xp: 0, completedQuests: [] };
 
 export interface LevelThreshold {
   level: number;
@@ -29,15 +31,27 @@ export const LEVEL_THRESHOLDS: LevelThreshold[] = [
   providedIn: 'root'
 })
 export class UserProgressService {
-  private progressSignal = signal<UserProgressState>({
-    xp: 0,
-    level: 1,
-    completedQuests: [],
-    unlockedSkills: ['Syntaxe de base'],
-    activeQuestId: 'q1'
+  private readonly progressState = signal<{ user: JwtResponse; progress: UserProgressState } | null>(null);
+  private pending?: { user: JwtResponse; response: Observable<UserProgressState> };
+
+  readonly progress = computed(() => {
+    const state = this.progressState();
+    return state && state.user === this.authService.currentUser() ? state.progress : EMPTY_PROGRESS;
   });
 
-  readonly progress = this.progressSignal.asReadonly();
+  readonly hasUnverifiedLegacyProgress = computed(() => {
+    const user = this.authService.currentUser();
+    const verified = this.progress();
+    if (!user || this.progressState()?.user !== user) return false;
+
+    try {
+      const stored = localStorage.getItem(`codequest_progress_${user.username}`);
+      const completed = stored ? JSON.parse(stored).completedQuests : null;
+      return Array.isArray(completed) && completed.some(id => !verified.completedQuests.includes(id));
+    } catch {
+      return false;
+    }
+  });
 
   readonly currentLevelInfo = computed(() => {
     const xp = this.progress().xp;
@@ -61,40 +75,32 @@ export class UserProgressService {
 
   readonly completedCount = computed(() => this.progress().completedQuests.length);
 
-  constructor(private authService: AuthService) {
-    this.loadProgress();
-  }
+  constructor(private authService: AuthService, private http: HttpClient) {}
 
-  /**
-   * Marks a quest as completed and awards experience points.
-   */
-  completeQuest(questId: string, xpReward: number): void {
-    const current = this.progressSignal();
-    const isNewCompletion = !current.completedQuests.includes(questId);
-    
-    const newCompleted = isNewCompletion 
-      ? [...current.completedQuests, questId] 
-      : current.completedQuests;
-    
-    const newXp = current.xp + (isNewCompletion ? xpReward : 0);
-    const newLevelInfo = LEVEL_THRESHOLDS.find(t => newXp >= t.minXp && newXp < t.maxXp) || LEVEL_THRESHOLDS[LEVEL_THRESHOLDS.length - 1];
+  loadProgress(refresh = false): Observable<UserProgressState> {
+    const user = this.authService.currentUser();
+    if (!user) {
+      return of(EMPTY_PROGRESS);
+    }
+    if (!refresh && this.pending?.user === user) {
+      return this.pending.response;
+    }
 
-    const updatedSkills = [...current.unlockedSkills];
-    if (questId === 'q1' && !updatedSkills.includes('Variables Java')) updatedSkills.push('Variables Java');
-    if (questId === 'q2' && !updatedSkills.includes('Logique Booleenne')) updatedSkills.push('Logique Booleenne');
-    if (questId === 'q3' && !updatedSkills.includes('Design REST & HTTP')) updatedSkills.push('Design REST & HTTP');
-
-    const updatedState: UserProgressState = {
-      ...current,
-      xp: newXp,
-      level: newLevelInfo.level,
-      completedQuests: newCompleted,
-      unlockedSkills: updatedSkills,
-      activeQuestId: questId === 'q1' ? 'q2' : questId === 'q2' ? 'q3' : null
-    };
-
-    this.progressSignal.set(updatedState);
-    this.saveProgress(updatedState);
+    const response = this.http.get<UserProgressState>('/api/progress').pipe(
+      tap({
+        next: progress => {
+          if (this.authService.currentUser() === user && this.pending?.response === response) {
+            this.progressState.set({ user, progress });
+          }
+        },
+        error: () => {
+          if (this.pending?.response === response) this.pending = undefined;
+        }
+      }),
+      shareReplay({ bufferSize: 1, refCount: true })
+    );
+    this.pending = { user, response };
+    return response;
   }
 
   isQuestCompleted(questId: string): boolean {
@@ -127,25 +133,4 @@ export class UserProgressService {
     const prefix = user ? user.username : 'guest';
     localStorage.removeItem(`codequest_draft_${prefix}_${questId}`);
   }
-
-  private loadProgress(): void {
-    const user = this.authService.currentUser();
-    const key = user ? `codequest_progress_${user.username}` : 'codequest_progress_default';
-    const stored = localStorage.getItem(key);
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored);
-        this.progressSignal.set(parsed);
-      } catch (e) {
-        console.error('Error loading progress from storage:', e);
-      }
-    }
-  }
-
-  private saveProgress(state: UserProgressState): void {
-    const user = this.authService.currentUser();
-    const key = user ? `codequest_progress_${user.username}` : 'codequest_progress_default';
-    localStorage.setItem(key, JSON.stringify(state));
-  }
 }
-

@@ -9,7 +9,11 @@ import { NotFoundComponent } from './components/not-found/not-found.component';
 import { authGuard } from './services/auth.guard';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'worlds', pathMatch: 'full' },
+  {
+    path: '',
+    pathMatch: 'full',
+    loadComponent: () => import('./components/landing/landing.component').then(module => module.LandingComponent)
+  },
   { path: 'worlds', component: WorldListComponent, canActivate: [authGuard] },
   { path: 'worlds/:id', component: WorldDetailComponent, canActivate: [authGuard] },
   { path: 'worlds/:worldId/quests/:questId', component: QuestPlayComponent, canActivate: [authGuard] },

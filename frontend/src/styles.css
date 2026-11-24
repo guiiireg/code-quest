@@ -263,3 +263,59 @@ html {
     scroll-behavior: auto !important;
   }
 }
+
+/* Quest atlas, journal and workshop */
+.quest-atlas,
+.quest-journal,
+.playground-container {
+  --quest-ink: #0b1017;
+  --quest-surface: #111923;
+  --quest-gold: #f4ca83;
+  --quest-muted: #dfd4c3;
+  --quest-line: #f4ca834d;
+  color: #fcf7ef;
+}
+
+[data-world='world-1'] { --quest-art: url('/landing/archives.webp'); }
+[data-world='world-2'] { --quest-art: url('/landing/inclusion.webp'); }
+[data-world='world-3'] { --quest-art: url('/landing/citadel.webp'); }
+
+.quest-primary,
+.quest-secondary {
+  display: inline-block;
+  padding: .62rem 1rem;
+  border: 1px solid var(--quest-gold);
+  background: var(--quest-gold);
+  color: #19120b;
+  font: 700 .9rem/1.5 var(--font-body);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.quest-secondary {
+  border-color: var(--quest-line);
+  background: var(--quest-ink);
+  color: var(--quest-gold);
+}
+
+.quest-primary:hover { background: #ffe5b6; }
+.quest-secondary:hover { border-color: var(--quest-gold); }
+.quest-primary:disabled { opacity: .5; cursor: default; }
+
+.quest-feedback {
+  padding: 1rem;
+  border-left: 1px solid var(--quest-line);
+  color: var(--quest-muted);
+}
+
+@keyframes quest-arrive {
+  from { opacity: 0; transform: translateY(.75rem); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .quest-atlas *, .quest-atlas *::before,
+  .quest-journal *, .playground-container * {
+    animation: none !important;
+    transition: none !important;
+  }
+}

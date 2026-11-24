@@ -1,13 +1,11 @@
-import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, ElementRef, ChangeDetectorRef, DestroyRef, inject } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { WorldService } from '../../services/world.service';
 import { UserProgressService } from '../../services/user-progress.service';
 import { Quest, SubmissionResponse } from '../../models/world.model';
-import { MatCardModule } from '@angular/material/card';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatDividerModule } from '@angular/material/divider';
 import { FormsModule } from '@angular/forms';
+import { catchError, forkJoin, map, of, switchMap } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { AuthService } from '../../services/auth.service';
 
@@ -17,14 +15,7 @@ import { AuthService } from '../../services/auth.service';
 @Component({
   selector: 'app-quest-play',
   standalone: true,
-  imports: [
-    MatCardModule,
-    MatButtonModule,
-    MatIconModule,
-    MatDividerModule,
-    RouterModule,
-    FormsModule
-  ],
+  imports: [RouterModule, FormsModule],
   templateUrl: './quest-play.component.html',
   styleUrl: './quest-play.component.css'
 })
@@ -34,12 +25,15 @@ export class QuestPlayComponent implements OnInit, AfterViewInit, OnDestroy {
   worldId: string | null = null;
   quest: Quest | null = null;
   code: string = '';
+  editorReady = false;
   loading: boolean = true;
   submitting: boolean = false;
   errorMessage: string = '';
   result: SubmissionResponse | null = null;
+  progressSyncFailed = false;
 
   private editorInstance: any = null;
+  private readonly destroyRef = inject(DestroyRef);
 
   constructor(
     private route: ActivatedRoute,
@@ -53,52 +47,38 @@ export class QuestPlayComponent implements OnInit, AfterViewInit, OnDestroy {
     this.worldId = this.route.snapshot.paramMap.get('worldId');
     const questId = this.route.snapshot.paramMap.get('questId');
 
-    if (questId) {
-      this.worldService.getQuestById(questId).subscribe({
-        next: (data) => {
-          this.quest = data;
-          const savedCode = this.progressService.getSavedQuestCode(data.id);
-          this.code = (savedCode !== null && savedCode !== undefined) ? savedCode : (data.codeTemplate || '');
-          
-          // Verify sequential progression (unlocked if user has Admin privileges)
-          if (this.worldId && !this.authService.isAdmin()) {
-            this.worldService.getWorldById(this.worldId).subscribe({
-              next: (worldData) => {
-                const idx = worldData.quests.findIndex(q => q.id === data.id);
-                if (idx > 0) {
-                  const prevQuest = worldData.quests[idx - 1];
-                  const isCompletedCurrent = this.progressService.isQuestCompleted(data.id);
-                  const isCompletedPrev = this.progressService.isQuestCompleted(prevQuest.id);
-                  if (!isCompletedPrev && !isCompletedCurrent) {
-                    this.errorMessage = `This trial is locked! You must complete the previous quest first: "${prevQuest.title}".`;
-                  }
-                }
-                this.loading = false;
-                this.cdr.detectChanges();
-                this.initMonaco();
-              },
-              error: () => {
-                this.loading = false;
-                this.cdr.detectChanges();
-                this.initMonaco();
-              }
-            });
-          } else {
-            this.loading = false;
-            this.cdr.detectChanges();
-            this.initMonaco();
-          }
-        },
-        error: (err) => {
-          this.errorMessage = "Unable to load quest instructions.";
-          this.loading = false;
-          console.error(err);
-        }
-      });
-    } else {
-      this.errorMessage = "Quest identifier is missing.";
+    if (!questId || !this.worldId) {
+      this.errorMessage = 'Identifiant de quête ou de monde manquant.';
       this.loading = false;
+      return;
     }
+
+    forkJoin({
+      quest: this.worldService.getQuestById(questId),
+      world: this.worldService.getWorldById(this.worldId),
+      progress: this.progressService.loadProgress()
+    }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: ({ quest, world }) => {
+        const index = world.quests.findIndex(candidate => candidate.id === quest.id);
+        if (index < 0) {
+          this.errorMessage = 'Cette quête ne fait pas partie de ce monde.';
+        } else if (index > 0 && !this.authService.isAdmin() &&
+          !this.progressService.isQuestCompleted(quest.id) &&
+          !this.progressService.isQuestCompleted(world.quests[index - 1].id)) {
+          this.errorMessage = `Termine d’abord la quête « ${world.quests[index - 1].title} ».`;
+        } else {
+          this.quest = quest;
+          this.code = this.progressService.getSavedQuestCode(quest.id) ?? quest.codeTemplate ?? '';
+        }
+        this.loading = false;
+        this.cdr.detectChanges();
+        if (this.quest) this.initMonaco();
+      },
+      error: () => {
+        this.errorMessage = 'Impossible de charger la quête ou son journal.';
+        this.loading = false;
+      }
+    });
   }
 
   ngAfterViewInit(): void {
@@ -109,29 +89,29 @@ export class QuestPlayComponent implements OnInit, AfterViewInit, OnDestroy {
 
   initMonaco(): void {
     setTimeout(() => {
-      if (!this.editorContainer || this.editorInstance) return;
+      if (!this.editorContainer?.nativeElement.isConnected || this.editorInstance) return;
 
-      if ((window as any).monaco) {
+      if ((window as any).monaco?.editor) {
         this.createMonacoEditor();
       } else {
-        this.loadMonacoScript().then(() => {
-          this.createMonacoEditor();
+        this.loadMonacoScript().then(loaded => {
+          if (loaded) this.createMonacoEditor();
         });
       }
     }, 50);
   }
 
-  loadMonacoScript(): Promise<void> {
+  loadMonacoScript(): Promise<boolean> {
     return new Promise((resolve) => {
-      if ((window as any).monaco) {
-        resolve();
+      if ((window as any).monaco?.editor) {
+        resolve(true);
         return;
       }
       const onGotAmdLoader = () => {
         (window as any).require.config({ paths: { vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs' } });
         (window as any).require(['vs/editor/editor.main'], () => {
-          resolve();
-        });
+          resolve(true);
+        }, () => resolve(false));
       };
 
       if ((window as any).require && (window as any).require.config) {
@@ -141,19 +121,23 @@ export class QuestPlayComponent implements OnInit, AfterViewInit, OnDestroy {
         loaderScript.type = 'text/javascript';
         loaderScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.min.js';
         loaderScript.addEventListener('load', onGotAmdLoader);
+        loaderScript.addEventListener('error', () => resolve(false));
         document.body.appendChild(loaderScript);
       }
     });
   }
 
   createMonacoEditor(): void {
-    if (!this.editorContainer || this.editorInstance) return;
+    if (!this.editorContainer?.nativeElement.isConnected || this.editorInstance) return;
 
+    this.editorReady = true;
+    this.cdr.detectChanges();
     const langMode = this.getEditorLanguage();
     this.editorInstance = (window as any).monaco.editor.create(this.editorContainer.nativeElement, {
       value: this.code,
       language: langMode,
       theme: 'vs-dark',
+      ariaLabel: 'Ton code',
       automaticLayout: true,
       fontSize: 14,
       fontFamily: "'Fira Code', 'Cascadia Code', 'Consolas', monospace",
@@ -170,12 +154,14 @@ export class QuestPlayComponent implements OnInit, AfterViewInit, OnDestroy {
       padding: { top: 14, bottom: 14 }
     });
 
-    this.editorInstance.onDidChangeModelContent(() => {
-      this.code = this.editorInstance.getValue();
-      if (this.quest) {
-        this.progressService.saveQuestCode(this.quest.id, this.code);
-      }
-    });
+    this.editorInstance.onDidChangeModelContent(() => this.updateCode(this.editorInstance.getValue()));
+  }
+
+  updateCode(code: string): void {
+    this.code = code;
+    if (this.quest) {
+      this.progressService.saveQuestCode(this.quest.id, code);
+    }
   }
 
   getEditorLanguage(): string {
@@ -193,23 +179,30 @@ export class QuestPlayComponent implements OnInit, AfterViewInit, OnDestroy {
       this.code = this.editorInstance.getValue();
     }
 
-    if (!this.quest || !this.code.trim()) return;
+    if (!this.quest || !this.code.trim() || this.submitting) return;
 
     this.submitting = true;
     this.result = null;
 
-    this.worldService.submitQuest(this.quest.id, this.code).subscribe({
-      next: (res) => {
-        this.result = res;
+    this.progressSyncFailed = false;
+    this.worldService.submitQuest(this.quest.id, this.code).pipe(
+      switchMap(response => response.success
+        ? this.progressService.loadProgress(true).pipe(
+          map(() => ({ response, synced: true })),
+          catchError(() => of({ response, synced: false }))
+        )
+        : of({ response, synced: true })),
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe({
+      next: ({ response, synced }) => {
+        this.result = response;
+        this.progressSyncFailed = !synced;
         this.submitting = false;
-        if (res.success && this.quest) {
-          this.progressService.completeQuest(this.quest.id, res.xpGained || this.quest.xpReward);
-        }
       },
       error: (err) => {
         this.result = {
           success: false,
-          output: "Error during code evaluation by the compiler sandbox.",
+          output: "Impossible de valider la solution pour le moment.",
           xpGained: 0
         };
         this.submitting = false;
@@ -221,10 +214,10 @@ export class QuestPlayComponent implements OnInit, AfterViewInit, OnDestroy {
   resetTemplate(): void {
     if (this.quest) {
       this.code = this.quest.codeTemplate || '';
-      this.progressService.clearSavedQuestCode(this.quest.id);
       if (this.editorInstance) {
         this.editorInstance.setValue(this.code);
       }
+      this.progressService.clearSavedQuestCode(this.quest.id);
       this.result = null;
     }
   }
